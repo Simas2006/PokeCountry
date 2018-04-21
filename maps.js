@@ -11,7 +11,7 @@ var flags = [
 var maps = [
   `00000000000000000000
    00000000000000000000
-   00111111111111111100
+   00113111111111111100
    00111111111111111100
    00111111111111111100
    00111111111111111100
@@ -24,7 +24,12 @@ var maps = [
    00222222222222222200
    00222222222222222200
    00000000000000000000
-   00000000000000000000`
+   00000000000000000000`,
+  `00000
+   01130
+   01110
+   01110
+   00000`
 ].map(item => item.split("\n").map(jtem => jtem.trim().split("").map(ktem => parseInt(ktem))));
 var mapMetadata = [
   {
@@ -45,10 +50,22 @@ var mapMetadata = [
     warps: [
       {
         inloc: [4,2],
-        outloc: [0,0],
+        outloc: [2,2],
         world: 1
       }
-    ]
+    ],
+    reset: [5,2]
+  },
+  {
+    trainers: [],
+    warps: [
+      {
+        inloc: [3,1],
+        outloc: [2,2],
+        world: 0
+      }
+    ],
+    reset: [2,2]
   }
 ];
 
@@ -63,19 +80,24 @@ var players = [
 var mapPosition = [2,2];
 var mapIndex = 0;
 var mapCanMove = true;
+var mapInExit = false;
+var mapKeypresses = {
+  up: false,
+  down: false,
+  left: false,
+  right: false
+}
 
 var zoomLevel = 12;
 var enableGridInMap = true;
 
 function renderMap() {
-  var canvas = document.getElementById("canvas");
-  canvas.width = Math.min(window.innerWidth,window.innerHeight);
-  canvas.height = Math.min(window.innerWidth,window.innerHeight);
-  var ctx = canvas.getContext("2d");
+  // rendering code
   var map = maps[mapIndex];
   var unit = Math.min(canvas.width,canvas.height) / zoomLevel;
   if ( Math.ceil(mapPosition[0]) - mapPosition[0] < 1e-4 ) mapPosition[0] = Math.ceil(mapPosition[0]);
   if ( Math.ceil(mapPosition[1]) - mapPosition[1] < 1e-4 ) mapPosition[1] = Math.ceil(mapPosition[1]);
+  ctx.strokeStyle = "black";
   for ( var i = 0; i < zoomLevel + 1; i++ ) {
     for ( var j = 0; j < zoomLevel + 1; j++ ) {
       var sum = [
@@ -85,7 +107,6 @@ function renderMap() {
       ctx.fillStyle = ["lightblue","green","white","black"][map[Math.floor(sum[1])][Math.floor(sum[0])]];
       ctx.fillRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))) - 1,unit + 2,unit + 2);
       if ( enableGridInMap ) {
-        ctx.strokeStyle = "black";
         ctx.strokeRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))),unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))),unit,unit);
       }
     }
@@ -124,25 +145,42 @@ function renderMap() {
     ctx.fill();
     ctx.stroke();
   }
+  // internal game code
+  var warps = mapMetadata[mapIndex].warps;
+  if ( ! mapInExit ) {
+    for ( var i = 0; i < warps.length; i++ ) {
+      if ( Math.round(mapPosition[0]) == warps[i].inloc[0] && Math.round(mapPosition[1])  == warps[i].inloc[1] ) {
+        openNewMap(warps[i].world,warps[i].outloc);
+        mapCanMove = false;
+        mapInExit = true;
+      }
+    }
+  }
   if ( mapCanMove ) {
-    if ( keypresses.up ) mapPosition[1] -= 0.04;
-    if ( keypresses.down ) mapPosition[1] += 0.04;
-    if ( keypresses.left ) mapPosition[0] -= 0.04;
-    if ( keypresses.right ) mapPosition[0] += 0.04;
+    if ( mapKeypresses.up ) mapPosition[1] -= 0.04;
+    if ( mapKeypresses.down ) mapPosition[1] += 0.04;
+    if ( mapKeypresses.left ) mapPosition[0] -= 0.04;
+    if ( mapKeypresses.right ) mapPosition[0] += 0.04;
   }
   if ( map[Math.round(mapPosition[1])][Math.round(mapPosition[0])] == 0 ) mapCanMove = false;
 }
 
-var keypresses = {
-  up: false,
-  down: false,
-  left: false,
-  right: false
+function openNewMap(index,newloc) {
+  blurActive = 1;
+  setTimeout(function() {
+    mapIndex = index;
+    mapPosition[0] = newloc[0];
+    mapPosition[1] = newloc[1];
+    setTimeout(function() {
+      mapCanMove = true;
+      mapInExit = false;
+    },1250);
+  },1250);
 }
 
 function handleKeyboardMap(key,down) {
-  if ( key == "ArrowUp" ) keypresses.up = down;
-  if ( key == "ArrowDown" ) keypresses.down = down;
-  if ( key == "ArrowLeft" ) keypresses.left = down;
-  if ( key == "ArrowRight" ) keypresses.right = down;
+  if ( key == "ArrowUp" ) mapKeypresses.up = down;
+  if ( key == "ArrowDown" ) mapKeypresses.down = down;
+  if ( key == "ArrowLeft" ) mapKeypresses.left = down;
+  if ( key == "ArrowRight" ) mapKeypresses.right = down;
 }
