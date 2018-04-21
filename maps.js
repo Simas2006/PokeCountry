@@ -60,8 +60,10 @@ var players = [
     direction: 0
   }
 ];
-var mapPosition = [0,0];
+var mapPosition = [2,2];
 var mapIndex = 0;
+var mapCanMove = true;
+
 var zoomLevel = 12;
 var enableGridInMap = true;
 
@@ -80,7 +82,7 @@ function renderMap() {
         Math.min(Math.max(i + mapPosition[0] - zoomLevel / 2,0),map[0].length - 1),
         Math.min(Math.max(j + mapPosition[1] - zoomLevel / 2,0),map.length - 1)
       ];
-      ctx.fillStyle = ["lightblue","green","white"][map[Math.floor(sum[1])][Math.floor(sum[0])]];
+      ctx.fillStyle = ["lightblue","green","white","black"][map[Math.floor(sum[1])][Math.floor(sum[0])]];
       ctx.fillRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))) - 1,unit + 2,unit + 2);
       if ( enableGridInMap ) {
         ctx.strokeStyle = "black";
@@ -122,4 +124,25 @@ function renderMap() {
     ctx.fill();
     ctx.stroke();
   }
+  if ( mapCanMove ) {
+    if ( keypresses.up ) mapPosition[1] -= 0.04;
+    if ( keypresses.down ) mapPosition[1] += 0.04;
+    if ( keypresses.left ) mapPosition[0] -= 0.04;
+    if ( keypresses.right ) mapPosition[0] += 0.04;
+  }
+  if ( map[Math.round(mapPosition[1])][Math.round(mapPosition[0])] == 0 ) mapCanMove = false;
+}
+
+var keypresses = {
+  up: false,
+  down: false,
+  left: false,
+  right: false
+}
+
+function handleKeyboardMap(key,down) {
+  if ( key == "ArrowUp" ) keypresses.up = down;
+  if ( key == "ArrowDown" ) keypresses.down = down;
+  if ( key == "ArrowLeft" ) keypresses.left = down;
+  if ( key == "ArrowRight" ) keypresses.right = down;
 }
