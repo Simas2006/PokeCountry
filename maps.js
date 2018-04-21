@@ -67,22 +67,24 @@ var enableGridInMap = true;
 
 function renderMap() {
   var canvas = document.getElementById("canvas");
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  canvas.width = Math.min(window.innerWidth,window.innerHeight);
+  canvas.height = Math.min(window.innerWidth,window.innerHeight);
   var ctx = canvas.getContext("2d");
   var map = maps[mapIndex];
-  var unit = canvas.width / zoomLevel;
-  for ( var i = 0; i < zoomLevel; i++ ) {
-    for ( var j = 0; j < zoomLevel; j++ ) {
+  var unit = Math.min(canvas.width,canvas.height) / zoomLevel;
+  if ( Math.ceil(mapPosition[0]) - mapPosition[0] < 1e-4 ) mapPosition[0] = Math.ceil(mapPosition[0]);
+  if ( Math.ceil(mapPosition[1]) - mapPosition[1] < 1e-4 ) mapPosition[1] = Math.ceil(mapPosition[1]);
+  for ( var i = 0; i < zoomLevel + 1; i++ ) {
+    for ( var j = 0; j < zoomLevel + 1; j++ ) {
       var sum = [
-        Math.min(Math.max(j + mapPosition[1] - zoomLevel / 2,0),map.length - 1),
-        Math.min(Math.max(i + mapPosition[0] - zoomLevel / 2,0),map[0].length - 1)
+        Math.min(Math.max(i + mapPosition[0] - zoomLevel / 2,0),map[0].length - 1),
+        Math.min(Math.max(j + mapPosition[1] - zoomLevel / 2,0),map.length - 1)
       ];
-      ctx.fillStyle = ["lightblue","green","white"][map[Math.round(sum[0])][Math.round(sum[1])]];
-      ctx.fillRect(unit * i - 1,unit * j - 1,unit + 2,unit + 2);
+      ctx.fillStyle = ["lightblue","green","white"][map[Math.floor(sum[1])][Math.floor(sum[0])]];
+      ctx.fillRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))) - 1,unit + 2,unit + 2);
       if ( enableGridInMap ) {
         ctx.strokeStyle = "black";
-        ctx.strokeRect(unit * i,unit * j,unit,unit);
+        ctx.strokeRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))),unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))),unit,unit);
       }
     }
   }
