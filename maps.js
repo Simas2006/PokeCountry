@@ -147,13 +147,9 @@ function renderMap() {
   }
   // internal game code
   var warps = mapMetadata[mapIndex].warps;
-  if ( ! mapInExit ) {
-    for ( var i = 0; i < warps.length; i++ ) {
-      if ( Math.round(mapPosition[0]) == warps[i].inloc[0] && Math.round(mapPosition[1])  == warps[i].inloc[1] ) {
-        openNewMap(warps[i].world,warps[i].outloc);
-        mapCanMove = false;
-        mapInExit = true;
-      }
+  for ( var i = 0; i < warps.length; i++ ) {
+    if ( Math.round(mapPosition[0]) == warps[i].inloc[0] && Math.round(mapPosition[1])  == warps[i].inloc[1] ) {
+      openNewMap(warps[i].world,warps[i].outloc);
     }
   }
   if ( mapCanMove ) {
@@ -162,10 +158,15 @@ function renderMap() {
     if ( mapKeypresses.left ) mapPosition[0] -= 0.04;
     if ( mapKeypresses.right ) mapPosition[0] += 0.04;
   }
-  if ( map[Math.round(mapPosition[1])][Math.round(mapPosition[0])] == 0 ) mapCanMove = false;
+  if ( map[Math.round(mapPosition[1])][Math.round(mapPosition[0])] == 0 ) {
+    openNewMap(mapIndex,mapMetadata[mapIndex].reset);
+  }
 }
 
 function openNewMap(index,newloc) {
+  if ( mapInExit ) return;
+  mapCanMove = false;
+  mapInExit = true;
   blurActive = 1;
   setTimeout(function() {
     mapIndex = index;
