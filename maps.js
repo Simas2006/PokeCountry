@@ -108,5 +108,16 @@ function renderMap() {
       ctx.fillRect(unit * (sum[0] + 0.5) + pixelPosition[0],unit * (sum[1] + 0.5) + pixelPosition[1],unit / 3,unit / 3);
     }
     ctx.restore();
+    var directions = [[0.5,0.8,0.4],[0.375,0.675,0.525],[0.5,0.2,0.4],[0.375,0.675,0.3]];
+    ctx.fillStyle = "white";
+    ctx.lineWidth = "2";
+    ctx.beginPath();
+    ctx.arc(unit * (sum[0] + directions[players[i].direction][0]),unit * (sum[1] + directions[players[i].direction][2]),unit / 7,0,2 * Math.PI);
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(unit * (sum[0] + directions[players[i].direction][1]),unit * (sum[1] + directions[players[i].direction][2]),unit / 7,0,2 * Math.PI);
+    ctx.fill();
+    ctx.stroke();
   }
 }
