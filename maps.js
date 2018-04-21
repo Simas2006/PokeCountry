@@ -63,7 +63,7 @@ var players = [
 var mapPosition = [0,0];
 var mapIndex = 0;
 var zoomLevel = 12;
-var enableGridInMap = false;
+var enableGridInMap = true;
 
 function renderMap() {
   var canvas = document.getElementById("canvas");
@@ -95,17 +95,17 @@ function renderMap() {
     ctx.save();
     ctx.fillStyle = "red";
     ctx.beginPath();
-    ctx.arc(unit * (sum[0] + 0.5),unit * (sum[1] + 0.5),35,0,2 * Math.PI);
+    ctx.arc(unit * (sum[0] + 0.5),unit * (sum[1] + 0.5),unit / 2,0,2 * Math.PI);
     ctx.stroke();
     ctx.clip();
     var flag = flags[players[i].country];
     for ( var j = 0; j < flag.length; j++ ) {
       var pixelPosition = [
-        (Math.floor(j / 3) - 1.5) * 23.333,
-        (j % 3 - 1.5) * 23.333
+        (Math.floor(j / 3) - 1.5) * (unit / 3),
+        (j % 3 - 1.5) * (unit / 3)
       ];
       ctx.fillStyle = ["red","orange","yellow","green","blue","purple","black","white"][flag[j]];
-      ctx.fillRect(unit * (sum[0] + 0.5) + pixelPosition[0],unit * (sum[1] + 0.5) + pixelPosition[1],23.333,23.333);
+      ctx.fillRect(unit * (sum[0] + 0.5) + pixelPosition[0],unit * (sum[1] + 0.5) + pixelPosition[1],unit / 3,unit / 3);
     }
     ctx.restore();
   }
