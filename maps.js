@@ -272,6 +272,9 @@ function battleTrainer(index) {
   setTimeout(function() {
     blurActive = 1;
     setTimeout(function() {
+      battleSwapTime = 1.5;
+      battleSwapDirection = 1;
+      battleSwapPlayer = -1;
       gamemode = "battle";
       mapCanMove = true;
       mapInExit = false;
