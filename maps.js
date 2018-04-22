@@ -1,13 +1,3 @@
-var flags = [
-  `440440070`, // US
-  `602602602`, // Germany
-  `740740740`, // Russia
-  `220220000`, // China
-  `000707000`, // Canada
-  `444777000`, // France
-  `777003003`, // Belarus
-  `000020000`  // Vietnam
-].map(item => item.split("").map(jtem => parseInt(jtem)));
 var maps = [
   `00000000000000000000
    00000000000000000000
@@ -26,8 +16,8 @@ var maps = [
    00000000000000000000
    00000000000000000000`,
   `00000
-   01130
    01110
+   01130
    01110
    00000`
 ].map(item => item.split("\n").map(jtem => jtem.trim().split("").map(ktem => parseInt(ktem))));
@@ -35,18 +25,52 @@ var mapMetadata = [
   {
     trainers: [
       {
-        country: 7,
+        country: 4,
         x: 2,
         y: 6,
         direction: 0,
-        colored: true
+        colored: true,
+        exists: true,
+        battleData: {
+          country: 4,
+          party: [
+            {
+              country: 5,
+              moves: [
+                [1,1],
+                [2,2],
+                [3,3],
+                [4,4]
+              ]
+            },
+            {
+              country: 6,
+              moves: [
+                [1,4],
+                [2,3],
+                [3,2],
+                [4,1]
+              ]
+            },
+            {
+              country: 7,
+              moves: [
+                [1,1],
+                [2,4],
+                [3,3],
+                [4,2]
+              ]
+            }
+          ]
+        }
       },
       {
         country: 6,
         x: 3,
         y: 6,
         direction: 0,
-        colored: true
+        colored: true,
+        exists: false
       }
     ],
     warps: [
@@ -62,7 +86,7 @@ var mapMetadata = [
     trainers: [],
     warps: [
       {
-        inloc: [3,1],
+        inloc: [3,2],
         outloc: [2,2],
         world: 0
       }
@@ -77,7 +101,40 @@ var mapObjects = [
     x: -1,
     y: -1,
     direction: 0,
-    colored: true
+    colored: true,
+    exists: true,
+    battleData: {
+      country: 0,
+      party: [
+        {
+          country: 1,
+          moves: [
+            [1,1],
+            [2,2],
+            [3,3],
+            [4,4]
+          ]
+        },
+        {
+          country: 2,
+          moves: [
+            [1,4],
+            [2,3],
+            [3,2],
+            [4,1]
+          ]
+        },
+        {
+          country: 3,
+          moves: [
+            [1,1],
+            [2,4],
+            [3,3],
+            [4,2]
+          ]
+        }
+      ]
+    }
   }
 ];
 var mapPosition = [2,2];
@@ -115,13 +172,13 @@ function renderMap() {
     }
   }
   for ( var i = 0; i < mapObjects.length; i++ ) {
+    if ( ! mapObjects[i].exists ) continue;
     ctx.fillStyle = "#000000";
     var sum = [
       mapObjects[i].x == -1 ? mapZoomLevel / 2 : mapObjects[i].x - mapPosition[0] + (mapZoomLevel / 2),
       mapObjects[i].y == -1 ? mapZoomLevel / 2 : mapObjects[i].y - mapPosition[1] + (mapZoomLevel / 2)
     ];
     ctx.save();
-    ctx.fillStyle = "red";
     ctx.beginPath();
     ctx.arc(unit * (sum[0] + 0.5),unit * (sum[1] + 0.5),unit / 2,0,2 * Math.PI);
     ctx.stroke();
@@ -177,20 +234,14 @@ function renderMap() {
     },1250);
   }
   for ( var i = 1; i < mapObjects.length; i++ ) {
+    if ( ! mapObjects[i].exists ) continue;
     if (
       Math.sqrt(
         Math.pow(Math.abs(mapPosition[0] - mapObjects[i].x),2) +
         Math.pow(Math.abs(mapPosition[1] - mapObjects[i].y),2)
       ) <= 3 && ! mapInExit
     ) {
-      mapInExit = true;
-      mapCanMove = false;
-      blurActive = 1;
-      setTimeout(function() {
-        gamemode = "battle";
-        mapCanMove = true;
-        mapInExit = false;
-      },1250);
+      battleTrainer(i);
     }
   }
 }
@@ -206,6 +257,22 @@ function openNewMap(index,newloc) {
     mapPosition[1] = newloc[1];
     mapObjects = [mapObjects[0]].concat(mapMetadata[mapIndex].trainers);
     setTimeout(function() {
+      mapCanMove = true;
+      mapInExit = false;
+    },1250);
+  },1250);
+}
+
+function battleTrainer(index) {
+  mapInExit = true;
+  mapCanMove = false;
+  mapObjects[0].colored = false;
+  if ( mapObjects[index] ) mapObjects[index].colored = false;
+  battlePlayers = [mapObjects[0].battleData,mapMetadata[mapIndex].trainers[index - 1].battleData];
+  setTimeout(function() {
+    blurActive = 1;
+    setTimeout(function() {
+      gamemode = "battle";
       mapCanMove = true;
       mapInExit = false;
     },1250);
