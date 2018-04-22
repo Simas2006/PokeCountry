@@ -36,15 +36,17 @@ var mapMetadata = [
     trainers: [
       {
         country: 7,
-        x: 5,
-        y: 4,
-        direction: 0
+        x: 2,
+        y: 6,
+        direction: 0,
+        colored: true
       },
       {
         country: 6,
-        x: 4,
-        y: 4,
-        direction: 0
+        x: 3,
+        y: 6,
+        direction: 0,
+        colored: true
       }
     ],
     warps: [
@@ -74,7 +76,8 @@ var mapObjects = [
     country: 0,
     x: -1,
     y: -1,
-    direction: 0
+    direction: 0,
+    colored: true
   }
 ];
 var mapPosition = [2,2];
@@ -123,14 +126,16 @@ function renderMap() {
     ctx.arc(unit * (sum[0] + 0.5),unit * (sum[1] + 0.5),unit / 2,0,2 * Math.PI);
     ctx.stroke();
     ctx.clip();
-    var flag = flags[mapObjects[i].country];
-    for ( var j = 0; j < flag.length; j++ ) {
-      var pixelPosition = [
-        (Math.floor(j / 3) - 1.5) * (unit / 3),
-        (j % 3 - 1.5) * (unit / 3)
-      ];
-      ctx.fillStyle = ["red","orange","yellow","green","blue","purple","black","white"][flag[j]];
-      ctx.fillRect(unit * (sum[0] + 0.5) + pixelPosition[0],unit * (sum[1] + 0.5) + pixelPosition[1],unit / 3,unit / 3);
+    if ( mapObjects[i].colored ) {
+      var flag = flags[mapObjects[i].country];
+      for ( var j = 0; j < flag.length; j++ ) {
+        var pixelPosition = [
+          (Math.floor(j / 3) - 1.5) * (unit / 3),
+          (j % 3 - 1.5) * (unit / 3)
+        ];
+        ctx.fillStyle = ["red","orange","yellow","green","blue","purple","black","white"][flag[j]];
+        ctx.fillRect(unit * (sum[0] + 0.5) + pixelPosition[0],unit * (sum[1] + 0.5) + pixelPosition[1],unit / 3,unit / 3);
+      }
     }
     ctx.restore();
     var directions = [[0.5,0.8,0.4],[0.375,0.675,0.525],[0.5,0.2,0.4],[0.375,0.675,0.3]];
@@ -170,6 +175,23 @@ function renderMap() {
         mapInExit = false;
       },1250);
     },1250);
+  }
+  for ( var i = 1; i < mapObjects.length; i++ ) {
+    if (
+      Math.sqrt(
+        Math.pow(Math.abs(mapPosition[0] - mapObjects[i].x),2) +
+        Math.pow(Math.abs(mapPosition[1] - mapObjects[i].y),2)
+      ) <= 3 && ! mapInExit
+    ) {
+      mapInExit = true;
+      mapCanMove = false;
+      blurActive = 1;
+      setTimeout(function() {
+        gamemode = "battle";
+        mapCanMove = true;
+        mapInExit = false;
+      },1250);
+    }
   }
 }
 

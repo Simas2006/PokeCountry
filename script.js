@@ -10,6 +10,7 @@ window.onload = function() {
   ctx = canvas.getContext("2d");
   setInterval(function() {
     if ( gamemode == "map" ) renderMap();
+    if ( gamemode == "battle" ) renderBattle();
     if ( blurActive > 0 ) {
       var size = Math.min(window.innerWidth,window.innerHeight);
       ctx.fillStyle = "black";
