@@ -3,6 +3,17 @@ var blurActive = 0;
 var blurDirection = 0;
 var canvas,ctx;
 
+var flags = [
+  `440440070`, // US
+  `602602602`, // Germany
+  `740740740`, // Russia
+  `220220000`, // China
+  `000707000`, // Canada
+  `444777000`, // France
+  `777003003`, // Belarus
+  `000020000`  // Vietnam
+].map(item => item.split("").map(jtem => parseInt(jtem)));
+
 window.onload = function() {
   canvas = document.getElementById("canvas");
   canvas.width = Math.min(window.innerWidth,window.innerHeight);
