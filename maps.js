@@ -36,8 +36,8 @@ var mapMetadata = [
     trainers: [
       {
         country: 7,
-        x: 2,
-        y: 2,
+        x: 5,
+        y: 4,
         direction: 0
       },
       {
@@ -182,7 +182,7 @@ function openNewMap(index,newloc) {
     mapIndex = index;
     mapPosition[0] = newloc[0];
     mapPosition[1] = newloc[1];
-
+    mapObjects = [mapObjects[0]].concat(mapMetadata[mapIndex].trainers);
     setTimeout(function() {
       mapCanMove = true;
       mapInExit = false;
