@@ -33,6 +33,10 @@ var mapMetadata = [
         exists: true,
         battleData: {
           country: 4,
+          visibleCountry: 4,
+          active: -1,
+          hp: 100,
+          pp: [100,100,100,100],
           party: [
             {
               country: 5,
@@ -105,6 +109,10 @@ var mapObjects = [
     exists: true,
     battleData: {
       country: 0,
+      visibleCountry: 0,
+      active: -1,
+      hp: 100,
+      pp: [100,100,100,100],
       party: [
         {
           country: 1,
@@ -288,5 +296,5 @@ function handleKeyboardMap(key,down) {
   if ( key == "ArrowLeft" ) mapKeypresses.left = down;
   if ( key == "ArrowRight" ) mapKeypresses.right = down;
   var index = ["ArrowRight","ArrowDown","ArrowLeft","ArrowUp"].indexOf(key);
-  if ( index > -1 ) mapObjects[0].direction = index;
+  if ( index > -1 && down ) mapObjects[0].direction = index;
 }
