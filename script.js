@@ -13,6 +13,7 @@ var flags = [
   `777003003`, // Belarus
   `000020000`  // Vietnam
 ].map(item => item.split("").map(jtem => parseInt(jtem)));
+var names = ["USA","Germany","Russia","China","Canada","France","Belarus","Vietnam"];
 
 window.onload = function() {
   canvas = document.getElementById("canvas");
@@ -36,6 +37,7 @@ window.onload = function() {
   window.onkeydown = function(event) {
     if ( event.key.startsWith("Arrow") ) {
       if ( gamemode == "map" ) handleKeyboardMap(event.key,true);
+      if ( gamemode == "battle" ) handleKeyboardBattle(event.key);
     }
   }
   window.onkeyup = function(event) {
