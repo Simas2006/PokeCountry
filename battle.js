@@ -76,8 +76,8 @@ function renderBattle() {
       break;
     }
   }
-  ctx.fillText(battleTextToDraw.slice(0,Math.min(Math.floor(battleCharDrawn),sliceOn)),canvas.width * 0.01,canvas.height * 0.78 + 30);
-  ctx.fillText(battleTextToDraw.slice(sliceOn + 1,Math.floor(battleCharDrawn)),canvas.width * 0.01,canvas.height * 0.9 + 30);
+  ctx.fillText(battleTextToDraw.slice(0,Math.min(Math.floor(battleCharDrawn),sliceOn)),canvas.width * 0.01,canvas.height * 0.85);
+  ctx.fillText(battleTextToDraw.slice(sliceOn + 1,Math.floor(battleCharDrawn)),canvas.width * 0.01,canvas.height * 0.97);
   if ( battleCharDrawn <= battleTextToDraw.length ) {
     battleCharDrawn += 0.1;
   } else if ( battleFlashingToggle >= 1 ) {
