@@ -13,7 +13,7 @@ var flags = [
   `777003003`, // Belarus
   `000020000`  // Vietnam
 ].map(item => item.split("").map(jtem => parseInt(jtem)));
-var names = ["USA","Cambodia","Russia","China","Canada","France","Belarus","Vietnam"];
+var names = ["USA","Germany","Russia","China","Canada","France","Belarus","Vietnam"];
 
 function drawRoundedRect(radius,x,y,width,height) {
   ctx.beginPath();
@@ -49,13 +49,13 @@ window.onload = function() {
     }
   },10);
   window.onkeydown = function(event) {
-    if ( event.key.startsWith("Arrow") ) {
+    if ( event.key.startsWith("Arrow") || event.key == " " ) {
       if ( gamemode == "map" ) handleKeyboardMap(event.key,true);
       if ( gamemode == "battle" ) handleKeyboardBattle(event.key);
     }
   }
   window.onkeyup = function(event) {
-    if ( event.key.startsWith("Arrow") ) {
+    if ( event.key.startsWith("Arrow") || event.key == " " ) {
       if ( gamemode == "map" ) handleKeyboardMap(event.key,false);
     }
   }

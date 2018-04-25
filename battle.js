@@ -7,6 +7,9 @@ var battleTextToDraw;
 var battleDialogueItem = 0;
 var battleFlashingToggle = 0;
 var battleSelectedButton = 0;
+var battleSelectedOption = -1;
+var battleBoxItems = [["SAGE","100/100"],["BEIGE","0/100"],["HAVA","50/100"],["NAGE","0/100"]];
+var battleBoxSelected = 0;
 
 function renderBattle() {
   // rendering code
@@ -94,6 +97,32 @@ function renderBattle() {
     ctx.stroke();
     ctx.restore();
   }
+  ctx.font = canvas.height * 0.06 + "px Menlo";
+  if ( battleSelectedOption > -1 ) {
+    ctx.fillStyle = "white";
+    ctx.strokeStyle = "black";
+    drawRoundedRect(10,canvas.width * 0.4,canvas.height * 0.15 - 10,canvas.width * 0.6 - 5,canvas.height * 0.6);
+    ctx.stroke();
+    ctx.fill();
+    ctx.fillStyle = "black";
+    var y = canvas.height * 0.23 - 10;
+    for ( var i = 0; i < battleBoxItems.length; i++ ) {
+      ctx.fillText(" " + battleBoxItems[i][0],canvas.width * 0.4 + 10,y);
+      if ( battleBoxSelected == i ) {
+        ctx.beginPath();
+        ctx.moveTo(canvas.width * 0.4 + 10,y - canvas.height * 0.05);
+        ctx.lineTo(canvas.width * 0.43 + 10,y - canvas.height * 0.025);
+        ctx.lineTo(canvas.width * 0.4 + 10,y);
+        ctx.closePath();
+        ctx.fill();
+      }
+      y += canvas.height * 0.07;
+      if ( battleBoxItems[i][1] ) {
+        ctx.fillText(" ".repeat(14 - battleBoxItems[i][1].length) + battleBoxItems[i][1],canvas.width * 0.4 + 10,y);
+        y += canvas.height * 0.07;
+      }
+    }
+  }
   ctx.font = canvas.height * 0.08 + "px Menlo";
   var sliceOn = battleTextToDraw.length;
   var splitWords = battleTextToDraw.split(" ");
@@ -104,6 +133,7 @@ function renderBattle() {
     }
   }
   if ( battleTextToDraw.indexOf("\n") > -1 ) sliceOn = battleTextToDraw.indexOf("\n");
+  ctx.fillStyle = "black";
   ctx.fillText(battleTextToDraw.slice(0,Math.min(Math.floor(battleCharDrawn),sliceOn)),canvas.width * 0.01,canvas.height * 0.85);
   ctx.fillText(battleTextToDraw.slice(sliceOn + 1,Math.floor(battleCharDrawn)),canvas.width * 0.01,canvas.height * 0.97);
   if ( battleCharDrawn <= battleTextToDraw.length ) {
@@ -153,7 +183,15 @@ function battleDialogueIncrement() {
 }
 
 function handleKeyboardBattle(key) {
-  if ( key == "ArrowUp" || (key == "ArrowDown" && battleDialogueItem == 3) ) battleSelectedButton = [2,3,0,1][battleSelectedButton];
-  if ( key == "ArrowLeft" || key == "ArrowRight" ) battleSelectedButton = [1,0,3,2][battleSelectedButton];
+  if ( battleDialogueItem == 3 ) {
+    if ( battleSelectedOption <= -1 ) {
+      if ( key == "ArrowUp" || key == "ArrowDown" ) battleSelectedButton = [2,3,0,1][battleSelectedButton];
+      if ( key == "ArrowLeft" || key == "ArrowRight" ) battleSelectedButton = [1,0,3,2][battleSelectedButton];
+    } else {
+      if ( key == "ArrowUp" ) battleBoxSelected = Math.max(battleBoxSelected - 1,0);
+      if ( key == "ArrowDown" ) battleBoxSelected = Math.min(battleBoxSelected + 1,battleBoxItems.length - 1);
+    }
+  }
   if ( key == "ArrowDown" && battleDialogueItem != 3 ) battleDialogueIncrement();
+  if ( key == " " && battleDialogueItem == 3 ) battleSelectedOption = battleSelectedButton;
 }
