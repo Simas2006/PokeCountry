@@ -6,6 +6,7 @@ var battleCharDrawn = 0;
 var battleTextToDraw;
 var battleDialogueItem = 0;
 var battleFlashingToggle = 0;
+var battleSelectedButton = 0;
 
 function renderBattle() {
   // rendering code
@@ -44,30 +45,56 @@ function renderBattle() {
   ctx.restore();
   ctx.strokeStyle = "black";
   ctx.fillStyle = "white";
-  var radius = 10;
-  var x = 1;
-  var y = canvas.height * 0.75;
-  var width = canvas.width - 2;
-  var height = canvas.height - (y + 1);
-  ctx.beginPath();
-  ctx.moveTo(x + radius,y);
-  ctx.lineTo(x + width - radius,y);
-  ctx.quadraticCurveTo(x + width,y,x + width,y + radius);
-  ctx.lineTo(x + width,y + height - radius);
-  ctx.quadraticCurveTo(x + width,y + height,x + width - radius,y + height);
-  ctx.lineTo(x + radius,y + height);
-  ctx.quadraticCurveTo(x,y + height,x,y + height - radius);
-  ctx.lineTo(x,y + radius);
-  ctx.quadraticCurveTo(x,y,x + radius,y);
-  ctx.closePath();
+  drawRoundedRect(10,1,canvas.height * 0.75,canvas.width - 2,canvas.height * 0.25 - 1);
   ctx.stroke();
   ctx.fill();
   ctx.fillStyle = "black";
-  ctx.font = canvas.height * 0.08 + "px Menlo";
   if ( battleDialogueItem == 0 ) battleTextToDraw = `${names[battlePlayers[1].country].toUpperCase()} wants to battle!`;
   if ( battleDialogueItem == 1 ) battleTextToDraw = `${names[battlePlayers[1].country].toUpperCase()} sent out ${names[battlePlayers[1].party[battlePlayers[1].active].country].toUpperCase()}!`;
   if ( battleDialogueItem == 2 ) battleTextToDraw = `Go ${names[battlePlayers[0].party[battlePlayers[0].active].country].toUpperCase()}!`;
-
+  if ( battleDialogueItem == 3 ) {
+    battleTextToDraw = `What should\n${names[battlePlayers[0].party[battlePlayers[0].active].country].toUpperCase()} do?`;
+    drawRoundedRect(10,canvas.width * 0.6,canvas.height * 0.75 + 10,canvas.width * 0.4 - 5,canvas.height * 0.25 - 20);
+    ctx.stroke();
+    ctx.save();
+    ctx.clip();
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = battleSelectedButton == 0 ? "gold" : "red";
+    ctx.fillStyle = battleSelectedButton == 0 ? "#fff1b3" : "#ff9999";
+    ctx.fillRect(canvas.width * 0.6,canvas.height * 0.75 + 10,canvas.width * 0.2 - 2,canvas.height * 0.125 - 12);
+    ctx.strokeRect(canvas.width * 0.6,canvas.height * 0.75 + 10,canvas.width * 0.2 - 2,canvas.height * 0.125 - 12);
+    ctx.strokeStyle = battleSelectedButton == 1 ? "gold" : "orange";
+    ctx.fillStyle = battleSelectedButton == 1 ? "#fff1b3" : "#fedba9";
+    ctx.fillRect(canvas.width * 0.8 + 2,canvas.height * 0.75 + 10,canvas.width * 0.2 - 7,canvas.height * 0.125 - 12);
+    ctx.strokeRect(canvas.width * 0.8 + 2,canvas.height * 0.75 + 10,canvas.width * 0.2 - 7,canvas.height * 0.125 - 12);
+    ctx.strokeStyle = battleSelectedButton == 2 ? "gold" : "green";
+    ctx.fillStyle = battleSelectedButton == 2 ? "#fff1b3" : "#99ff99";
+    ctx.fillRect(canvas.width * 0.6,canvas.height * 0.878,canvas.width * 0.2 - 2,canvas.height * 0.125 - 12);
+    ctx.strokeRect(canvas.width * 0.6,canvas.height * 0.878,canvas.width * 0.2 - 2,canvas.height * 0.125 - 12);
+    ctx.strokeStyle = battleSelectedButton == 3 ? "gold" : "blue";
+    ctx.fillStyle = battleSelectedButton == 3 ? "#fff1b3" : "#9999ff";
+    ctx.fillRect(canvas.width * 0.8 + 2,canvas.height * 0.878,canvas.width * 0.2 - 7,canvas.height * 0.125 - 12);
+    ctx.strokeRect(canvas.width * 0.8 + 2,canvas.height * 0.878,canvas.width * 0.2 - 7,canvas.height * 0.125 - 12);
+    ctx.textAlign = "center";
+    ctx.fillStyle = "black";
+    ctx.font = canvas.height * 0.06 + "px Menlo";
+    ctx.fillText("FIGHT",canvas.width * 0.695,canvas.height * 0.8425);
+    ctx.fillText("BAG",canvas.width * 0.8975,canvas.height * 0.8425);
+    ctx.fillText("RUN",canvas.width * 0.8975,canvas.height * 0.955);
+    ctx.font = canvas.height * 0.0425 + "px Menlo";
+    ctx.fillText("POKÉMON",canvas.width * 0.6975,canvas.height * 0.9475);
+    ctx.strokeStyle = "black";
+    ctx.beginPath();
+    ctx.moveTo(canvas.width * 0.6,canvas.height * 0.875);
+    ctx.lineTo(canvas.width - 5,canvas.height * 0.875);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(canvas.width * 0.8,canvas.height * 0.75 + 10);
+    ctx.lineTo(canvas.width * 0.8,canvas.height - 10);
+    ctx.stroke();
+    ctx.restore();
+  }
+  ctx.font = canvas.height * 0.08 + "px Menlo";
   var sliceOn = battleTextToDraw.length;
   var splitWords = battleTextToDraw.split(" ");
   for ( var i = 0; i < splitWords.length + 1; i++ ) {
@@ -76,11 +103,12 @@ function renderBattle() {
       break;
     }
   }
+  if ( battleTextToDraw.indexOf("\n") > -1 ) sliceOn = battleTextToDraw.indexOf("\n");
   ctx.fillText(battleTextToDraw.slice(0,Math.min(Math.floor(battleCharDrawn),sliceOn)),canvas.width * 0.01,canvas.height * 0.85);
   ctx.fillText(battleTextToDraw.slice(sliceOn + 1,Math.floor(battleCharDrawn)),canvas.width * 0.01,canvas.height * 0.97);
   if ( battleCharDrawn <= battleTextToDraw.length ) {
     battleCharDrawn += 0.1;
-  } else if ( battleFlashingToggle >= 1 ) {
+  } else if ( battleFlashingToggle >= 1 && battleDialogueItem != 3 ) {
     ctx.fillStyle = "black";
     ctx.beginPath();
     ctx.moveTo(canvas.width * 0.9,canvas.height * 0.9);
@@ -125,9 +153,7 @@ function battleDialogueIncrement() {
 }
 
 function handleKeyboardBattle(key) {
-  if ( key == "ArrowDown" ) {
-    if ( battleDialogueItem != 2 ) {
-      battleDialogueIncrement();
-    }
-  }
+  if ( key == "ArrowUp" || (key == "ArrowDown" && battleDialogueItem == 3) ) battleSelectedButton = [2,3,0,1][battleSelectedButton];
+  if ( key == "ArrowLeft" || key == "ArrowRight" ) battleSelectedButton = [1,0,3,2][battleSelectedButton];
+  if ( key == "ArrowDown" && battleDialogueItem != 3 ) battleDialogueIncrement();
 }

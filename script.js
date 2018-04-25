@@ -13,7 +13,21 @@ var flags = [
   `777003003`, // Belarus
   `000020000`  // Vietnam
 ].map(item => item.split("").map(jtem => parseInt(jtem)));
-var names = ["USA","Germany","Russia","China","Canada","France","Belarus","Vietnam"];
+var names = ["USA","Cambodia","Russia","China","Canada","France","Belarus","Vietnam"];
+
+function drawRoundedRect(radius,x,y,width,height) {
+  ctx.beginPath();
+  ctx.moveTo(x + radius,y);
+  ctx.lineTo(x + width - radius,y);
+  ctx.quadraticCurveTo(x + width,y,x + width,y + radius);
+  ctx.lineTo(x + width,y + height - radius);
+  ctx.quadraticCurveTo(x + width,y + height,x + width - radius,y + height);
+  ctx.lineTo(x + radius,y + height);
+  ctx.quadraticCurveTo(x,y + height,x,y + height - radius);
+  ctx.lineTo(x,y + radius);
+  ctx.quadraticCurveTo(x,y,x + radius,y);
+  ctx.closePath();
+}
 
 window.onload = function() {
   canvas = document.getElementById("canvas");
@@ -24,7 +38,7 @@ window.onload = function() {
     if ( gamemode == "map" ) renderMap();
     if ( gamemode == "battle" ) renderBattle();
     if ( blurActive > 0 ) {
-      var size = Math.min(window.innerWidth,window.innerHeight);
+      var size = Math.min(canvas.width,canvas.height);
       ctx.fillStyle = "black";
       ctx.fillRect(0,0,size,(blurActive / 100) * (size / 2));
       ctx.fillRect(0,(1 - blurActive / 100 + 1) * (size / 2),size,(blurActive / 100) * (size / 2));
