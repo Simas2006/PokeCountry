@@ -8,7 +8,7 @@ var battleDialogueItem = 0;
 var battleFlashingToggle = 0;
 var battleSelectedButton = 0;
 var battleSelectedOption = -1;
-var battleBoxItems = [["SAGE","100/100"],["BEIGE","0/100"],["HAVA","50/100"],["NAGE","0/100"]];
+var battleBoxItems;
 var battleBoxSelected = 0;
 
 function renderBattle() {
@@ -106,8 +106,9 @@ function renderBattle() {
     ctx.fill();
     ctx.fillStyle = "black";
     var y = canvas.height * 0.23 - 10;
+    var items = battleBoxItems[battleSelectedOption];
     for ( var i = 0; i < battleBoxItems.length; i++ ) {
-      ctx.fillText(" " + battleBoxItems[i][0],canvas.width * 0.4 + 10,y);
+      ctx.fillText(" " + items[i][0],canvas.width * 0.4 + 10,y);
       if ( battleBoxSelected == i ) {
         ctx.beginPath();
         ctx.moveTo(canvas.width * 0.4 + 10,y - canvas.height * 0.05);
@@ -117,8 +118,8 @@ function renderBattle() {
         ctx.fill();
       }
       y += canvas.height * 0.07;
-      if ( battleBoxItems[i][1] ) {
-        ctx.fillText(" ".repeat(14 - battleBoxItems[i][1].length) + battleBoxItems[i][1],canvas.width * 0.4 + 10,y);
+      if ( items[i][1] ) {
+        ctx.fillText(" ".repeat(14 - items[i][1].length) + items[i][1],canvas.width * 0.4 + 10,y);
         y += canvas.height * 0.07;
       }
     }
@@ -179,6 +180,13 @@ function battleDialogueIncrement() {
     setTimeout(function() {
       battlePlayers[0].visibleCountry = battlePlayers[0].party[battlePlayers[0].active].country;
     },1000);
+  } else if ( battleDialogueItem == 3 ) {
+    battleBoxItems = [
+      battlePlayers[0].party[battlePlayers[0].active].moves.map((item,index) => [moves[item[0]].name,battlePlayers[0].pp[index] + "/100"]),
+      [],
+      [],
+      []
+    ]
   }
 }
 
@@ -193,5 +201,8 @@ function handleKeyboardBattle(key) {
     }
   }
   if ( key == "ArrowDown" && battleDialogueItem != 3 ) battleDialogueIncrement();
-  if ( key == " " && battleDialogueItem == 3 ) battleSelectedOption = battleSelectedButton;
+  if ( key == " " && battleDialogueItem == 3 && battleSelectedOption <= -1 ) {
+    battleSelectedOption = battleSelectedButton;
+    battleSelectedButton = -1;
+  }
 }

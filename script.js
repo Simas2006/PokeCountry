@@ -14,6 +14,43 @@ var flags = [
   `000020000`  // Vietnam
 ].map(item => item.split("").map(jtem => parseInt(jtem)));
 var names = ["USA","Germany","Russia","China","Canada","France","Belarus","Vietnam"];
+var moves = [
+  {
+    name: "WWI",
+    power: [2,1,0,1],
+    selfInflict: 0
+  },
+  {
+    name: "WWII",
+    power: [2,1,0,1],
+    selfInflict: 0
+  },
+  {
+    name: "DIVIDE",
+    power: [2,1,0,1],
+    selfInflict: 0.5
+  },
+  {
+    name: "EU",
+    power: [2,3,1,2],
+    selfInflict: 0
+  },
+  {
+    name: "FREE FRANCE",
+    power: [3,3,1,3],
+    selfInflict: 0.25
+  },
+  {
+    name: "GUILLOTINE",
+    power: [3,1,1,1],
+    selfInflict: 0
+  },
+  {
+    name: "SURRENDER",
+    power: [3,3,3,3],
+    selfInflict: 1
+  }
+];
 
 function drawRoundedRect(radius,x,y,width,height) {
   ctx.beginPath();
