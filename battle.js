@@ -10,14 +10,21 @@ var battleSelectedButton = 0;
 var battleSelectedOption = -1;
 var battleBoxItems;
 var battleBoxSelected = 0;
+var battleSelectedMove;
+var battleMovementTimer = 0;
+var battleMovementPlayer = 0;
+var battleDamageComplete = false;
 
 function renderBattle() {
   // rendering code
   ctx.fillStyle = "white";
   ctx.fillRect(0,0,canvas.width,canvas.height);
   var size = canvas.width * 0.3;
+  var index = Math.floor(battleMovementTimer / 25);
+  var xm = [ 0, 0, 1, 1, 1, 0,-1,-1,-1, 0,0][index] * 100;
+  var ym = [ 0,-1,-1, 0, 1, 1, 1, 0,-1,-1,0][index] * 100;
   ctx.beginPath();
-  ctx.arc(canvas.width * (0.25 - (battleSwapPlayer != 1 ? battleSwapTime : 0)),canvas.height * 0.75,size,0,2 * Math.PI);
+  ctx.arc(canvas.width * (0.25 - (battleSwapPlayer != 1 ? battleSwapTime : 0)) + (battleMovementPlayer == 0 ? xm : 0),canvas.height * 0.75 + (battleMovementPlayer == 0 ? ym : 0),size,0,2 * Math.PI);
   ctx.stroke();
   ctx.save();
   ctx.clip();
@@ -28,11 +35,11 @@ function renderBattle() {
       (j % 3 - 1.5) * (size / 1.5)
     ];
     ctx.fillStyle = ["red","orange","yellow","green","blue","purple","black","white"][flag[j]];
-    ctx.fillRect(canvas.width * (0.25 - (battleSwapPlayer != 1 ? battleSwapTime : 0)) + pixelPosition[0],canvas.height * 0.75 + pixelPosition[1],size / 1.5,size / 1.5);
+    ctx.fillRect(canvas.width * (0.25 - (battleSwapPlayer != 1 ? battleSwapTime : 0)) + (battleMovementPlayer == 0 ? xm : 0) + pixelPosition[0],canvas.height * 0.75 + (battleMovementPlayer == 0 ? ym : 0) + pixelPosition[1],size / 1.5,size / 1.5);
   }
   ctx.restore();
   ctx.beginPath();
-  ctx.arc(canvas.width * (0.75 + (battleSwapPlayer != 0 ? battleSwapTime : 0)),canvas.height * 0.25,size,0,2 * Math.PI);
+  ctx.arc(canvas.width * (0.75 + (battleSwapPlayer != 0 ? battleSwapTime : 0)) + (battleMovementPlayer == 1 ? xm : 0),canvas.height * 0.25 + (battleMovementPlayer == 1 ? ym : 0),size,0,2 * Math.PI);
   ctx.stroke();
   ctx.save();
   ctx.clip();
@@ -43,19 +50,22 @@ function renderBattle() {
       (j % 3 - 1.5) * (size / 1.5)
     ];
     ctx.fillStyle = ["red","orange","yellow","green","blue","purple","black","white"][flag[j]];
-    ctx.fillRect(canvas.width * (0.75 + (battleSwapPlayer != 0 ? battleSwapTime : 0)) + pixelPosition[0],canvas.height * 0.25 + pixelPosition[1],size / 1.5,size / 1.5);
+    ctx.fillRect(canvas.width * (0.75 + (battleSwapPlayer != 0 ? battleSwapTime : 0)) + (battleMovementPlayer == 1 ? xm : 0) + pixelPosition[0],canvas.height * 0.25 + (battleMovementPlayer == 1 ? ym : 0) + pixelPosition[1],size / 1.5,size / 1.5);
   }
   ctx.restore();
-  ctx.strokeStyle = "black";
-  ctx.fillStyle = "white";
-  drawRoundedRect(10,1,canvas.height * 0.75,canvas.width - 2,canvas.height * 0.25 - 1);
-  ctx.stroke();
-  ctx.fill();
+  if ( battleDialogueItem != 4 ) {
+    ctx.strokeStyle = "black";
+    ctx.fillStyle = "white";
+    drawRoundedRect(10,1,canvas.height * 0.75,canvas.width - 2,canvas.height * 0.25 - 1);
+    ctx.stroke();
+    ctx.fill();
+  }
   ctx.fillStyle = "black";
   if ( battleDialogueItem == 0 ) battleTextToDraw = `${names[battlePlayers[1].country].toUpperCase()} wants to battle!`;
   if ( battleDialogueItem == 1 ) battleTextToDraw = `${names[battlePlayers[1].country].toUpperCase()} sent out ${names[battlePlayers[1].party[battlePlayers[1].active].country].toUpperCase()}!`;
   if ( battleDialogueItem == 2 ) battleTextToDraw = `Go ${names[battlePlayers[0].party[battlePlayers[0].active].country].toUpperCase()}!`;
   if ( battleDialogueItem == 3 ) {
+    battleDamageComplete = false;
     battleTextToDraw = `What should\n${names[battlePlayers[0].party[battlePlayers[0].active].country].toUpperCase()} do?`;
     drawRoundedRect(10,canvas.width * 0.6,canvas.height * 0.75 + 10,canvas.width * 0.4 - 5,canvas.height * 0.25 - 20);
     ctx.stroke();
@@ -97,6 +107,18 @@ function renderBattle() {
     ctx.stroke();
     ctx.restore();
   }
+  var activeCountry = battlePlayers[battleMovementPlayer].party[battlePlayers[battleMovementPlayer].active];
+  var oppositeCountry = battlePlayers[battleMovementPlayer == 0 ? 1 : 0].party[battlePlayers[battleMovementPlayer == 0 ? 1 : 0].active];
+  if ( battleDialogueItem >= 5 ) {
+    if ( battleDialogueItem == 5 ) battleTextToDraw = `${names[activeCountry.country].toUpperCase()} used ${moves[activeCountry.moves[battleSelectedMove][0]].name}!`;
+    if ( battleDialogueItem == 6 && ! battleDamageComplete ) {
+      var damage = activeCountry.moves[battleSelectedMove][1] / moves[activeCountry.moves[battleSelectedMove][0]].power[oppositeCountry.group] * 5;
+      var oppositeObject = battlePlayers[battleMovementPlayer == 0 ? 1 : 0];
+      oppositeObject.hp = Math.round(oppositeObject.hp - damage);
+      battleDamageComplete = true;
+    }
+  }
+  ["It's super effective!","It landed!","It missed...","It wasn't very effective..."];
   ctx.font = canvas.height * 0.06 + "px Menlo";
   if ( battleSelectedOption > -1 ) {
     ctx.fillStyle = "white";
@@ -124,19 +146,21 @@ function renderBattle() {
       }
     }
   }
-  ctx.font = canvas.height * 0.08 + "px Menlo";
-  var sliceOn = battleTextToDraw.length;
-  var splitWords = battleTextToDraw.split(" ");
-  for ( var i = 0; i < splitWords.length + 1; i++ ) {
-    if ( splitWords.slice(0,i).join(" ").length >= 20 ) {
-      sliceOn = splitWords.slice(0,i - 1).join(" ").length;
-      break;
+  if ( battleDialogueItem != 4 ) {
+    ctx.font = canvas.height * 0.08 + "px Menlo";
+    var sliceOn = battleTextToDraw.length;
+    var splitWords = battleTextToDraw.split(" ");
+    for ( var i = 0; i < splitWords.length + 1; i++ ) {
+      if ( splitWords.slice(0,i).join(" ").length >= 20 ) {
+        sliceOn = splitWords.slice(0,i - 1).join(" ").length;
+        break;
+      }
     }
+    if ( battleTextToDraw.indexOf("\n") > -1 ) sliceOn = battleTextToDraw.indexOf("\n");
+    ctx.fillStyle = "black";
+    ctx.fillText(battleTextToDraw.slice(0,Math.min(Math.floor(battleCharDrawn),sliceOn)),canvas.width * 0.01,canvas.height * 0.85);
+    ctx.fillText(battleTextToDraw.slice(sliceOn + 1,Math.floor(battleCharDrawn)),canvas.width * 0.01,canvas.height * 0.97);
   }
-  if ( battleTextToDraw.indexOf("\n") > -1 ) sliceOn = battleTextToDraw.indexOf("\n");
-  ctx.fillStyle = "black";
-  ctx.fillText(battleTextToDraw.slice(0,Math.min(Math.floor(battleCharDrawn),sliceOn)),canvas.width * 0.01,canvas.height * 0.85);
-  ctx.fillText(battleTextToDraw.slice(sliceOn + 1,Math.floor(battleCharDrawn)),canvas.width * 0.01,canvas.height * 0.97);
   if ( battleCharDrawn <= battleTextToDraw.length ) {
     battleCharDrawn += 0.1;
   } else if ( battleFlashingToggle >= 1 && battleDialogueItem != 3 ) {
@@ -157,6 +181,7 @@ function renderBattle() {
   } else {
     battleSwapDirection = 0;
   }
+  if ( battleDialogueItem == 4 ) battleMovementTimer++;
 }
 
 function battleDialogueIncrement() {
@@ -187,6 +212,13 @@ function battleDialogueIncrement() {
       [],
       []
     ]
+  } else if ( battleDialogueItem == 4 ) {
+    battleMovementTimer = 0;
+    battleSelectedOption = -1;
+    setTimeout(function() {
+      battleMovementTimer = 0;
+      battleDialogueIncrement();
+    },2750);
   }
 }
 
@@ -201,8 +233,13 @@ function handleKeyboardBattle(key) {
     }
   }
   if ( key == "ArrowDown" && battleDialogueItem != 3 ) battleDialogueIncrement();
-  if ( key == " " && battleDialogueItem == 3 && battleSelectedOption <= -1 ) {
-    battleSelectedOption = battleSelectedButton;
-    battleSelectedButton = -1;
+  if ( key == " " && battleDialogueItem == 3 ) {
+    if ( battleSelectedOption <= -1 ) {
+      battleSelectedOption = battleSelectedButton;
+      battleSelectedButton = -1;
+    } else {
+      battleSelectedMove = battleBoxSelected;
+      battleDialogueIncrement();
+    }
   }
 }

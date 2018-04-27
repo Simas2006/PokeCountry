@@ -17,17 +17,17 @@ var names = ["USA","Germany","Russia","China","Canada","France","Belarus","Vietn
 var moves = [
   {
     name: "WWI",
-    power: [2,1,0,1],
+    power: [3,2,1,2],
     selfInflict: 0
   },
   {
     name: "WWII",
-    power: [2,1,0,1],
+    power: [3,2,1,2],
     selfInflict: 0
   },
   {
     name: "DIVIDE",
-    power: [2,1,0,1],
+    power: [3,2,1,2],
     selfInflict: 0.5
   },
   {

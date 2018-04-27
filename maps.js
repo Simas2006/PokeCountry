@@ -21,6 +21,8 @@ var maps = [
    01110
    00000`
 ].map(item => item.split("\n").map(jtem => jtem.trim().split("").map(ktem => parseInt(ktem))));
+// Groups: 0-3 [US,Russia,Europe,China]
+// Limit move levels to 1 <= x <= 5, except SURRENDER = 0
 var mapMetadata = [
   {
     trainers: [
@@ -40,6 +42,7 @@ var mapMetadata = [
           party: [
             {
               country: 5,
+              group: 1,
               moves: [
                 [4,1],
                 [5,2],
@@ -105,6 +108,7 @@ var mapObjects = [
       party: [
         {
           country: 1,
+          group: 1,
           moves: [
             [0,1],
             [1,2],
