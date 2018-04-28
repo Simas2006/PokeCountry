@@ -164,11 +164,13 @@ function renderBattle() {
     }
     if ( battleDialogueItem == 6 && ! battleDamageComplete ) {
       var damage = activeCountry.moves[battleSelectedMove][1] / moves[activeCountry.moves[battleSelectedMove][0]].power[oppositeCountry.group] * 5;
+      if ( Math.random() <= moves[activeCountry.moves[battleSelectedMove][0]].missChance ) damage = 0;
       var oppositeObject = battlePlayers[battleMovementPlayer == 0 ? 1 : 0];
       oppositeObject.hp = Math.round(oppositeObject.hp - damage);
       battleDamageComplete = true;
-      var text = ["The attack missed...","It wasn't very effective...","The attack landed!","It's super effective!"];
-      battleTextToDraw = text[Math.floor(damage / 6.25)];
+      var text = ["It wasn't very effective...","The attack landed!","It's super effective!"];
+      battleTextToDraw = text[Math.floor(damage / 8.333)];
+      if ( damage == 0 ) battleTextToDraw = "The attack missed...";
     }
   }
   ctx.font = canvas.height * 0.06 + "px Menlo";

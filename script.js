@@ -18,37 +18,44 @@ var moves = [
   {
     name: "WWI",
     power: [3,2,1,2],
-    selfInflict: 0
+    selfInflict: 0,
+    missChance: 0.25
   },
   {
     name: "WWII",
     power: [3,2,1,2],
-    selfInflict: 0
+    selfInflict: 0,
+    missChance: 0.25
   },
   {
     name: "DIVIDE",
     power: [3,2,1,2],
-    selfInflict: 0.5
+    selfInflict: 0.5,
+    missChance: 0
   },
   {
     name: "EU",
     power: [2,3,1,2],
-    selfInflict: 0
+    selfInflict: 0,
+    missChance: 0.33
   },
   {
     name: "FREE FRANCE",
     power: [3,3,1,3],
-    selfInflict: 0.25
+    selfInflict: 0.25,
+    missChance: 0.5
   },
   {
     name: "GUILLOTINE",
     power: [3,1,1,1],
-    selfInflict: 0
+    selfInflict: 0,
+    missChance: 0
   },
   {
     name: "SURRENDER",
     power: [3,3,3,3],
-    selfInflict: 1
+    selfInflict: 1,
+    missChance: 1
   }
 ];
 
