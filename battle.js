@@ -53,6 +53,7 @@ function renderBattle() {
     ctx.fillRect(canvas.width * (0.75 + (battleSwapPlayer != 0 ? battleSwapTime : 0)) + (battleMovementPlayer == 1 ? xm : 0) + pixelPosition[0],canvas.height * 0.25 + (battleMovementPlayer == 1 ? ym : 0) + pixelPosition[1],size / 1.5,size / 1.5);
   }
   ctx.restore();
+  ctx.lineWidth = 5;
   if ( battleDialogueItem != 4 ) {
     ctx.strokeStyle = "black";
     ctx.fillStyle = "white";
@@ -71,7 +72,6 @@ function renderBattle() {
     ctx.stroke();
     ctx.save();
     ctx.clip();
-    ctx.lineWidth = 5;
     ctx.strokeStyle = battleSelectedButton == 0 ? "gold" : "red";
     ctx.fillStyle = battleSelectedButton == 0 ? "#fff1b3" : "#ff9999";
     ctx.fillRect(canvas.width * 0.6,canvas.height * 0.75 + 10,canvas.width * 0.2 - 2,canvas.height * 0.125 - 12);
@@ -116,9 +116,10 @@ function renderBattle() {
       var oppositeObject = battlePlayers[battleMovementPlayer == 0 ? 1 : 0];
       oppositeObject.hp = Math.round(oppositeObject.hp - damage);
       battleDamageComplete = true;
+      var text = ["The attack missed...","It wasn't very effective...","The attack landed!","It's super effective!"];
+      battleTextToDraw = text[Math.floor(damage / 6.25)];
     }
   }
-  ["It's super effective!","It landed!","It missed...","It wasn't very effective..."];
   ctx.font = canvas.height * 0.06 + "px Menlo";
   if ( battleSelectedOption > -1 ) {
     ctx.fillStyle = "white";

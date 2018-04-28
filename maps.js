@@ -42,7 +42,7 @@ var mapMetadata = [
           party: [
             {
               country: 5,
-              group: 1,
+              group: 2,
               moves: [
                 [4,1],
                 [5,2],
