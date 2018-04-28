@@ -115,7 +115,6 @@ function renderBattle() {
   if ( battleDialogueItem == 2 ) battleTextToDraw = `Go ${names[battlePlayers[0].party[battlePlayers[0].active].country].toUpperCase()}!`;
   if ( battleDialogueItem == 3 ) {
     ctx.lineWidth = 5;
-    battleDamageComplete = false;
     battleTextToDraw = `What should\n${names[battlePlayers[0].party[battlePlayers[0].active].country].toUpperCase()} do?`;
     drawRoundedRect(10,canvas.width * 0.6,canvas.height * 0.75 + 10,canvas.width * 0.4 - 5,canvas.height * 0.25 - 20);
     ctx.stroke();
@@ -159,7 +158,10 @@ function renderBattle() {
   var activeCountry = battlePlayers[battleMovementPlayer].party[battlePlayers[battleMovementPlayer].active];
   var oppositeCountry = battlePlayers[battleMovementPlayer == 0 ? 1 : 0].party[battlePlayers[battleMovementPlayer == 0 ? 1 : 0].active];
   if ( battleDialogueItem >= 5 ) {
-    if ( battleDialogueItem == 5 ) battleTextToDraw = `${names[activeCountry.country].toUpperCase()} used ${moves[activeCountry.moves[battleSelectedMove][0]].name}!`;
+    if ( battleDialogueItem == 5 ) {
+      battleTextToDraw = `${names[activeCountry.country].toUpperCase()} used ${moves[activeCountry.moves[battleSelectedMove][0]].name}!`;
+      battleDamageComplete = false;
+    }
     if ( battleDialogueItem == 6 && ! battleDamageComplete ) {
       var damage = activeCountry.moves[battleSelectedMove][1] / moves[activeCountry.moves[battleSelectedMove][0]].power[oppositeCountry.group] * 5;
       var oppositeObject = battlePlayers[battleMovementPlayer == 0 ? 1 : 0];
@@ -271,6 +273,10 @@ function battleDialogueIncrement() {
       battleMovementTimer = 0;
       battleDialogueIncrement();
     },2750);
+  } else if ( battleDialogueItem == 7 ) {
+    battleMovementPlayer = battleMovementPlayer == 0 ? 1 : 0;
+    battleDialogueItem = 2 + battleMovementPlayer;
+    battleDialogueIncrement();
   }
 }
 
