@@ -39,6 +39,7 @@ var mapMetadata = [
           active: -1,
           hp: 100,
           pp: [100,100,100,100],
+          skill: 0.4,
           party: [
             {
               country: 5,

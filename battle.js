@@ -14,6 +14,7 @@ var battleSelectedMove;
 var battleMovementTimer = 0;
 var battleMovementPlayer = 0;
 var battleDamageComplete = false;
+var battleAICalculated = false;
 
 function renderBattle() {
   // rendering code
@@ -159,6 +160,21 @@ function renderBattle() {
   var oppositeCountry = battlePlayers[battleMovementPlayer == 0 ? 1 : 0].party[battlePlayers[battleMovementPlayer == 0 ? 1 : 0].active];
   if ( battleDialogueItem >= 5 ) {
     if ( battleDialogueItem == 5 ) {
+      if ( battleMovementPlayer == 1 && ! battleAICalculated ) {
+        var sortedMoves = activeCountry.moves.map(item => [
+          item[1] / moves[item[0]].power[oppositeCountry.group] * 5,
+          item[0]
+        ]).sort(function(a,b) {
+          return b[0] - a[0];
+        });
+        var index;
+        var value = Math.random();
+        if ( value <= battlePlayers[1].skill ) index = 0;
+        else if ( value <= (1 - battlePlayers[1].skill) / 2 ) index = 1;
+        else index = 2;
+        battleSelectedMove = index;
+        battleAICalculated = true;
+      }
       battleTextToDraw = `${names[activeCountry.country].toUpperCase()} used ${moves[activeCountry.moves[battleSelectedMove][0]].name}!`;
       battleDamageComplete = false;
     }
@@ -171,6 +187,7 @@ function renderBattle() {
       var text = ["It wasn't very effective...","The attack landed!","It's super effective!"];
       battleTextToDraw = text[Math.floor(damage / 8.333)];
       if ( damage == 0 ) battleTextToDraw = "The attack missed...";
+      battleAICalculated = false;
     }
   }
   ctx.font = canvas.height * 0.06 + "px Menlo";
