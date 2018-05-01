@@ -38,7 +38,7 @@ var mapMetadata = [
           visibleCountry: 4,
           active: -1,
           hp: 100,
-          pp: [100,100,100,100],
+          pp: [0,0,0,0],
           skill: 0.4,
           party: [
             {
@@ -105,7 +105,7 @@ var mapObjects = [
       visibleCountry: 0,
       active: -1,
       hp: 100,
-      pp: [100,100,100,100],
+      pp: [0,0,0,5],
       party: [
         {
           country: 1,

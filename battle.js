@@ -15,6 +15,7 @@ var battleMovementTimer = 0;
 var battleMovementPlayer = 0;
 var battleDamageComplete = false;
 var battleAICalculated = false;
+var battleOutOfPP = false;
 
 function renderBattle() {
   // rendering code
@@ -116,7 +117,8 @@ function renderBattle() {
   if ( battleDialogueItem == 2 ) battleTextToDraw = `Go ${names[battlePlayers[0].party[battlePlayers[0].active].country].toUpperCase()}!`;
   if ( battleDialogueItem == 3 ) {
     ctx.lineWidth = 5;
-    battleTextToDraw = `What should\n${names[battlePlayers[0].party[battlePlayers[0].active].country].toUpperCase()} do?`;
+    if ( battleOutOfPP ) battleTextToDraw = `There isn't\nenough PP!`;
+    else battleTextToDraw = `What should\n${names[battlePlayers[0].party[battlePlayers[0].active].country].toUpperCase()} do?`;
     drawRoundedRect(10,canvas.width * 0.6,canvas.height * 0.75 + 10,canvas.width * 0.4 - 5,canvas.height * 0.25 - 20);
     ctx.stroke();
     ctx.save();
@@ -161,32 +163,47 @@ function renderBattle() {
   if ( battleDialogueItem >= 5 ) {
     if ( battleDialogueItem == 5 ) {
       if ( battleMovementPlayer == 1 && ! battleAICalculated ) {
-        var sortedMoves = activeCountry.moves.map(item => [
+        var sortedMoves = activeCountry.moves.map((item,index) => [
           item[1] / moves[item[0]].power[oppositeCountry.group] * 5,
-          item[0]
-        ]).sort(function(a,b) {
+          index
+        ]).filter((item,index) => battlePlayers[1].pp[index] > 0).sort(function(a,b) {
           return b[0] - a[0];
         });
-        var index;
-        var value = Math.random();
-        if ( value <= battlePlayers[1].skill ) index = 0;
-        else if ( value <= (1 - battlePlayers[1].skill) / 2 ) index = 1;
-        else index = 2;
-        battleSelectedMove = index;
+        if ( sortedMoves.length > 0 ) {
+          var index;
+          var value = Math.random();
+          if ( value <= battlePlayers[1].skill ) index = 0;
+          else if ( value <= battlePlayers[1].skill + (1 - battlePlayers[1].skill) / 2 ) index = 1;
+          else index = 2;
+          if ( index >= sortedMoves.length ) index = sortedMoves.length - 1;
+          battleSelectedMove = sortedMoves[index][1];
+        } else {
+          battleSelectedMove = -1;
+        }
         battleAICalculated = true;
       }
-      battleTextToDraw = `${names[activeCountry.country].toUpperCase()} used ${moves[activeCountry.moves[battleSelectedMove][0]].name}!`;
+      var moveName;
+      if ( battleSelectedMove <= -1 ) moveName = "STRUGGLE";
+      else moveName = moves[activeCountry.moves[battleSelectedMove][0]].name;
+      battleTextToDraw = `${names[activeCountry.country].toUpperCase()} used ${moveName}!`;
       battleDamageComplete = false;
+      battleOutOfPP = false;
     }
     if ( battleDialogueItem == 6 && ! battleDamageComplete ) {
-      var damage = activeCountry.moves[battleSelectedMove][1] / moves[activeCountry.moves[battleSelectedMove][0]].power[oppositeCountry.group] * 5;
-      if ( Math.random() <= moves[activeCountry.moves[battleSelectedMove][0]].missChance ) damage = 0;
+      var damage;
+      if ( battleSelectedMove > -1 ) {
+        damage = activeCountry.moves[battleSelectedMove][1] / moves[activeCountry.moves[battleSelectedMove][0]].power[oppositeCountry.group] * 5;
+        if ( Math.random() <= moves[activeCountry.moves[battleSelectedMove][0]].missChance ) damage = 0;
+      } else {
+        damage = Math.floor(Math.random() * 6);
+      }
       var oppositeObject = battlePlayers[battleMovementPlayer == 0 ? 1 : 0];
       oppositeObject.hp = Math.round(oppositeObject.hp - damage);
       battleDamageComplete = true;
       var text = ["It wasn't very effective...","The attack landed!","It's super effective!"];
       battleTextToDraw = text[Math.floor(damage / 8.333)];
       if ( damage == 0 ) battleTextToDraw = "The attack missed...";
+      battlePlayers[battleMovementPlayer].pp[battleSelectedMove] -= 5;
       battleAICalculated = false;
     }
   }
@@ -262,8 +279,6 @@ function battleDialogueIncrement() {
     battleSwapPlayer = 1;
     battleSwapTime = 0.01;
     battlePlayers[1].active++;
-    battlePlayers[1].hp = 100;
-    battlePlayers[1].pp = [100,100,100,100];
     setTimeout(function() {
       battlePlayers[1].visibleCountry = battlePlayers[1].party[battlePlayers[1].active].country;
     },1000);
@@ -271,8 +286,6 @@ function battleDialogueIncrement() {
     battleSwapPlayer = 0;
     battleSwapTime = 0.01;
     battlePlayers[0].active++;
-    battlePlayers[0].hp = 100;
-    battlePlayers[0].pp = [100,100,100,100];
     setTimeout(function() {
       battlePlayers[0].visibleCountry = battlePlayers[0].party[battlePlayers[0].active].country;
     },1000);
@@ -312,11 +325,20 @@ function handleKeyboardBattle(key) {
   if ( key == "ArrowDown" && battleDialogueItem != 3 ) battleDialogueIncrement();
   if ( key == " " && battleDialogueItem == 3 ) {
     if ( battleSelectedOption <= -1 ) {
-      battleSelectedOption = battleSelectedButton;
-      battleSelectedButton = -1;
+      if ( battlePlayers[0].pp.filter(item => item > 0).length > 0 ) {
+        battleSelectedOption = battleSelectedButton;
+        battleSelectedButton = -1;
+      } else {
+        battleSelectedMove = -1;
+        battleDialogueIncrement();
+      }
     } else {
-      battleSelectedMove = battleBoxSelected;
-      battleDialogueIncrement();
+      if ( battlePlayers[0].pp[battleBoxSelected] <= 0 ) {
+        battleOutOfPP = true;
+      } else {
+        battleSelectedMove = battleBoxSelected;
+        battleDialogueIncrement();
+      }
     }
   }
 }
