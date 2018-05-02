@@ -16,6 +16,8 @@ var battleMovementPlayer = 0;
 var battleDamageComplete = false;
 var battleAICalculated = false;
 var battleOutOfPP = false;
+var battleFaintPlayer = 0;
+var battleFaintComplete = false;
 
 function renderBattle() {
   // rendering code
@@ -160,56 +162,72 @@ function renderBattle() {
   }
   var activeCountry = battlePlayers[battleMovementPlayer].party[battlePlayers[battleMovementPlayer].active];
   var oppositeCountry = battlePlayers[battleMovementPlayer == 0 ? 1 : 0].party[battlePlayers[battleMovementPlayer == 0 ? 1 : 0].active];
-  if ( battleDialogueItem >= 5 ) {
-    if ( battleDialogueItem == 5 ) {
-      if ( battleMovementPlayer == 1 && ! battleAICalculated ) {
-        var sortedMoves = activeCountry.moves.map((item,index) => [
-          item[1] / moves[item[0]].power[oppositeCountry.group] * 5,
-          index
-        ]).filter((item,index) => battlePlayers[1].pp[index] > 0).sort(function(a,b) {
-          return b[0] - a[0];
-        });
-        if ( sortedMoves.length > 0 ) {
-          var index;
-          var value = Math.random();
-          if ( value <= battlePlayers[1].skill ) index = 0;
-          else if ( value <= battlePlayers[1].skill + (1 - battlePlayers[1].skill) / 2 ) index = 1;
-          else index = 2;
-          if ( index >= sortedMoves.length ) index = sortedMoves.length - 1;
-          battleSelectedMove = sortedMoves[index][1];
-        } else {
-          battleSelectedMove = -1;
-        }
-        battleAICalculated = true;
-      }
-      var moveName;
-      if ( battleSelectedMove <= -1 ) moveName = "STRUGGLE";
-      else moveName = moves[activeCountry.moves[battleSelectedMove][0]].name;
-      battleTextToDraw = `${names[activeCountry.country].toUpperCase()} used ${moveName}!`;
-      battleDamageComplete = false;
-      battleOutOfPP = false;
-    }
-    if ( battleDialogueItem == 6 && ! battleDamageComplete ) {
-      var damage;
-      if ( battleSelectedMove > -1 ) {
-        damage = activeCountry.moves[battleSelectedMove][1] / moves[activeCountry.moves[battleSelectedMove][0]].power[oppositeCountry.group] * 5;
-        if ( Math.random() <= moves[activeCountry.moves[battleSelectedMove][0]].missChance ) damage = 0;
+  if ( battleDialogueItem == 5 ) {
+    if ( battleMovementPlayer == 1 && ! battleAICalculated ) {
+      var sortedMoves = activeCountry.moves.map((item,index) => [
+        item[1] / moves[item[0]].power[oppositeCountry.group] * 5,
+        index
+      ]).filter((item,index) => battlePlayers[1].pp[index] > 0).sort(function(a,b) {
+        return b[0] - a[0];
+      });
+      if ( sortedMoves.length > 0 ) {
+        var index;
+        var value = Math.random();
+        if ( value <= battlePlayers[1].skill ) index = 0;
+        else if ( value <= battlePlayers[1].skill + (1 - battlePlayers[1].skill) / 2 ) index = 1;
+        else index = 2;
+        if ( index >= sortedMoves.length ) index = sortedMoves.length - 1;
+        battleSelectedMove = sortedMoves[index][1];
       } else {
-        damage = Math.floor(Math.random() * 6);
+        battleSelectedMove = -1;
       }
-      var oppositeObject = battlePlayers[battleMovementPlayer == 0 ? 1 : 0];
-      oppositeObject.hp = Math.round(oppositeObject.hp - damage);
-      battleDamageComplete = true;
-      if ( battleSelectedMove > -1 ) {
-        battlePlayers[battleMovementPlayer].hp *= 1 - moves[activeCountry.moves[battleSelectedMove][0]].selfInflict;
-        moves[activeCountry.moves[battleSelectedMove][0]].onUse(battlePlayers[battleMovementPlayer],battlePlayers[battleMovementPlayer].party,activeCountry);
-      }
-      var text = ["It wasn't very effective...","The attack landed!","It's super effective!"];
-      battleTextToDraw = text[Math.floor(damage / 8.333)];
-      if ( damage == 0 ) battleTextToDraw = "The attack missed...";
-      battlePlayers[battleMovementPlayer].pp[battleSelectedMove] -= 5;
-      battleAICalculated = false;
+      battleAICalculated = true;
     }
+    var moveName;
+    if ( battleSelectedMove <= -1 ) moveName = "STRUGGLE";
+    else moveName = moves[activeCountry.moves[battleSelectedMove][0]].name;
+    battleTextToDraw = `${names[activeCountry.country].toUpperCase()} used ${moveName}!`;
+    battleDamageComplete = false;
+    battleOutOfPP = false;
+  }
+  if ( battleDialogueItem == 6 && ! battleDamageComplete ) {
+    var damage;
+    if ( battleSelectedMove > -1 ) {
+      damage = activeCountry.moves[battleSelectedMove][1] / moves[activeCountry.moves[battleSelectedMove][0]].power[oppositeCountry.group] * 5;
+      if ( Math.random() <= moves[activeCountry.moves[battleSelectedMove][0]].missChance ) damage = 0;
+    } else {
+      damage = Math.floor(Math.random() * 6);
+    }
+    var oppositeObject = battlePlayers[battleMovementPlayer == 0 ? 1 : 0];
+    oppositeObject.hp = Math.round(oppositeObject.hp - damage);
+    battleDamageComplete = true;
+    if ( battleSelectedMove > -1 ) {
+      battlePlayers[battleMovementPlayer].hp *= 1 - moves[activeCountry.moves[battleSelectedMove][0]].selfInflict;
+      moves[activeCountry.moves[battleSelectedMove][0]].onUse(battlePlayers[battleMovementPlayer],battlePlayers[battleMovementPlayer].party,activeCountry);
+    }
+    var text = ["It wasn't very effective...","The attack landed!","It's super effective!"];
+    battleTextToDraw = text[Math.floor(damage / 8.333)];
+    if ( damage == 0 ) battleTextToDraw = "The attack missed...";
+    battlePlayers[battleMovementPlayer].pp[battleSelectedMove] -= 5;
+    battleAICalculated = false;
+  }
+  if ( battleDialogueItem == 8 ) {
+    var selectedCountry = battlePlayers[battleFaintPlayer].party[battlePlayers[battleFaintPlayer].active];
+    battleTextToDraw = `${names[selectedCountry.country].toUpperCase()} fainted!`;
+  }
+  if ( battleDialogueItem == 9 && ! battleFaintComplete ) {
+    var selectedObject = battlePlayers[battleFaintPlayer]
+    var selectedCountry = selectedObject.party[battlePlayers[battleFaintPlayer].active + 1];
+    battleTextToDraw = `${names[selectedObject.country].toUpperCase()} sent out ${names[selectedCountry.country].toUpperCase()}!`;
+    battleSwapPlayer = 1;
+    battleSwapTime = 0.01;
+    setTimeout(function() {
+      selectedObject.active++;
+      selectedObject.visibleCountry = selectedCountry.country;
+      selectedObject.pp = [100,100,100,100];
+      selectedObject.hp = 100;
+    },1000);
+    battleFaintComplete = true;
   }
   ctx.font = canvas.height * 0.06 + "px Menlo";
   if ( battleSelectedOption > -1 ) {
@@ -310,6 +328,18 @@ function battleDialogueIncrement() {
       battleDialogueIncrement();
     },2750);
   } else if ( battleDialogueItem == 7 ) {
+    battleMovementPlayer = battleMovementPlayer == 0 ? 1 : 0;
+    battleDialogueItem = 2 + battleMovementPlayer;
+    if ( battlePlayers[0].hp <= 0 ) {
+      battleFaintPlayer = 0;
+      battleDialogueItem = 7;
+    }
+    if ( battlePlayers[1].hp <= 0 ) {
+      battleFaintPlayer = 1;
+      battleDialogueItem = 7;
+    }
+    battleDialogueIncrement();
+  } else if ( battleDialogueItem == 10 ) {
     battleMovementPlayer = battleMovementPlayer == 0 ? 1 : 0;
     battleDialogueItem = 2 + battleMovementPlayer;
     battleDialogueIncrement();
