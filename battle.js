@@ -200,7 +200,10 @@ function renderBattle() {
       var oppositeObject = battlePlayers[battleMovementPlayer == 0 ? 1 : 0];
       oppositeObject.hp = Math.round(oppositeObject.hp - damage);
       battleDamageComplete = true;
-      if ( battleSelectedMove > -1 ) battlePlayers[battleMovementPlayer].hp *= 1 - moves[activeCountry.moves[battleSelectedMove][0]].selfInflict;
+      if ( battleSelectedMove > -1 ) {
+        battlePlayers[battleMovementPlayer].hp *= 1 - moves[activeCountry.moves[battleSelectedMove][0]].selfInflict;
+        moves[activeCountry.moves[battleSelectedMove][0]].onUse(battlePlayers[battleMovementPlayer],battlePlayers[battleMovementPlayer].party,activeCountry);
+      }
       var text = ["It wasn't very effective...","The attack landed!","It's super effective!"];
       battleTextToDraw = text[Math.floor(damage / 8.333)];
       if ( damage == 0 ) battleTextToDraw = "The attack missed...";

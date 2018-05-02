@@ -11,7 +11,7 @@ var flags = [
   `000707000`, // Canada
   `444777000`, // France
   `777003003`, // Belarus
-  `000020000`  // Vietnam
+  `000020000`, // Vietnam
 ].map(item => item.split("").map(jtem => parseInt(jtem)));
 var names = ["USA","Germany","Russia","China","Canada","France","Belarus","Vietnam"];
 var moves = [
@@ -19,43 +19,52 @@ var moves = [
     name: "WWI",
     power: [3,2,1,2],
     selfInflict: 0,
-    missChance: 0.25
+    missChance: 0.25,
+    onUse: function(object,party,player) {}
   },
   {
     name: "WWII",
     power: [3,2,1,2],
     selfInflict: 0,
-    missChance: 0.25
+    missChance: 0.25,
+    onUse: function(object,party,player) {}
   },
   {
     name: "DIVIDE",
     power: [3,2,1,2],
     selfInflict: 0.5,
-    missChance: 0
+    missChance: 0,
+    onUse: function(object,party,player) {
+      party.push(player);
+    }
   },
   {
     name: "EU",
     power: [2,3,1,2],
     selfInflict: 0,
-    missChance: 0.33
+    missChance: 0.33,
+    onUse: function(object,party,player) {}
   },
   {
     name: "FREE FRANCE",
     power: [3,3,1,3],
     selfInflict: 0.25,
-    missChance: 0.5
+    missChance: 0.5,
+    onUse: function(object,party,player) {}
   },
   {
     name: "GUILLOTINE",
     power: [3,1,1,1],
     selfInflict: 0,
-    missChance: 0
+    missChance: 0,
+    onUse: function(object,party,player) {}
   },
   {
     name: "SURRENDER",
     power: [3,3,3,3],
     selfInflict: 1,
-    missChance: 1
+    missChance: 1,
+    onUse: function(object,party,player) {}
   }
 ];
 
