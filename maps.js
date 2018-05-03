@@ -49,14 +49,6 @@ var mapMetadata = [
                 [5,2],
                 [6,0],
               ]
-            },
-            {
-              country: 6,
-              moves: []
-            },
-            {
-              country: 7,
-              moves: []
             }
           ]
         }
@@ -116,14 +108,6 @@ var mapObjects = [
             [2,3],
             [3,4]
           ]
-        },
-        {
-          country: 2,
-          moves: []
-        },
-        {
-          country: 3,
-          moves: []
         }
       ]
     }
@@ -131,8 +115,10 @@ var mapObjects = [
 ];
 var mapPosition = [2,2];
 var mapIndex = 0;
+var mapCurrentBattle;
 var mapCanMove = true;
 var mapInExit = false;
+var mapInvincible = false;
 var mapKeypresses = {
   up: false,
   down: false,
@@ -225,6 +211,7 @@ function renderMap() {
       },1250);
     },1250);
   }
+  var triggered = false;
   for ( var i = 1; i < mapObjects.length; i++ ) {
     if ( ! mapObjects[i].exists ) continue;
     if (
@@ -233,9 +220,11 @@ function renderMap() {
         Math.pow(Math.abs(mapPosition[1] - mapObjects[i].y),2)
       ) <= 3 && ! mapInExit
     ) {
-      battleTrainer(i);
+      if ( ! mapInvincible ) mapBattleTrainer(i);
+      triggered = true;
     }
   }
+  if ( ! triggered ) mapInvincible = false;
 }
 
 function openNewMap(index,newloc) {
@@ -255,12 +244,13 @@ function openNewMap(index,newloc) {
   },1250);
 }
 
-function battleTrainer(index) {
+function mapBattleTrainer(index) {
   mapInExit = true;
   mapCanMove = false;
   mapObjects[0].colored = false;
   if ( mapObjects[index] ) mapObjects[index].colored = false;
   battlePlayers = [mapObjects[0].battleData,mapMetadata[mapIndex].trainers[index - 1].battleData];
+  mapCurrentBattle = index;
   setTimeout(function() {
     blurActive = 1;
     setTimeout(function() {
@@ -271,6 +261,29 @@ function battleTrainer(index) {
       mapCanMove = true;
       mapInExit = false;
     },1250);
+  },1250);
+}
+
+
+function mapTrainerComplete(winner) {
+  blurActive = 1;
+  setTimeout(function() {
+    gamemode = "map";
+    if ( winner == 0 ) {
+      mapObjects[mapCurrentBattle].exists = false;
+      mapMetadata[mapIndex].trainers[mapCurrentBattle - 1].exists = false;
+    } else {
+      mapInvincible = true;
+      mapObjects[mapCurrentBattle].colored = true;
+      mapMetadata[mapIndex].trainers[mapCurrentBattle - 1].colored = true;
+    }
+    mapObjects[0].colored = true;
+    mapKeypresses = {
+      up: false,
+      down: false,
+      left: false,
+      right: false
+    }
   },1250);
 }
 

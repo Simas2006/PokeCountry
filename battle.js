@@ -1,4 +1,5 @@
 var battlePlayers = [];
+var battleWinner = -1;
 var battleSwapTime;
 var battleSwapDirection;
 var battleSwapPlayer;
@@ -57,55 +58,57 @@ function renderBattle() {
     ctx.fillRect(canvas.width * (0.75 + (battleSwapPlayer != 0 ? battleSwapTime : 0)) + (battleMovementPlayer == 1 ? xm : 0) + pixelPosition[0] - 1,canvas.height * 0.25 + (battleMovementPlayer == 1 ? ym : 0) + pixelPosition[1] - 1,size / 1.5 + 2,size / 1.5 + 2);
   }
   ctx.restore();
-  ctx.strokeStyle = "black";
-  ctx.lineWidth = 5;
-  drawRoundedRect(10,canvas.width * 0.625,canvas.height * 0.675,canvas.width * 0.325,canvas.height * 0.05);
-  ctx.stroke();
-  ctx.save();
-  ctx.clip();
-  ctx.fillStyle = "white";
-  ctx.fillRect(canvas.width * 0.625,canvas.height * 0.675,canvas.width * 0.325,canvas.height * 0.05);
-  if ( battlePlayers[0].hp >= 33 || battleFlashingToggle < 1.5 ) {
-    ctx.fillStyle = ["red","rgb(254,209,11)","green","green"][Math.floor(battlePlayers[0].hp / 33)];
-    ctx.fillRect(canvas.width * 0.625,canvas.height * 0.675,canvas.width * 0.325 * (battlePlayers[0].hp / 100),canvas.height * 0.05);
+  if ( battleWinner <= -1 ) {
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 5;
+    drawRoundedRect(10,canvas.width * 0.625,canvas.height * 0.675,canvas.width * 0.325,canvas.height * 0.05);
+    ctx.stroke();
+    ctx.save();
+    ctx.clip();
+    ctx.fillStyle = "white";
+    ctx.fillRect(canvas.width * 0.625,canvas.height * 0.675,canvas.width * 0.325,canvas.height * 0.05);
+    if ( battlePlayers[0].hp >= 33 || battleFlashingToggle < 1.5 ) {
+      ctx.fillStyle = ["red","rgb(254,209,11)","green","green"][Math.floor(battlePlayers[0].hp / 33)];
+      ctx.fillRect(canvas.width * 0.625,canvas.height * 0.675,canvas.width * 0.325 * (battlePlayers[0].hp / 100),canvas.height * 0.05);
+    }
+    ctx.restore();
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(canvas.width * 0.625,canvas.height * 0.66);
+    ctx.lineTo(canvas.width * 0.95,canvas.height * 0.66);
+    ctx.stroke();
+    ctx.fillStyle = "black";
+    ctx.textAlign = "left";
+    ctx.font = canvas.height * 0.06 + "px Menlo";
+    var name;
+    if ( battlePlayers[0].active > -1 ) name = names[battlePlayers[0].party[battlePlayers[0].active].country];
+    else name = names[battlePlayers[0].country];
+    ctx.fillText(name,canvas.width * 0.625,canvas.height * 0.652);
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 5;
+    drawRoundedRect(10,canvas.width * 0.05,canvas.height * 0.2,canvas.width * 0.325,canvas.height * 0.05);
+    ctx.stroke();
+    ctx.save();
+    ctx.clip();
+    ctx.fillStyle = "white";
+    ctx.fillRect(canvas.width * 0.05,canvas.height * 0.2,canvas.width * 0.325,canvas.height * 0.05);
+    if ( battlePlayers[1].hp >= 33 || battleFlashingToggle < 1.5 ) {
+      ctx.fillStyle = ["red","rgb(254,209,11)","green","green"][Math.floor(battlePlayers[1].hp / 33)];
+      ctx.fillRect(canvas.width * 0.05,canvas.height * 0.2,canvas.width * 0.325 * (battlePlayers[1].hp / 100),canvas.height * 0.05);
+    }
+    ctx.restore();
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(canvas.width * 0.05,canvas.height * 0.185);
+    ctx.lineTo(canvas.width * 0.375,canvas.height * 0.185);
+    ctx.stroke();
+    ctx.fillStyle = "black";
+    ctx.font = canvas.height * 0.06 + "px Menlo";
+    var name;
+    if ( battlePlayers[1].active > -1 ) name = names[battlePlayers[1].party[battlePlayers[1].active].country];
+    else name = names[battlePlayers[1].country];
+    ctx.fillText(name,canvas.width * 0.05,canvas.height * 0.177);
   }
-  ctx.restore();
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(canvas.width * 0.625,canvas.height * 0.66);
-  ctx.lineTo(canvas.width * 0.95,canvas.height * 0.66);
-  ctx.stroke();
-  ctx.fillStyle = "black";
-  ctx.textAlign = "left";
-  ctx.font = canvas.height * 0.06 + "px Menlo";
-  var name;
-  if ( battlePlayers[0].active > -1 ) name = names[battlePlayers[0].party[battlePlayers[0].active].country];
-  else name = names[battlePlayers[0].country];
-  ctx.fillText(name,canvas.width * 0.625,canvas.height * 0.652);
-  ctx.strokeStyle = "black";
-  ctx.lineWidth = 5;
-  drawRoundedRect(10,canvas.width * 0.05,canvas.height * 0.2,canvas.width * 0.325,canvas.height * 0.05);
-  ctx.stroke();
-  ctx.save();
-  ctx.clip();
-  ctx.fillStyle = "white";
-  ctx.fillRect(canvas.width * 0.05,canvas.height * 0.2,canvas.width * 0.325,canvas.height * 0.05);
-  if ( battlePlayers[1].hp >= 33 || battleFlashingToggle < 1.5 ) {
-    ctx.fillStyle = ["red","rgb(254,209,11)","green","green"][Math.floor(battlePlayers[1].hp / 33)];
-    ctx.fillRect(canvas.width * 0.05,canvas.height * 0.2,canvas.width * 0.325 * (battlePlayers[1].hp / 100),canvas.height * 0.05);
-  }
-  ctx.restore();
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(canvas.width * 0.05,canvas.height * 0.185);
-  ctx.lineTo(canvas.width * 0.375,canvas.height * 0.185);
-  ctx.stroke();
-  ctx.fillStyle = "black";
-  ctx.font = canvas.height * 0.06 + "px Menlo";
-  var name;
-  if ( battlePlayers[1].active > -1 ) name = names[battlePlayers[1].party[battlePlayers[1].active].country];
-  else name = names[battlePlayers[1].country];
-  ctx.fillText(name,canvas.width * 0.05,canvas.height * 0.177);
   if ( battleDialogueItem != 4 ) {
     ctx.strokeStyle = "black";
     ctx.fillStyle = "white";
@@ -216,14 +219,22 @@ function renderBattle() {
     battleTextToDraw = `${names[selectedCountry.country].toUpperCase()} fainted!`;
   }
   if ( battleDialogueItem == 9 && ! battleFaintComplete ) {
-    var selectedObject = battlePlayers[battleFaintPlayer]
+    battleWinner = -1;
+    var selectedObject = battlePlayers[battleFaintPlayer];
     var selectedCountry = selectedObject.party[battlePlayers[battleFaintPlayer].active + 1];
-    battleTextToDraw = `${names[selectedObject.country].toUpperCase()} sent out ${names[selectedCountry.country].toUpperCase()}!`;
-    battleSwapPlayer = 1;
+    if ( ! selectedCountry ) battleWinner = battleFaintPlayer == 0 ? 1 : 0;
+    if ( battleWinner <= -1 ) battleTextToDraw = `${names[selectedObject.country].toUpperCase()} sent out ${names[selectedCountry.country].toUpperCase()}!`;
+    else battleTextToDraw = `${["You",names[battlePlayers[1].country].toUpperCase()][battleWinner]} won the battle${["!","..."][battleWinner]}`;
+    battleSwapPlayer = battleWinner <= -1 ? battleFaintPlayer : -1;
     battleSwapTime = 0.01;
     setTimeout(function() {
-      selectedObject.active++;
-      selectedObject.visibleCountry = selectedCountry.country;
+      if ( battleWinner <= -1 ) {
+        selectedObject.active++;
+        selectedObject.visibleCountry = selectedCountry.country;
+      } else {
+        battlePlayers[0].visibleCountry = battlePlayers[0].country;
+        battlePlayers[1].visibleCountry = battlePlayers[1].country;
+      }
       selectedObject.pp = [100,100,100,100];
       selectedObject.hp = 100;
     },1000);
@@ -340,9 +351,15 @@ function battleDialogueIncrement() {
     }
     battleDialogueIncrement();
   } else if ( battleDialogueItem == 10 ) {
-    battleMovementPlayer = battleMovementPlayer == 0 ? 1 : 0;
-    battleDialogueItem = 2 + battleMovementPlayer;
-    battleDialogueIncrement();
+    if ( battleWinner <= -1 ) {
+      battleMovementPlayer = battleMovementPlayer == 0 ? 1 : 0;
+      battleDialogueItem = 2 + battleMovementPlayer;
+      battleDialogueIncrement();
+    } else {
+      battleTextToDraw = "";
+      battleCharDrawn = 0;
+      mapTrainerComplete(battleWinner);
+    }
   }
 }
 
