@@ -219,7 +219,6 @@ function renderBattle() {
     battleTextToDraw = `${names[selectedCountry.country].toUpperCase()} fainted!`;
   }
   if ( battleDialogueItem == 9 && ! battleFaintComplete ) {
-    battleWinner = -1;
     var selectedObject = battlePlayers[battleFaintPlayer];
     var selectedCountry = selectedObject.party[battlePlayers[battleFaintPlayer].active + 1];
     if ( ! selectedCountry ) battleWinner = battleFaintPlayer == 0 ? 1 : 0;
@@ -231,12 +230,12 @@ function renderBattle() {
       if ( battleWinner <= -1 ) {
         selectedObject.active++;
         selectedObject.visibleCountry = selectedCountry.country;
+        selectedObject.pp = [100,100,100,100];
+        selectedObject.hp = 100;
       } else {
         battlePlayers[0].visibleCountry = battlePlayers[0].country;
         battlePlayers[1].visibleCountry = battlePlayers[1].country;
       }
-      selectedObject.pp = [100,100,100,100];
-      selectedObject.hp = 100;
     },1000);
     battleFaintComplete = true;
   }
@@ -356,8 +355,7 @@ function battleDialogueIncrement() {
       battleDialogueItem = 2 + battleMovementPlayer;
       battleDialogueIncrement();
     } else {
-      battleTextToDraw = "";
-      battleCharDrawn = 0;
+      resetBattle();
       mapTrainerComplete(battleWinner);
     }
   }
@@ -376,7 +374,11 @@ function handleKeyboardBattle(key) {
   if ( key == "ArrowDown" && battleDialogueItem != 3 ) battleDialogueIncrement();
   if ( key == " " && battleDialogueItem == 3 ) {
     if ( battleSelectedOption <= -1 ) {
-      if ( battlePlayers[0].pp.filter(item => item > 0).length > 0 ) {
+      if ( battleSelectedButton == 3 ) {
+        battleDialogueItem = 99;
+        resetBattle();
+        mapTrainerComplete(1);
+      } else if ( battlePlayers[0].pp.filter(item => item > 0).length > 0 ) {
         battleSelectedOption = battleSelectedButton;
         battleSelectedButton = -1;
       } else {
@@ -392,4 +394,23 @@ function handleKeyboardBattle(key) {
       }
     }
   }
+}
+
+function resetBattle() {
+  battlePlayers[0].active = -1;
+  battlePlayers[1].active = -1;
+  battleTextToDraw = "";
+  battleCharDrawn = 0;
+  battleDialogueItem = 0;
+  battleFlashingToggle = 0;
+  battleSelectedButton = 0;
+  battleSelectedOption = -1;
+  battleBoxItems = null;
+  battleBoxSelected = 0;
+  battleSelectedMove = null;
+  battleMovementTimer = 0;
+  battleMovementPlayer = 0;
+  battleDamageComplete = false;
+  battleFaintPlayer = 0;
+  battleFaintComplete = false;
 }
