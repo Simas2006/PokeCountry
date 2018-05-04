@@ -20,6 +20,21 @@ var battleOutOfPP = false;
 var battleFaintPlayer = 0;
 var battleFaintComplete = false;
 
+/*
+ * battleDialogueItem states:
+ * 0 - Intitalization
+ * 1 - ENEMY sent out COUNTRY
+ * 2 - Go COUNTRY!
+ * 3 - Choice buttons + move selection
+ * 4 - FIGHT: Movement
+ * 5 - COUNTRY used MOVE (no effects)
+ * 6 - Effectiveness levels (effects executed)
+ * 7 - Intermediary state (jumps to 3 or 8)
+ * 8 - COUNTRY fainted (no effects)
+ * 9 - PERSON sent out COUNTRY/PERSON won the battle!
+ * 10 - Intermediary state (jumps to 3 or EXIT)
+ */
+
 function renderBattle() {
   // rendering code
   ctx.fillStyle = "white";
@@ -67,9 +82,9 @@ function renderBattle() {
     ctx.clip();
     ctx.fillStyle = "white";
     ctx.fillRect(canvas.width * 0.625,canvas.height * 0.675,canvas.width * 0.325,canvas.height * 0.05);
-    if ( battlePlayers[0].hp >= 33 || battleFlashingToggle < 1.5 ) {
-      ctx.fillStyle = ["red","rgb(254,209,11)","green","green"][Math.floor(battlePlayers[0].hp / 33)];
-      ctx.fillRect(canvas.width * 0.625,canvas.height * 0.675,canvas.width * 0.325 * (battlePlayers[0].hp / 100),canvas.height * 0.05);
+    if ( battlePlayers[0].hp[0] >= 33 || battleFlashingToggle < 1.5 ) {
+      ctx.fillStyle = ["red","rgb(254,209,11)","green","green"][Math.floor(battlePlayers[0].hp[0] / 33)];
+      ctx.fillRect(canvas.width * 0.625,canvas.height * 0.675,canvas.width * 0.325 * (battlePlayers[0].hp[0] / 100),canvas.height * 0.05);
     }
     ctx.restore();
     ctx.lineWidth = 2;
@@ -92,9 +107,9 @@ function renderBattle() {
     ctx.clip();
     ctx.fillStyle = "white";
     ctx.fillRect(canvas.width * 0.05,canvas.height * 0.2,canvas.width * 0.325,canvas.height * 0.05);
-    if ( battlePlayers[1].hp >= 33 || battleFlashingToggle < 1.5 ) {
-      ctx.fillStyle = ["red","rgb(254,209,11)","green","green"][Math.floor(battlePlayers[1].hp / 33)];
-      ctx.fillRect(canvas.width * 0.05,canvas.height * 0.2,canvas.width * 0.325 * (battlePlayers[1].hp / 100),canvas.height * 0.05);
+    if ( battlePlayers[1].hp[0] >= 33 || battleFlashingToggle < 1.5 ) {
+      ctx.fillStyle = ["red","rgb(254,209,11)","green","green"][Math.floor(battlePlayers[1].hp[0] / 33)];
+      ctx.fillRect(canvas.width * 0.05,canvas.height * 0.2,canvas.width * 0.325 * (battlePlayers[1].hp[0] / 100),canvas.height * 0.05);
     }
     ctx.restore();
     ctx.lineWidth = 2;
@@ -202,10 +217,10 @@ function renderBattle() {
       damage = Math.floor(Math.random() * 6);
     }
     var oppositeObject = battlePlayers[battleMovementPlayer == 0 ? 1 : 0];
-    oppositeObject.hp = Math.round(oppositeObject.hp - damage);
+    oppositeObject.hp[0] = Math.round(oppositeObject.hp[0] - damage);
     battleDamageComplete = true;
     if ( battleSelectedMove > -1 ) {
-      battlePlayers[battleMovementPlayer].hp *= 1 - moves[activeCountry.moves[battleSelectedMove][0]].selfInflict;
+      battlePlayers[battleMovementPlayer].hp[0] *= 1 - moves[activeCountry.moves[battleSelectedMove][0]].selfInflict;
       moves[activeCountry.moves[battleSelectedMove][0]].onUse(battlePlayers[battleMovementPlayer],battlePlayers[battleMovementPlayer].party,activeCountry);
     }
     var text = ["It wasn't very effective...","The attack landed!","It's super effective!"];
@@ -217,11 +232,12 @@ function renderBattle() {
   if ( battleDialogueItem == 8 ) {
     var selectedCountry = battlePlayers[battleFaintPlayer].party[battlePlayers[battleFaintPlayer].active];
     battleTextToDraw = `${names[selectedCountry.country].toUpperCase()} fainted!`;
+    battleFaintComplete = false;
   }
   if ( battleDialogueItem == 9 && ! battleFaintComplete ) {
     var selectedObject = battlePlayers[battleFaintPlayer];
-    var selectedCountry = selectedObject.party[battlePlayers[battleFaintPlayer].active + 1];
-    if ( ! selectedCountry ) battleWinner = battleFaintPlayer == 0 ? 1 : 0;
+    var selectedCountry = selectedObject.party[selectedObject.active + 1];
+    if ( selectedObject.active + 1 >= selectedObject.party.length ) battleWinner = battleFaintPlayer == 0 ? 1 : 0;
     if ( battleWinner <= -1 ) battleTextToDraw = `${names[selectedObject.country].toUpperCase()} sent out ${names[selectedCountry.country].toUpperCase()}!`;
     else battleTextToDraw = `${["You",names[battlePlayers[1].country].toUpperCase()][battleWinner]} won the battle${["!","..."][battleWinner]}`;
     battleSwapPlayer = battleWinner <= -1 ? battleFaintPlayer : -1;
@@ -230,8 +246,8 @@ function renderBattle() {
       if ( battleWinner <= -1 ) {
         selectedObject.active++;
         selectedObject.visibleCountry = selectedCountry.country;
-        selectedObject.pp = [100,100,100,100];
-        selectedObject.hp = 100;
+        selectedObject.hp = selectedCountry.hp;
+        selectedObject.pp = selectedCountry.pp;
       } else {
         battlePlayers[0].visibleCountry = battlePlayers[0].country;
         battlePlayers[1].visibleCountry = battlePlayers[1].country;
@@ -311,6 +327,8 @@ function battleDialogueIncrement() {
     battleSwapPlayer = 1;
     battleSwapTime = 0.01;
     battlePlayers[1].active++;
+    battlePlayers[1].hp = battlePlayers[1].party[battlePlayers[1].active].hp;
+    battlePlayers[1].pp = battlePlayers[1].party[battlePlayers[1].active].pp;
     setTimeout(function() {
       battlePlayers[1].visibleCountry = battlePlayers[1].party[battlePlayers[1].active].country;
     },1000);
@@ -318,6 +336,8 @@ function battleDialogueIncrement() {
     battleSwapPlayer = 0;
     battleSwapTime = 0.01;
     battlePlayers[0].active++;
+    battlePlayers[0].hp = battlePlayers[0].party[battlePlayers[0].active].hp;
+    battlePlayers[0].pp = battlePlayers[0].party[battlePlayers[0].active].pp;
     setTimeout(function() {
       battlePlayers[0].visibleCountry = battlePlayers[0].party[battlePlayers[0].active].country;
     },1000);
@@ -340,11 +360,11 @@ function battleDialogueIncrement() {
   } else if ( battleDialogueItem == 7 ) {
     battleMovementPlayer = battleMovementPlayer == 0 ? 1 : 0;
     battleDialogueItem = 2 + battleMovementPlayer;
-    if ( battlePlayers[0].hp <= 0 ) {
+    if ( battlePlayers[0].hp[0] <= 0 ) {
       battleFaintPlayer = 0;
       battleDialogueItem = 7;
     }
-    if ( battlePlayers[1].hp <= 0 ) {
+    if ( battlePlayers[1].hp[0] <= 0 ) {
       battleFaintPlayer = 1;
       battleDialogueItem = 7;
     }

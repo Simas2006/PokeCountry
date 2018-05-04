@@ -37,7 +37,7 @@ var mapMetadata = [
           country: 4,
           visibleCountry: 4,
           active: -1,
-          hp: 100,
+          hp: [100],
           pp: [100,100,100,100],
           skill: 0.4,
           party: [
@@ -48,7 +48,20 @@ var mapMetadata = [
                 [4,1],
                 [5,2],
                 [6,0],
-              ]
+              ],
+              hp: [100],
+              pp: [100,100,100,100],
+            },
+            {
+              country: 5,
+              group: 2,
+              moves: [
+                [4,1],
+                [5,2],
+                [6,0],
+              ],
+              hp: [100],
+              pp: [100,100,100,100],
             }
           ]
         }
@@ -96,7 +109,7 @@ var mapObjects = [
       country: 0,
       visibleCountry: 0,
       active: -1,
-      hp: 100,
+      hp: [100],
       pp: [100,100,100,100],
       party: [
         {
@@ -107,7 +120,21 @@ var mapObjects = [
             [1,2],
             [2,3],
             [3,4]
-          ]
+          ],
+          hp: [100],
+          pp: [100,100,100,100]
+        },
+        {
+          country: 1,
+          group: 1,
+          moves: [
+            [0,1],
+            [1,2],
+            [2,3],
+            [3,4]
+          ],
+          hp: [100],
+          pp: [100,100,100,100]
         }
       ]
     }
