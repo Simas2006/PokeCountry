@@ -35,7 +35,7 @@ var moves = [
     selfInflict: 0.5,
     missChance: 0,
     onUse: function(object,party,player) {
-      party.push(player);
+      if ( party.length < 8 ) party.push(player);
     }
   },
   {
