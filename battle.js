@@ -238,7 +238,7 @@ function renderBattle() {
     var selectedObject = battlePlayers[battleFaintPlayer];
     var selectedCountry = selectedObject.party[selectedObject.active + 1];
     if ( selectedObject.active + 1 >= selectedObject.party.length ) battleWinner = battleFaintPlayer == 0 ? 1 : 0;
-    if ( battleWinner <= -1 ) battleTextToDraw = `${names[selectedObject.country].toUpperCase()} sent out ${names[selectedCountry.country].toUpperCase()}!`;
+    if ( battleWinner <= -1 ) battleTextToDraw = `${["You",names[battlePlayers[1].country].toUpperCase()][battleFaintPlayer]} sent out ${names[selectedCountry.country].toUpperCase()}!`;
     else battleTextToDraw = `${["You",names[battlePlayers[1].country].toUpperCase()][battleWinner]} won the battle${["!","..."][battleWinner]}`;
     battleSwapPlayer = battleWinner <= -1 ? battleFaintPlayer : -1;
     battleSwapTime = 0.01;
