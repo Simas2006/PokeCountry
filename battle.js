@@ -19,6 +19,9 @@ var battleAICalculated = false;
 var battleOutOfPP = false;
 var battleFaintPlayer = 0;
 var battleFaintComplete = false;
+var battleShakingTimer = -25;
+var battleShakingResult;
+var battleShakingType = 2;
 
 /*
  * battleDialogueItem states:
@@ -26,17 +29,21 @@ var battleFaintComplete = false;
  * 1 - ENEMY sent out COUNTRY
  * 2 - Go COUNTRY!
  * 3 - Choice buttons + move selection
- * 4 - FIGHT: Movement
+ * 4 - Movement in fight
  * 5 - COUNTRY used MOVE (no effects)
  * 6 - Effectiveness levels (effects executed)
  * 7 - Intermediary state (jumps to 3 or 8)
  * 8 - COUNTRY fainted (no effects)
  * 9 - PERSON sent out COUNTRY/PERSON won the battle!
  * 10 - Intermediary state (jumps to 3 or EXIT)
+ * 11 - Shaking in Pokeball
+ * 12 - Is or isn't caught
+ * 13 - Intermediary state (jumps to 3 or 9)
  */
 
 function renderBattle() {
   // rendering code
+  ctx.lineWidth = 1;
   ctx.fillStyle = "white";
   ctx.fillRect(0,0,canvas.width,canvas.height);
   var size = canvas.width * 0.3;
@@ -58,21 +65,23 @@ function renderBattle() {
     ctx.fillRect(canvas.width * (0.25 - (battleSwapPlayer != 1 ? battleSwapTime : 0)) + (battleMovementPlayer == 0 ? xm : 0) + pixelPosition[0],canvas.height * 0.75 + (battleMovementPlayer == 0 ? ym : 0) + pixelPosition[1],size / 1.5,size / 1.5);
   }
   ctx.restore();
-  ctx.beginPath();
-  ctx.arc(canvas.width * (0.75 + (battleSwapPlayer != 0 ? battleSwapTime : 0)) + (battleMovementPlayer == 1 ? xm : 0),canvas.height * 0.25 + (battleMovementPlayer == 1 ? ym : 0),size,0,2 * Math.PI);
-  ctx.stroke();
-  ctx.save();
-  ctx.clip();
-  var flag = flags[battlePlayers[1].visibleCountry];
-  for ( var j = 0; j < flag.length; j++ ) {
-    var pixelPosition = [
-      (Math.floor(j / 3) - 1.5) * (size / 1.5),
-      (j % 3 - 1.5) * (size / 1.5)
-    ];
-    ctx.fillStyle = ["red","orange","yellow","green","blue","purple","black","white"][flag[j]];
-    ctx.fillRect(canvas.width * (0.75 + (battleSwapPlayer != 0 ? battleSwapTime : 0)) + (battleMovementPlayer == 1 ? xm : 0) + pixelPosition[0] - 1,canvas.height * 0.25 + (battleMovementPlayer == 1 ? ym : 0) + pixelPosition[1] - 1,size / 1.5 + 2,size / 1.5 + 2);
+  if ( ! battleShakingResult ) {
+    ctx.beginPath();
+    ctx.arc(canvas.width * (0.75 + (battleSwapPlayer != 0 ? battleSwapTime : 0)) + (battleMovementPlayer == 1 ? xm : 0),canvas.height * 0.25 + (battleMovementPlayer == 1 ? ym : 0),size,0,2 * Math.PI);
+    ctx.stroke();
+    ctx.save();
+    ctx.clip();
+    var flag = flags[battlePlayers[1].visibleCountry];
+    for ( var j = 0; j < flag.length; j++ ) {
+      var pixelPosition = [
+        (Math.floor(j / 3) - 1.5) * (size / 1.5),
+        (j % 3 - 1.5) * (size / 1.5)
+      ];
+      ctx.fillStyle = ["red","orange","yellow","green","blue","purple","black","white"][flag[j]];
+      ctx.fillRect(canvas.width * (0.75 + (battleSwapPlayer != 0 ? battleSwapTime : 0)) + (battleMovementPlayer == 1 ? xm : 0) + pixelPosition[0] - 1,canvas.height * 0.25 + (battleMovementPlayer == 1 ? ym : 0) + pixelPosition[1] - 1,size / 1.5 + 2,size / 1.5 + 2);
+    }
+    ctx.restore();
   }
-  ctx.restore();
   if ( battleWinner <= -1 ) {
     ctx.strokeStyle = "black";
     ctx.lineWidth = 5;
@@ -124,12 +133,60 @@ function renderBattle() {
     else name = names[battlePlayers[1].country];
     ctx.fillText(name,canvas.width * 0.05,canvas.height * 0.177);
   }
-  if ( battleDialogueItem != 4 ) {
+  if ( battleDialogueItem != 4 && battleDialogueItem != 11 && battleTextToDraw ) {
     ctx.strokeStyle = "black";
     ctx.fillStyle = "white";
     drawRoundedRect(10,1,canvas.height * 0.75,canvas.width - 2,canvas.height * 0.25 - 1);
     ctx.stroke();
     ctx.fill();
+    ctx.font = canvas.height * 0.08 + "px Menlo";
+    var sliceOn = battleTextToDraw.length;
+    var splitWords = battleTextToDraw.split(" ");
+    for ( var i = 0; i < splitWords.length + 1; i++ ) {
+      if ( splitWords.slice(0,i).join(" ").length >= 20 ) {
+        sliceOn = splitWords.slice(0,i - 1).join(" ").length;
+        break;
+      }
+    }
+    if ( battleTextToDraw.indexOf("\n") > -1 ) sliceOn = battleTextToDraw.indexOf("\n");
+    ctx.fillStyle = "black";
+    ctx.fillText(battleTextToDraw.slice(0,Math.min(Math.floor(battleCharDrawn),sliceOn)),canvas.width * 0.01,canvas.height * 0.85);
+    ctx.fillText(battleTextToDraw.slice(sliceOn + 1,Math.floor(battleCharDrawn)),canvas.width * 0.01,canvas.height * 0.97);
+  }
+  if ( battleDialogueItem == 11 ) {
+    ctx.lineWidth = 10;
+    ctx.strokeStyle = "black";
+    var angle = 0;
+    if ( battleShakingTimer >= 250 && battleShakingTimer < 750 ) {
+      if ( battleShakingTimer % 125 < 15 ) angle = 0.125 * Math.PI;
+      else if ( battleShakingTimer % 125 < 30 ) angle = -0.125 * Math.PI;
+    }
+    var radius = 1;
+    if ( battleShakingResult ) {
+      if ( battleShakingTimer >= 750 && battleShakingTimer < 900 ) radius = 1 - (battleShakingTimer - 750) / 150;
+      else if ( battleShakingTimer >= 900 ) radius = 0;
+    } else if ( battleShakingTimer >= 751 ) {
+      battleShakingTimer = 150;
+    }
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+    ctx.arc(canvas.width * 0.75,canvas.height * (1 - Math.min(battleShakingTimer,150) / 150 + 0.25),canvas.height * 0.33 * radius,angle,Math.PI + angle);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = ["red","purple","gold"][battleShakingType];
+    ctx.beginPath();
+    ctx.arc(canvas.width * 0.75,canvas.height * (Math.min(battleShakingTimer,150) / 150 - 0.75),canvas.height * 0.33 * radius,Math.PI + angle,2 * Math.PI + angle);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+    ctx.arc(canvas.width * 0.75,canvas.height * (1 - Math.min(battleShakingTimer,150) / 150 + 0.25),canvas.height * 0.1 * radius,0,2 * Math.PI);
+    ctx.fill();
+    ctx.stroke();
+    if ( battleShakingTimer == 750 ) battleShakingResult = Math.random() < 0.333 + (0.2085 * battleShakingType);
+    battleShakingTimer += battleShakingResult === false ? -5 : 1;
   }
   ctx.fillStyle = "black";
   if ( battleDialogueItem == 0 ) battleTextToDraw = `${names[battlePlayers[1].country].toUpperCase()} wants to battle!`;
@@ -282,24 +339,9 @@ function renderBattle() {
       }
     }
   }
-  if ( battleDialogueItem != 4 ) {
-    ctx.font = canvas.height * 0.08 + "px Menlo";
-    var sliceOn = battleTextToDraw.length;
-    var splitWords = battleTextToDraw.split(" ");
-    for ( var i = 0; i < splitWords.length + 1; i++ ) {
-      if ( splitWords.slice(0,i).join(" ").length >= 20 ) {
-        sliceOn = splitWords.slice(0,i - 1).join(" ").length;
-        break;
-      }
-    }
-    if ( battleTextToDraw.indexOf("\n") > -1 ) sliceOn = battleTextToDraw.indexOf("\n");
-    ctx.fillStyle = "black";
-    ctx.fillText(battleTextToDraw.slice(0,Math.min(Math.floor(battleCharDrawn),sliceOn)),canvas.width * 0.01,canvas.height * 0.85);
-    ctx.fillText(battleTextToDraw.slice(sliceOn + 1,Math.floor(battleCharDrawn)),canvas.width * 0.01,canvas.height * 0.97);
-  }
   if ( battleCharDrawn <= battleTextToDraw.length ) {
     battleCharDrawn += 0.1;
-  } else if ( battleFlashingToggle >= 1 && battleDialogueItem != 3 ) {
+  } else if ( battleFlashingToggle >= 1 && [3,4,11].indexOf(battleDialogueItem) <= -1 ) {
     ctx.fillStyle = "black";
     ctx.beginPath();
     ctx.moveTo(canvas.width * 0.9,canvas.height * 0.9);
