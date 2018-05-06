@@ -17,11 +17,13 @@ var battleMovementPlayer = 0;
 var battleDamageComplete = false;
 var battleAICalculated = false;
 var battleOutOfPP = false;
+var battleOutOfPokeball = false;
 var battleFaintPlayer = 0;
 var battleFaintComplete = false;
 var battleShakingTimer = -25;
 var battleShakingResult;
 var battleShakingType = 2;
+var battleCaptureComplete = false;
 
 /*
  * battleDialogueItem states:
@@ -196,6 +198,7 @@ function renderBattle() {
   if ( battleDialogueItem == 3 ) {
     ctx.lineWidth = 5;
     if ( battleOutOfPP ) battleTextToDraw = `There isn't\nenough PP!`;
+    else if ( battleOutOfPokeball ) battleTextToDraw = `You don't\nhave that!`;
     else battleTextToDraw = `What should\n${names[battlePlayers[0].party[battlePlayers[0].active].country].toUpperCase()} do?`;
     drawRoundedRect(10,canvas.width * 0.6,canvas.height * 0.75 + 10,canvas.width * 0.4 - 5,canvas.height * 0.25 - 20);
     ctx.stroke();
@@ -235,6 +238,7 @@ function renderBattle() {
     ctx.lineTo(canvas.width * 0.8,canvas.height - 10);
     ctx.stroke();
     ctx.restore();
+    battleShakingResult = null;
   }
   var activeCountry = battlePlayers[battleMovementPlayer].party[battlePlayers[battleMovementPlayer].active];
   var oppositeCountry = battlePlayers[battleMovementPlayer == 0 ? 1 : 0].party[battlePlayers[battleMovementPlayer == 0 ? 1 : 0].active];
@@ -314,7 +318,7 @@ function renderBattle() {
     },1000);
     battleFaintComplete = true;
   }
-  if ( battleDialogueItem == 11 ) {
+  if ( battleDialogueItem == 12 && ! battleCaptureComplete ) {
     if ( battleShakingResult ) {
       battleFaintPlayer = 1;
       battlePlayers[0].party.push(battlePlayers[1].party[battlePlayers[1].active]);
@@ -322,6 +326,9 @@ function renderBattle() {
     } else {
       battleTextToDraw = `${names[battlePlayers[1].party[battlePlayers[1].active].country].toUpperCase()} got away!`;
     }
+    battlePlayers[0].pokeballs[battleShakingType]--;
+    battleCaptureComplete = true;
+    battleOutOfPokeball = false;
   }
   ctx.font = canvas.height * 0.06 + "px Menlo";
   if ( battleSelectedOption > -1 ) {
@@ -333,7 +340,7 @@ function renderBattle() {
     ctx.fillStyle = "black";
     var y = canvas.height * 0.23 - 10;
     var items = battleBoxItems[battleSelectedOption];
-    for ( var i = 0; i < battleBoxItems.length; i++ ) {
+    for ( var i = 0; i < items.length; i++ ) {
       ctx.fillText(" " + items[i][0],canvas.width * 0.4 + 10,y);
       if ( battleBoxSelected == i ) {
         ctx.beginPath();
@@ -399,7 +406,7 @@ function battleDialogueIncrement() {
     battleBoxSelected = 0;
     battleBoxItems = [
       battlePlayers[0].party[battlePlayers[0].active].moves.map((item,index) => [moves[item[0]].name,battlePlayers[0].pp[index] + "/100"]),
-      [],
+      battlePlayers[0].pokeballs.map((item,index) => [`${["POKE","MASTER ","ULTRA "][index]}BALL`,`x${item}`]),
       [],
       []
     ]
@@ -433,6 +440,7 @@ function battleDialogueIncrement() {
     }
   } else if ( battleDialogueItem == 13 ) {
     battleShakingTimer = -25;
+    battleCaptureComplete = false;
     battleDialogueItem = battleShakingResult ? 8 : 2;
     battleDialogueIncrement();
   }
@@ -445,7 +453,7 @@ function handleKeyboardBattle(key) {
       if ( key == "ArrowLeft" || key == "ArrowRight" ) battleSelectedButton = [1,0,3,2][battleSelectedButton];
     } else {
       if ( key == "ArrowUp" ) battleBoxSelected = Math.max(battleBoxSelected - 1,0);
-      if ( key == "ArrowDown" ) battleBoxSelected = Math.min(battleBoxSelected + 1,battleBoxItems.length - 1);
+      if ( key == "ArrowDown" ) battleBoxSelected = Math.min(battleBoxSelected + 1,battleBoxItems[battleSelectedOption].length - 1);
     }
   }
   if ( key == "ArrowDown" && battleDialogueItem != 3 ) battleDialogueIncrement();
@@ -463,10 +471,15 @@ function handleKeyboardBattle(key) {
         battleDialogueIncrement();
       }
     } else {
-      if ( battlePlayers[0].pp[battleBoxSelected] <= 0 ) {
+      if ( battlePlayers[0].pp[battleBoxSelected] <= 0 && battleSelectedOption == 0 ) {
         battleOutOfPP = true;
+      } else if ( battlePlayers[0].pokeballs[battleBoxSelected] <= 0 ) {
+        battleOutOfPokeball = true;
       } else {
-        battleSelectedMove = battleBoxSelected;
+        if ( battleSelectedOption == 0 ) battleSelectedMove = battleBoxSelected;
+        else battleShakingType = battleBoxSelected;
+        battleDialogueItem = [3,10][battleSelectedOption];
+        battleSelectedOption = -1;
         battleDialogueIncrement();
       }
     }

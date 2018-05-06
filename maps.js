@@ -111,6 +111,7 @@ var mapObjects = [
       active: -1,
       hp: [100],
       pp: [100,100,100,100],
+      pokeballs: [3,2,1],
       party: [
         {
           country: 1,
