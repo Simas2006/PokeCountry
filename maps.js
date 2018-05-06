@@ -53,7 +53,7 @@ var mapMetadata = [
               pp: [100,100,100,100],
             },
             {
-              country: 5,
+              country: 6,
               group: 2,
               moves: [
                 [4,1],

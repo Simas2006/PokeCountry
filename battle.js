@@ -163,7 +163,7 @@ function renderBattle() {
     }
     var radius = 1;
     if ( battleShakingResult ) {
-      if ( battleShakingTimer >= 750 && battleShakingTimer < 900 ) radius = 1 - (battleShakingTimer - 750) / 150;
+      if ( battleShakingTimer >= 750 && battleShakingTimer <= 900 ) radius = 1 - (battleShakingTimer - 750) / 150;
       else if ( battleShakingTimer >= 900 ) radius = 0;
     } else if ( battleShakingTimer >= 751 ) {
       battleShakingTimer = 150;
@@ -185,6 +185,7 @@ function renderBattle() {
     ctx.arc(canvas.width * 0.75,canvas.height * (1 - Math.min(battleShakingTimer,150) / 150 + 0.25),canvas.height * 0.1 * radius,0,2 * Math.PI);
     ctx.fill();
     ctx.stroke();
+    if ( battleShakingTimer < -25 || battleShakingTimer > 900 ) battleDialogueIncrement();
     if ( battleShakingTimer == 750 ) battleShakingResult = Math.random() < 0.333 + (0.2085 * battleShakingType);
     battleShakingTimer += battleShakingResult === false ? -5 : 1;
   }
@@ -309,8 +310,18 @@ function renderBattle() {
         battlePlayers[0].visibleCountry = battlePlayers[0].country;
         battlePlayers[1].visibleCountry = battlePlayers[1].country;
       }
+      battleShakingResult = null;
     },1000);
     battleFaintComplete = true;
+  }
+  if ( battleDialogueItem == 11 ) {
+    if ( battleShakingResult ) {
+      battleFaintPlayer = 1;
+      battlePlayers[0].party.push(battlePlayers[1].party[battlePlayers[1].active]);
+      battleTextToDraw = `You captured ${names[battlePlayers[1].party[battlePlayers[1].active].country].toUpperCase()}!`;
+    } else {
+      battleTextToDraw = `${names[battlePlayers[1].party[battlePlayers[1].active].country].toUpperCase()} got away!`;
+    }
   }
   ctx.font = canvas.height * 0.06 + "px Menlo";
   if ( battleSelectedOption > -1 ) {
@@ -420,6 +431,10 @@ function battleDialogueIncrement() {
       resetBattle();
       mapTrainerComplete(battleWinner);
     }
+  } else if ( battleDialogueItem == 13 ) {
+    battleShakingTimer = -25;
+    battleDialogueItem = battleShakingResult ? 8 : 2;
+    battleDialogueIncrement();
   }
 }
 
