@@ -18,6 +18,7 @@ var battleDamageComplete = false;
 var battleAICalculated = false;
 var battleOutOfPP = false;
 var battleOutOfPokeball = false;
+var battleOutOfSlots = false;
 var battleFaintPlayer = 0;
 var battleFaintComplete = false;
 var battleShakingTimer = -25;
@@ -199,6 +200,7 @@ function renderBattle() {
     ctx.lineWidth = 5;
     if ( battleOutOfPP ) battleTextToDraw = `There isn't\nenough PP!`;
     else if ( battleOutOfPokeball ) battleTextToDraw = `You don't\nhave that!`;
+    else if ( battleOutOfSlots ) battleTextToDraw = `Your party\nis full!`;
     else battleTextToDraw = `What should\n${names[battlePlayers[0].party[battlePlayers[0].active].country].toUpperCase()} do?`;
     drawRoundedRect(10,canvas.width * 0.6,canvas.height * 0.75 + 10,canvas.width * 0.4 - 5,canvas.height * 0.25 - 20);
     ctx.stroke();
@@ -269,6 +271,7 @@ function renderBattle() {
     battleTextToDraw = `${names[activeCountry.country].toUpperCase()} used ${moveName}!`;
     battleDamageComplete = false;
     battleOutOfPP = false;
+
   }
   if ( battleDialogueItem == 6 && ! battleDamageComplete ) {
     var damage;
@@ -329,6 +332,7 @@ function renderBattle() {
     battlePlayers[0].pokeballs[battleShakingType]--;
     battleCaptureComplete = true;
     battleOutOfPokeball = false;
+    battleOutOfSlots = false;
   }
   ctx.font = canvas.height * 0.06 + "px Menlo";
   if ( battleSelectedOption > -1 ) {
@@ -459,16 +463,18 @@ function handleKeyboardBattle(key) {
   if ( key == "ArrowDown" && battleDialogueItem != 3 ) battleDialogueIncrement();
   if ( key == " " && battleDialogueItem == 3 ) {
     if ( battleSelectedOption <= -1 ) {
-      if ( battleSelectedButton == 3 ) {
+      if ( battleSelectedButton == 0 && battlePlayers[0].pp.filter(item => item > 0).length <= 0 ) {
+        battleSelectedMove = -1;
+        battleDialogueIncrement();
+      } else if ( battleSelectedButton == 1 && battlePlayers[0].party.length >= 8 ) {
+        battleOutOfSlots = true;
+      } else if ( battleSelectedButton == 3 ) {
         battleDialogueItem = 99;
         resetBattle();
         mapTrainerComplete(1);
-      } else if ( battlePlayers[0].pp.filter(item => item > 0).length > 0 ) {
+      } else {
         battleSelectedOption = battleSelectedButton;
         battleSelectedButton = -1;
-      } else {
-        battleSelectedMove = -1;
-        battleDialogueIncrement();
       }
     } else {
       if ( battlePlayers[0].pp[battleBoxSelected] <= 0 && battleSelectedOption == 0 ) {
