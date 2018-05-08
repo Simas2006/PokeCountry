@@ -25,6 +25,7 @@ var battleShakingTimer = -25;
 var battleShakingResult;
 var battleShakingType = 2;
 var battleCaptureComplete = false;
+var battleChangePlayer = -1;
 
 /*
  * battleDialogueItem states:
@@ -241,6 +242,7 @@ function renderBattle() {
     ctx.stroke();
     ctx.restore();
     battleShakingResult = null;
+    battleFaintComplete = false;
   }
   var activeCountry = battlePlayers[battleMovementPlayer].party[battlePlayers[battleMovementPlayer].active];
   var oppositeCountry = battlePlayers[battleMovementPlayer == 0 ? 1 : 0].party[battlePlayers[battleMovementPlayer == 0 ? 1 : 0].active];
@@ -297,19 +299,24 @@ function renderBattle() {
   if ( battleDialogueItem == 8 ) {
     var selectedCountry = battlePlayers[battleFaintPlayer].party[battlePlayers[battleFaintPlayer].active];
     battleTextToDraw = `${names[selectedCountry.country].toUpperCase()} fainted!`;
-    battleFaintComplete = false;
   }
   if ( battleDialogueItem == 9 && ! battleFaintComplete ) {
+    var trigger = false;
+    if ( battleChangePlayer > -1 ) {
+      battlePlayers[0].party.splice(battlePlayers[0].active,0,battlePlayers[0].party.splice(battleChangePlayer,1)[0]);
+      battleChangePlayer = -1;
+      trigger = true;
+    }
     var selectedObject = battlePlayers[battleFaintPlayer];
-    var selectedCountry = selectedObject.party[selectedObject.active + 1];
-    if ( selectedObject.active + 1 >= selectedObject.party.length ) battleWinner = battleFaintPlayer == 0 ? 1 : 0;
+    var selectedCountry = selectedObject.party[selectedObject.active + (trigger ? 0 : 1)];
+    if ( selectedObject.active + 1 >= selectedObject.party.length && trigger ) battleWinner = battleFaintPlayer == 0 ? 1 : 0;
     if ( battleWinner <= -1 ) battleTextToDraw = `${["You",names[battlePlayers[1].country].toUpperCase()][battleFaintPlayer]} sent out ${names[selectedCountry.country].toUpperCase()}!`;
     else battleTextToDraw = `${["You",names[battlePlayers[1].country].toUpperCase()][battleWinner]} won the battle${["!","..."][battleWinner]}`;
     battleSwapPlayer = battleWinner <= -1 ? battleFaintPlayer : -1;
     battleSwapTime = 0.01;
     setTimeout(function() {
       if ( battleWinner <= -1 ) {
-        selectedObject.active++;
+        if ( ! trigger ) selectedObject.active++;
         selectedObject.visibleCountry = selectedCountry.country;
         selectedObject.hp = selectedCountry.hp;
         selectedObject.pp = selectedCountry.pp;
@@ -411,8 +418,7 @@ function battleDialogueIncrement() {
     battleBoxItems = [
       battlePlayers[0].party[battlePlayers[0].active].moves.map((item,index) => [moves[item[0]].name,battlePlayers[0].pp[index] + "/100"]),
       battlePlayers[0].pokeballs.map((item,index) => [`${["POKE","MASTER ","ULTRA "][index]}BALL`,`x${item}`]),
-      [],
-      []
+      battlePlayers[0].party.slice(battlePlayers[0].active).map((item,index) => [names[item.country].toUpperCase() + (index == 0 ? " ✔" : "")])
     ]
   } else if ( battleDialogueItem == 4 ) {
     battleMovementTimer = 0;
@@ -477,14 +483,15 @@ function handleKeyboardBattle(key) {
         battleSelectedButton = -1;
       }
     } else {
-      if ( battlePlayers[0].pp[battleBoxSelected] <= 0 && battleSelectedOption == 0 ) {
+      if ( battleSelectedOption == 0 && battlePlayers[0].pp[battleBoxSelected] <= 0 ) {
         battleOutOfPP = true;
-      } else if ( battlePlayers[0].pokeballs[battleBoxSelected] <= 0 ) {
+      } else if ( battleSelectedOption == 1 && battlePlayers[0].pokeballs[battleBoxSelected] <= 0 ) {
         battleOutOfPokeball = true;
       } else {
         if ( battleSelectedOption == 0 ) battleSelectedMove = battleBoxSelected;
         else battleShakingType = battleBoxSelected;
-        battleDialogueItem = [3,10][battleSelectedOption];
+        if ( battleSelectedOption == 2 ) battleChangePlayer = battlePlayers[0].active + battleBoxSelected;
+        battleDialogueItem = [3,10,8][battleSelectedOption];
         battleSelectedOption = -1;
         battleDialogueIncrement();
       }
