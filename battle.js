@@ -472,8 +472,11 @@ function handleKeyboardBattle(key) {
       if ( battleSelectedButton == 0 && battlePlayers[0].pp.filter(item => item > 0).length <= 0 ) {
         battleSelectedMove = -1;
         battleDialogueIncrement();
-      } else if ( battleSelectedButton == 1 && battlePlayers[0].party.length >= 8 ) {
-        battleOutOfSlots = true;
+      } else if ( battleSelectedButton == 1 ) {
+        battleOutOfSlots = false;
+        battleOutOfPokeball = false;
+        if ( battlePlayers[0].party.length >= 8 ) battleOutOfSlots = true;
+        else if ( battlePlayers[0].pokeballs.filter(item => item <= 0).length <= 0 ) battleOutOfPokeball = true;
       } else if ( battleSelectedButton == 3 ) {
         battleDialogueItem = 99;
         resetBattle();
