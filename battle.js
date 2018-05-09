@@ -19,6 +19,7 @@ var battleAICalculated = false;
 var battleOutOfPP = false;
 var battleOutOfPokeball = false;
 var battleOutOfSlots = false;
+var battleOutOfCountries = false;
 var battleFaintPlayer = 0;
 var battleFaintComplete = false;
 var battleShakingTimer = -25;
@@ -202,6 +203,7 @@ function renderBattle() {
     if ( battleOutOfPP ) battleTextToDraw = `There isn't\nenough PP!`;
     else if ( battleOutOfPokeball ) battleTextToDraw = `You don't\nhave that!`;
     else if ( battleOutOfSlots ) battleTextToDraw = `Your party\nis full!`;
+    else if ( battleOutOfCountries ) battleTextToDraw = `Nothing to\nswitch to!`;
     else battleTextToDraw = `What should\n${names[battlePlayers[0].party[battlePlayers[0].active].country].toUpperCase()} do?`;
     drawRoundedRect(10,canvas.width * 0.6,canvas.height * 0.75 + 10,canvas.width * 0.4 - 5,canvas.height * 0.25 - 20);
     ctx.stroke();
@@ -469,14 +471,23 @@ function handleKeyboardBattle(key) {
   if ( key == "ArrowDown" && battleDialogueItem != 3 ) battleDialogueIncrement();
   if ( key == " " && battleDialogueItem == 3 ) {
     if ( battleSelectedOption <= -1 ) {
+      battleOutOfCountries = false;
       if ( battleSelectedButton == 0 && battlePlayers[0].pp.filter(item => item > 0).length <= 0 ) {
         battleSelectedMove = -1;
         battleDialogueIncrement();
       } else if ( battleSelectedButton == 1 ) {
         battleOutOfSlots = false;
         battleOutOfPokeball = false;
-        if ( battlePlayers[0].party.length >= 8 ) battleOutOfSlots = true;
-        else if ( battlePlayers[0].pokeballs.filter(item => item <= 0).length <= 0 ) battleOutOfPokeball = true;
+        if ( battlePlayers[0].party.length >= 8 ) {
+          battleOutOfSlots = true;
+        } else if ( battlePlayers[0].pokeballs.filter(item => item <= 0).length >= 3 ) {
+          battleOutOfPokeball = true;
+        } else {
+          battleSelectedOption = battleSelectedButton;
+          battleSelectedButton = -1;
+        }
+      } else if ( battleSelectedButton == 2 && battlePlayers[0].active + 1 >= battlePlayers[0].party.length ) {
+        battleOutOfCountries = true;
       } else if ( battleSelectedButton == 3 ) {
         battleDialogueItem = 99;
         resetBattle();
