@@ -90,6 +90,7 @@ window.onload = function() {
   setInterval(function() {
     if ( gamemode == "map" ) renderMap();
     if ( gamemode == "battle" ) renderBattle();
+    renderNPC();
     if ( blurActive > 0 ) {
       var size = Math.min(canvas.width,canvas.height);
       ctx.fillStyle = "black";
