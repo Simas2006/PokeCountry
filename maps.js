@@ -155,6 +155,7 @@ var mapObjects = [
 ];
 var mapPosition = [2,2];
 var mapIndex = 0;
+var mapBattleWins = 0;
 var mapCurrentBattle;
 var mapCanMove = true;
 var mapInExit = false;
@@ -325,6 +326,7 @@ function mapTrainerComplete(winner) {
       right: false
     }
     battleWinner = -1;
+    mapBattleWins = winner == 0 ? 1 : -1;
   },1250);
 }
 

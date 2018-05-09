@@ -244,7 +244,6 @@ function renderBattle() {
     ctx.stroke();
     ctx.restore();
     battleShakingResult = null;
-    battleFaintComplete = false;
   }
   var activeCountry = battlePlayers[battleMovementPlayer].party[battlePlayers[battleMovementPlayer].active];
   var oppositeCountry = battlePlayers[battleMovementPlayer == 0 ? 1 : 0].party[battlePlayers[battleMovementPlayer == 0 ? 1 : 0].active];
@@ -311,7 +310,7 @@ function renderBattle() {
     }
     var selectedObject = battlePlayers[battleFaintPlayer];
     var selectedCountry = selectedObject.party[selectedObject.active + (trigger ? 0 : 1)];
-    if ( selectedObject.active + 1 >= selectedObject.party.length && trigger ) battleWinner = battleFaintPlayer == 0 ? 1 : 0;
+    if ( selectedObject.active + 1 >= selectedObject.party.length && ! trigger ) battleWinner = battleFaintPlayer == 0 ? 1 : 0;
     if ( battleWinner <= -1 ) battleTextToDraw = `${["You",names[battlePlayers[1].country].toUpperCase()][battleFaintPlayer]} sent out ${names[selectedCountry.country].toUpperCase()}!`;
     else battleTextToDraw = `${["You",names[battlePlayers[1].country].toUpperCase()][battleWinner]} won the battle${["!","..."][battleWinner]}`;
     battleSwapPlayer = battleWinner <= -1 ? battleFaintPlayer : -1;
@@ -396,6 +395,7 @@ function renderBattle() {
 function battleDialogueIncrement() {
   battleDialogueItem++;
   battleCharDrawn = 0;
+  battleFaintComplete = false;
   if ( battleDialogueItem == 1 ) {
     battleSwapPlayer = 1;
     battleSwapTime = 0.01;
