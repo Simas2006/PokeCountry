@@ -104,13 +104,14 @@ window.onload = function() {
   },10);
   window.onkeydown = function(event) {
     if ( event.key.startsWith("Arrow") || event.key == " " ) {
-      if ( gamemode == "map" ) handleKeyboardMap(event.key,true);
-      if ( gamemode == "battle" ) handleKeyboardBattle(event.key);
+      if ( npcTextDrawing ) handleKeyboardNPC(event.key);
+      else if ( gamemode == "map" ) handleKeyboardMap(event.key,true);
+      else if ( gamemode == "battle" ) handleKeyboardBattle(event.key);
     }
   }
   window.onkeyup = function(event) {
     if ( event.key.startsWith("Arrow") || event.key == " " ) {
-      if ( gamemode == "map" ) handleKeyboardMap(event.key,false);
+      if ( gamemode == "map" && ! npcTextDrawing ) handleKeyboardMap(event.key,false);
     }
   }
 }
