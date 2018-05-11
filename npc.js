@@ -2,7 +2,9 @@ var npcTextToDraw;
 var npcCharDrawn = 0;
 var npcTextDrawing = false;
 var npcFlashingToggle = 0;
-var npcReturnState = 1;
+var npcDialogueItem;
+var npcActiveType;
+var npcReturnState;
 
 /*
  * NPC types:
@@ -13,6 +15,7 @@ var npcReturnState = 1;
  */
 
 function renderNPC() {
+  if ( npcDialogueItem == 0 ) npcTextToDraw = "oh hi";
   if ( npcTextToDraw && npcTextDrawing ) {
     ctx.strokeStyle = "black";
     ctx.fillStyle = "white";
@@ -52,6 +55,7 @@ function handleKeyboardNPC(key) {
     if ( npcReturnState == 0 ) {
 
     } else {
+      mapInvincible = true;
       npcTextDrawing = false;
     }
   }

@@ -29,11 +29,12 @@ var mapMetadata = [
       {
         country: 4,
         x: 2,
-        y: 6,
+        y: 10,
         direction: 0,
         colored: true,
         exists: true,
         battleData: {
+          trigger: true,
           country: 4,
           visibleCountry: 4,
           active: -1,
@@ -64,15 +65,26 @@ var mapMetadata = [
               pp: [100,100,100,100],
             }
           ]
+        },
+        npcData: {
+          trigger: false
         }
       },
       {
-        country: 6,
-        x: 3,
-        y: 6,
+        country: 8,
+        x: 5,
+        y: 5,
         direction: 0,
+        exists: true,
         colored: true,
-        exists: false
+        battleData: {
+          trigger: false
+        },
+        npcData: {
+          trigger: true,
+          type: 3,
+          dialogue: "sage beige\nhello world"
+        }
       }
     ],
     warps: [
@@ -255,14 +267,39 @@ function renderMap() {
   var triggered = false;
   for ( var i = 1; i < mapObjects.length; i++ ) {
     if ( ! mapObjects[i].exists ) continue;
-    if (
-      Math.sqrt(
-        Math.pow(Math.abs(mapPosition[0] - mapObjects[i].x),2) +
-        Math.pow(Math.abs(mapPosition[1] - mapObjects[i].y),2)
-      ) <= 3 && ! mapInExit
-    ) {
-      if ( ! mapInvincible ) mapBattleTrainer(i);
-      triggered = true;
+    if ( mapObjects[i].battleData.trigger ) {
+      if (
+        Math.sqrt(
+          Math.pow(Math.abs(mapPosition[0] - mapObjects[i].x),2) +
+          Math.pow(Math.abs(mapPosition[1] - mapObjects[i].y),2)
+        ) <= 3 && ! mapInExit
+      ) {
+        if ( ! mapInvincible ) mapBattleTrainer(i);
+        triggered = true;
+      }
+    } else {
+      if (
+        Math.sqrt(
+          Math.pow(Math.abs(mapPosition[0] - mapObjects[i].x),2) +
+          Math.pow(Math.abs(mapPosition[1] - mapObjects[i].y),2)
+        ) <= 2 && ! mapInExit
+      ) {
+        if ( ! mapInvincible && ! npcTextDrawing ) {
+          npcActiveType = mapObjects[i].npcData.type;
+          npcReturnState = mapObjects[i].npcData.type == 3 ? 1 : 0;
+          if ( mapObjects[i].npcData.type == 3 ) npcTextToDraw = mapObjects[i].npcData.dialogue;
+          else npcDialogueItem = 0;
+          npcCharDrawn = 0;
+          npcTextDrawing = true;
+          mapKeypresses = {
+            up: false,
+            down: false,
+            left: false,
+            right: false
+          }
+        }
+        triggered = true;
+      }
     }
   }
   if ( ! triggered ) mapInvincible = false;

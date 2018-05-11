@@ -12,8 +12,9 @@ var flags = [
   `444777000`, // France
   `777003003`, // Belarus
   `000020000`, // Vietnam
+  `070777070`  // Switzerland
 ].map(item => item.split("").map(jtem => parseInt(jtem)));
-var names = ["USA","Germany","Russia","China","Canada","France","Belarus","Vietnam"];
+var names = ["USA","Germany","Russia","China","Canada","France","Belarus","Vietnam","Switzerland"];
 var moves = [
   {
     name: "WWI",
@@ -111,7 +112,7 @@ window.onload = function() {
   }
   window.onkeyup = function(event) {
     if ( event.key.startsWith("Arrow") || event.key == " " ) {
-      if ( gamemode == "map" && ! npcTextDrawing ) handleKeyboardMap(event.key,false);
+      if ( gamemode == "map" ) handleKeyboardMap(event.key,false);
     }
   }
 }
