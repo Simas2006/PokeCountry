@@ -82,8 +82,9 @@ var mapMetadata = [
         },
         npcData: {
           trigger: true,
-          type: 3,
-          dialogue: "sage beige\nhello world"
+          type: 0,
+          dialogue: null,
+          trader: [0,1]
         }
       }
     ],
@@ -285,11 +286,10 @@ function renderMap() {
         ) <= 2 && ! mapInExit
       ) {
         if ( ! mapInvincible && ! npcTextDrawing ) {
-          npcActiveType = mapObjects[i].npcData.type;
-          npcReturnState = mapObjects[i].npcData.type == 3 ? 1 : 0;
-          if ( mapObjects[i].npcData.type == 3 ) npcTextToDraw = mapObjects[i].npcData.dialogue;
-          else npcDialogueItem = 0;
+          npcData = mapObjects[i].npcData;
+          npcDialogueItem = 0;
           npcCharDrawn = 0;
+          npcActiveResult = -1;
           npcTextDrawing = true;
           mapKeypresses = {
             up: false,
