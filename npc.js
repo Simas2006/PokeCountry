@@ -9,7 +9,7 @@ var npcActiveResult = -1;
 var npcDialogue = [
   [`Welcome to SWISS CLINIC!`,`May we heal\nyour army?`,[`All done! Thank you for coming!`,`Well, thanks for coming anyway!`]],
   [], // to be implemented
-  [`Hey, I'll trade ya a (P1) for a (P2)!`,`Whattaya say?`,[`Pleasure doing business with you!`,`Well, that's a shame...`]]
+  [`Hey, I'll trade ya (P1) for (P2)!`,`Whattaya\nsay?`,[`Pleasure doing business with you!`,`Well, that's a shame...`]]
 ];
 
 /*
@@ -24,6 +24,10 @@ function renderNPC() {
   if ( npcTextDrawing ) {
     if ( npcData.type < 3 ) {
       var selected = npcDialogue[npcData.type][npcDialogueItem];
+      if ( npcData.trade ) {
+        selected = selected.replace("(P1)",names[npcData.trade[0]].toUpperCase());
+        selected = selected.replace("(P2)",names[npcData.trade[1]].toUpperCase());
+      }
       if ( npcActiveResult > -1 ) npcTextToDraw = selected[npcActiveResult];
       else npcTextToDraw = selected;
       if ( npcDialogueItem + 1 >= npcDialogue[npcData.type].length ) npcReturnState = 1;

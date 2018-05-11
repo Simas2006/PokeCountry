@@ -82,9 +82,9 @@ var mapMetadata = [
         },
         npcData: {
           trigger: true,
-          type: 0,
+          type: 2,
           dialogue: null,
-          trader: [0,1]
+          trade: [3,2]
         }
       }
     ],
