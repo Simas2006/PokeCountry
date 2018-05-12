@@ -82,9 +82,9 @@ var mapMetadata = [
         },
         npcData: {
           trigger: true,
-          type: 2,
+          type: 0,
           dialogue: null,
-          trade: [3,2]
+          trade: null
         }
       }
     ],
@@ -289,7 +289,7 @@ function renderMap() {
           npcData = mapObjects[i].npcData;
           npcDialogueItem = 0;
           npcCharDrawn = 0;
-          npcActiveResult = -1;
+          npcActiveResult = 0;
           npcTextDrawing = true;
           mapKeypresses = {
             up: false,

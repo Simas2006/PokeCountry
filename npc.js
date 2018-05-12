@@ -5,9 +5,9 @@ var npcTextDrawing = false;
 var npcFlashingToggle = 0;
 var npcDialogueItem;
 var npcReturnState = 0;
-var npcActiveResult = -1;
+var npcActiveResult = 0;
 var npcDialogue = [
-  [`Welcome to SWISS CLINIC!`,`May we heal\nyour army?`,[`All done! Thank you for coming!`,`Well, thanks for coming anyway!`]],
+  [`Welcome to SWISS CLINIC!`,`May we heal\nyour army?`,[`Well, thanks for coming anyway!`,`..........`],`All done! Thank you for coming!`],
   [], // to be implemented
   [`Hey, I'll trade ya (P1) for (P2)!`,`Whattaya\nsay?`,[`Pleasure doing business with you!`,`Well, that's a shame...`]]
 ];
@@ -28,9 +28,9 @@ function renderNPC() {
         selected = selected.replace("(P1)",names[npcData.trade[0]].toUpperCase());
         selected = selected.replace("(P2)",names[npcData.trade[1]].toUpperCase());
       }
-      if ( npcActiveResult > -1 ) npcTextToDraw = selected[npcActiveResult];
+      if ( selected instanceof Array ) npcTextToDraw = selected[npcActiveResult + 1];
       else npcTextToDraw = selected;
-      if ( npcDialogueItem + 1 >= npcDialogue[npcData.type].length ) npcReturnState = 1;
+      if ( npcDialogueItem + 1 >= npcDialogue[npcData.type].length || npcActiveResult == -1 ) npcReturnState = 1;
       else npcReturnState = 0;
     } else {
       npcTextToDraw = npcData.dialogue;
@@ -66,19 +66,55 @@ function renderNPC() {
       ctx.closePath();
       ctx.fill();
     }
+    if ( npcDialogueItem == 1 ) {
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = "black";
+      drawRoundedRect(10,canvas.width * 0.6,canvas.height * 0.75 + 10,canvas.width * 0.4 - 5,canvas.height * 0.25 - 20);
+      ctx.stroke();
+      ctx.save();
+      ctx.clip();
+      ctx.lineWidth = 10;
+      ctx.strokeStyle = npcActiveResult == 0 ? "gold" : "green";
+      ctx.fillStyle = npcActiveResult == 0 ? "#fff1b3" : "#99ff99";
+      ctx.fillRect(canvas.width * 0.6 + 1,canvas.height * 0.75 + 10,canvas.width * 0.2 - 5,canvas.height * 0.25 - 20);
+      ctx.strokeRect(canvas.width * 0.6 + 1,canvas.height * 0.75 + 10,canvas.width * 0.2 - 5,canvas.height * 0.25 - 20);
+      ctx.strokeStyle = npcActiveResult == -1 ? "gold" : "red";
+      ctx.fillStyle = npcActiveResult == -1 ? "#fff1b3" : "#ff9999";
+      ctx.fillRect(canvas.width * 0.8 - 1,canvas.height * 0.75 + 10,canvas.width * 0.2 - 5,canvas.height * 0.25 - 20);
+      ctx.strokeRect(canvas.width * 0.8 - 1,canvas.height * 0.75 + 10,canvas.width * 0.2 - 5,canvas.height * 0.25 - 20);
+      ctx.font = canvas.height * 0.06 + "px Menlo";
+      ctx.textAlign = "center";
+      ctx.fillStyle = "black";
+      ctx.fillText("YES",canvas.width * 0.7 - 1,canvas.height * 0.875);
+      ctx.fillText("NO",canvas.width * 0.9 - 4,canvas.height * 0.875);
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = "black";
+      ctx.moveTo(canvas.width * 0.8 - 3,canvas.height * 0.75 + 10);
+      ctx.lineTo(canvas.width * 0.8 - 3,canvas.height - 10);
+      ctx.stroke();
+      ctx.restore();
+    }
     npcFlashingToggle += 0.025;
     if ( npcFlashingToggle >= 2 ) npcFlashingToggle = 0;
   }
 }
 
 function handleKeyboardNPC(key) {
-  if ( key == "ArrowDown" ) {
+  if ( key == "ArrowDown" && npcDialogueItem != 1 ) {
     if ( npcReturnState == 0 ) {
       npcCharDrawn = 0;
       npcDialogueItem++;
     } else {
       mapInvincible = true;
       npcTextDrawing = false;
+    }
+  }
+  if ( npcDialogueItem == 1 ) {
+    if ( key == "ArrowLeft" || key == "ArrowRight" ) {
+      npcActiveResult = npcActiveResult == 0 ? -1 : 0;
+    } else if ( key == " " ) {
+      npcCharDrawn = 0;
+      npcDialogueItem++;
     }
   }
 }
