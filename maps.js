@@ -82,7 +82,7 @@ var mapMetadata = [
         },
         npcData: {
           trigger: true,
-          type: 0,
+          type: 1,
           dialogue: null,
           trade: null
         }
@@ -124,7 +124,7 @@ var mapObjects = [
       active: -1,
       hp: [100],
       pp: [100,100,100,100],
-      pokeballs: [0,0,0],
+      hexaballs: [0,0,0],
       party: [
         {
           country: 1,

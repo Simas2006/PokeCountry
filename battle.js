@@ -70,7 +70,7 @@ function renderBattle() {
     ctx.fillRect(canvas.width * (0.25 - (battleSwapPlayer != 1 ? battleSwapTime : 0)) + (battleMovementPlayer == 0 ? xm : 0) + pixelPosition[0],canvas.height * 0.75 + (battleMovementPlayer == 0 ? ym : 0) + pixelPosition[1],size / 1.5,size / 1.5);
   }
   ctx.restore();
-  if ( ! battleShakingResult ) {
+  if ( battleShakingTimer <= 250 && ! battleShakingResult ) {
     ctx.beginPath();
     ctx.arc(canvas.width * (0.75 + (battleSwapPlayer != 0 ? battleSwapTime : 0)) + (battleMovementPlayer == 1 ? xm : 0),canvas.height * 0.25 + (battleMovementPlayer == 1 ? ym : 0),size,0,2 * Math.PI);
     ctx.stroke();
@@ -161,10 +161,10 @@ function renderBattle() {
   if ( battleDialogueItem == 11 ) {
     ctx.lineWidth = 10;
     ctx.strokeStyle = "black";
-    var angle = 0;
+    var shake = 0;
     if ( battleShakingTimer >= 250 && battleShakingTimer < 750 ) {
-      if ( battleShakingTimer % 125 < 15 ) angle = 0.125 * Math.PI;
-      else if ( battleShakingTimer % 125 < 30 ) angle = -0.125 * Math.PI;
+      if ( battleShakingTimer % 125 < 15 ) shake = 0.1;
+      else if ( battleShakingTimer % 125 < 30 ) shake = -0.1;
     }
     var radius = 1;
     if ( battleShakingResult ) {
@@ -173,21 +173,23 @@ function renderBattle() {
     } else if ( battleShakingTimer >= 751 ) {
       battleShakingTimer = 150;
     }
-    ctx.fillStyle = "white";
-    ctx.beginPath();
-    ctx.arc(canvas.width * 0.75,canvas.height * (1 - Math.min(battleShakingTimer,150) / 150 + 0.25),canvas.height * 0.33 * radius,angle,Math.PI + angle);
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
     ctx.fillStyle = ["red","purple","gold"][battleShakingType];
     ctx.beginPath();
-    ctx.arc(canvas.width * 0.75,canvas.height * (Math.min(battleShakingTimer,150) / 150 - 0.75),canvas.height * 0.33 * radius,Math.PI + angle,2 * Math.PI + angle);
+    ctx.moveTo(canvas.width * (0.69 + shake) - (size * radius),canvas.height * (Math.min(battleShakingTimer,150) / 150 - 0.75));
+    ctx.lineTo(canvas.width * (0.75 + shake) - (size * radius) / 2,canvas.height * (Math.min(battleShakingTimer,150) / 150 - 0.75) - (size * radius));
+    ctx.lineTo(canvas.width * (0.75 + shake) + (size * radius) / 2,canvas.height * (Math.min(battleShakingTimer,150) / 150 - 0.75) - (size * radius));
+    ctx.lineTo(canvas.width * (0.81 + shake) + (size * radius),canvas.height * (Math.min(battleShakingTimer,150) / 150 - 0.75));
+    ctx.stroke();
     ctx.closePath();
     ctx.fill();
-    ctx.stroke();
     ctx.fillStyle = "white";
     ctx.beginPath();
-    ctx.arc(canvas.width * 0.75,canvas.height * (1 - Math.min(battleShakingTimer,150) / 150 + 0.25),canvas.height * 0.1 * radius,0,2 * Math.PI);
+    ctx.moveTo(canvas.width * (0.69 + shake) - (size * radius),canvas.height * (1 - Math.min(battleShakingTimer,150) / 150 + 0.25));
+    ctx.lineTo(canvas.width * (0.75 + shake) - (size * radius) / 2,canvas.height * (1 - Math.min(battleShakingTimer,150) / 150 + 0.25) + (size * radius));
+    ctx.lineTo(canvas.width * (0.75 + shake) + (size * radius) / 2,canvas.height * (1 - Math.min(battleShakingTimer,150) / 150 + 0.25) + (size * radius));
+    ctx.lineTo(canvas.width * (0.81 + shake) + (size * radius),canvas.height * (1 - Math.min(battleShakingTimer,150) / 150 + 0.25));
+    ctx.stroke();
+    ctx.closePath();
     ctx.fill();
     ctx.stroke();
     if ( battleShakingTimer < -25 || battleShakingTimer > 900 ) battleDialogueIncrement();
@@ -231,8 +233,7 @@ function renderBattle() {
     ctx.fillText("FIGHT",canvas.width * 0.695,canvas.height * 0.8425);
     ctx.fillText("BAG",canvas.width * 0.8975,canvas.height * 0.8425);
     ctx.fillText("RUN",canvas.width * 0.8975,canvas.height * 0.955);
-    ctx.font = canvas.height * 0.0425 + "px Menlo";
-    ctx.fillText("POKÉMON",canvas.width * 0.6975,canvas.height * 0.9475);
+    ctx.fillText("PARTY",canvas.width * 0.6975,canvas.height * 0.955);
     ctx.strokeStyle = "black";
     ctx.beginPath();
     ctx.moveTo(canvas.width * 0.6,canvas.height * 0.875);
@@ -337,7 +338,7 @@ function renderBattle() {
     } else {
       battleTextToDraw = `${names[battlePlayers[1].party[battlePlayers[1].active].country].toUpperCase()} got away!`;
     }
-    battlePlayers[0].pokeballs[battleShakingType]--;
+    battlePlayers[0].hexaballs[battleShakingType]--;
     battleCaptureComplete = true;
     battleOutOfPokeball = false;
     battleOutOfSlots = false;
@@ -419,7 +420,7 @@ function battleDialogueIncrement() {
     battleBoxSelected = 0;
     battleBoxItems = [
       battlePlayers[0].party[battlePlayers[0].active].moves.map((item,index) => [moves[item[0]].name,battlePlayers[0].pp[index] + "/100"]),
-      battlePlayers[0].pokeballs.map((item,index) => [`${["POKE","MASTER ","ULTRA "][index]}BALL`,`x${item}`]),
+      battlePlayers[0].hexaballs.map((item,index) => [`${["HEXA","MASTER ","ULTRA "][index]}BALL`,`x${item}`]),
       battlePlayers[0].party.slice(battlePlayers[0].active).map((item,index) => [names[item.country].toUpperCase() + (index == 0 ? " ✔" : "")])
     ]
   } else if ( battleDialogueItem == 4 ) {
@@ -480,7 +481,7 @@ function handleKeyboardBattle(key) {
         battleOutOfPokeball = false;
         if ( battlePlayers[0].party.length >= 8 ) {
           battleOutOfSlots = true;
-        } else if ( battlePlayers[0].pokeballs.filter(item => item <= 0).length >= 3 ) {
+        } else if ( battlePlayers[0].hexaballs.filter(item => item <= 0).length >= 3 ) {
           battleOutOfPokeball = true;
         } else {
           battleSelectedOption = battleSelectedButton;
@@ -499,7 +500,7 @@ function handleKeyboardBattle(key) {
     } else {
       if ( battleSelectedOption == 0 && battlePlayers[0].pp[battleBoxSelected] <= 0 ) {
         battleOutOfPP = true;
-      } else if ( battleSelectedOption == 1 && battlePlayers[0].pokeballs[battleBoxSelected] <= 0 ) {
+      } else if ( battleSelectedOption == 1 && battlePlayers[0].hexaballs[battleBoxSelected] <= 0 ) {
         battleOutOfPokeball = true;
       } else {
         if ( battleSelectedOption == 0 ) battleSelectedMove = battleBoxSelected;
