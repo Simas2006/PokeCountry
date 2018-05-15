@@ -229,7 +229,7 @@ function renderMap() {
     ctx.restore();
     var directions = [[0.5,0.8,0.4],[0.375,0.675,0.525],[0.5,0.2,0.4],[0.375,0.675,0.3]];
     ctx.fillStyle = "white";
-    ctx.lineWidth = "2";
+    ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.arc(unit * (sum[0] + directions[mapObjects[i].direction][0]),unit * (sum[1] + directions[mapObjects[i].direction][2]),unit / 7,0,2 * Math.PI);
     ctx.fill();

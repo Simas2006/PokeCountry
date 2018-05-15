@@ -6,9 +6,10 @@ var npcFlashingToggle = 0;
 var npcDialogueItem;
 var npcReturnState = 0;
 var npcActiveResult = 0;
+var npcHexaballType = 0;
 var npcDialogue = [
   [`Welcome to SWISS CLINIC!`,`May we heal\nyour army?`,[`Well, thanks for coming anyway!`,`..........`],`All done! Thank you for coming!`],
-  [], // to be implemented
+  [`Welcome to SWISS CLINIC!`,`Do you want\na hexaball?`,[`Well, thanks for coming anyway!`,"What kind?"],`How many?`,`something something`],
   [`Hey, I'll trade ya (P1) for (P2)!`,`Whattaya\nsay?`,[`Pleasure doing business with you!`,`Well, that's a shame...`]]
 ];
 
@@ -66,7 +67,7 @@ function renderNPC() {
       ctx.closePath();
       ctx.fill();
     }
-    if ( npcDialogueItem == 1 ) {
+    if ( npcDialogueItem == 1 || ((npcDialogueItem == 2 || npcDialogueItem == 3) && npcData.type == 1 && npcReturnState == 0) ) {
       ctx.lineWidth = 5;
       ctx.strokeStyle = "black";
       drawRoundedRect(10,canvas.width * 0.6,canvas.height * 0.75 + 10,canvas.width * 0.4 - 5,canvas.height * 0.25 - 20);
@@ -74,25 +75,59 @@ function renderNPC() {
       ctx.save();
       ctx.clip();
       ctx.lineWidth = 10;
-      ctx.strokeStyle = npcActiveResult == 0 ? "gold" : "green";
-      ctx.fillStyle = npcActiveResult == 0 ? "#fff1b3" : "#99ff99";
-      ctx.fillRect(canvas.width * 0.6 + 1,canvas.height * 0.75 + 10,canvas.width * 0.2 - 5,canvas.height * 0.25 - 20);
-      ctx.strokeRect(canvas.width * 0.6 + 1,canvas.height * 0.75 + 10,canvas.width * 0.2 - 5,canvas.height * 0.25 - 20);
-      ctx.strokeStyle = npcActiveResult == -1 ? "gold" : "red";
-      ctx.fillStyle = npcActiveResult == -1 ? "#fff1b3" : "#ff9999";
-      ctx.fillRect(canvas.width * 0.8 - 1,canvas.height * 0.75 + 10,canvas.width * 0.2 - 5,canvas.height * 0.25 - 20);
-      ctx.strokeRect(canvas.width * 0.8 - 1,canvas.height * 0.75 + 10,canvas.width * 0.2 - 5,canvas.height * 0.25 - 20);
-      ctx.font = canvas.height * 0.06 + "px Menlo";
-      ctx.textAlign = "center";
-      ctx.fillStyle = "black";
-      ctx.fillText("YES",canvas.width * 0.7 - 1,canvas.height * 0.875);
-      ctx.fillText("NO",canvas.width * 0.9 - 4,canvas.height * 0.875);
-      ctx.lineWidth = 5;
-      ctx.strokeStyle = "black";
-      ctx.moveTo(canvas.width * 0.8 - 3,canvas.height * 0.75 + 10);
-      ctx.lineTo(canvas.width * 0.8 - 3,canvas.height - 10);
-      ctx.stroke();
+      if ( npcDialogueItem == 1 ) {
+        ctx.strokeStyle = npcActiveResult == 0 ? "gold" : "green";
+        ctx.fillStyle = npcActiveResult == 0 ? "#fff1b3" : "#99ff99";
+        ctx.fillRect(canvas.width * 0.6 + 1,canvas.height * 0.75 + 10,canvas.width * 0.2 - 5,canvas.height * 0.25 - 20);
+        ctx.strokeRect(canvas.width * 0.6 + 1,canvas.height * 0.75 + 10,canvas.width * 0.2 - 5,canvas.height * 0.25 - 20);
+        ctx.strokeStyle = npcActiveResult == -1 ? "gold" : "red";
+        ctx.fillStyle = npcActiveResult == -1 ? "#fff1b3" : "#ff9999";
+        ctx.fillRect(canvas.width * 0.8 - 1,canvas.height * 0.75 + 10,canvas.width * 0.2 - 5,canvas.height * 0.25 - 20);
+        ctx.strokeRect(canvas.width * 0.8 - 1,canvas.height * 0.75 + 10,canvas.width * 0.2 - 5,canvas.height * 0.25 - 20);
+        ctx.font = canvas.height * 0.06 + "px Menlo";
+        ctx.textAlign = "center";
+        ctx.fillStyle = "black";
+        ctx.fillText("YES",canvas.width * 0.7 - 1,canvas.height * 0.875);
+        ctx.fillText("NO",canvas.width * 0.9 - 4,canvas.height * 0.875);
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = "black";
+        ctx.beginPath();
+        ctx.moveTo(canvas.width * 0.8 - 3,canvas.height * 0.75 + 10);
+        ctx.lineTo(canvas.width * 0.8 - 3,canvas.height - 10);
+        ctx.stroke();
+      } else {
+        ctx.strokeStyle = npcHexaballType == 0 ? "gold" : "red";
+        ctx.fillStyle = npcHexaballType == 0 ? "#fff1b3" : "#ff9999";
+        ctx.fillRect(canvas.width * 0.6 + 1,canvas.height * 0.75 + 10,canvas.width * 0.4 - 5,canvas.height * 0.125 - 12);
+        ctx.strokeRect(canvas.width * 0.6 + 1,canvas.height * 0.75 + 10,canvas.width * 0.4 - 5,canvas.height * 0.125 - 12);
+        ctx.strokeStyle = npcHexaballType == 1 ? "gold" : "green";
+        ctx.fillStyle = npcHexaballType == 1 ? "#fff1b3" : "#99ff99";
+        ctx.fillRect(canvas.width * 0.6 + 1,canvas.height * 0.875 + 2,canvas.width * 0.2 - 6,canvas.height * 0.125 - 13);
+        ctx.strokeRect(canvas.width * 0.6 + 1,canvas.height * 0.875 + 2,canvas.width * 0.2 - 6,canvas.height * 0.125 - 13);
+        ctx.strokeStyle = npcHexaballType == 2 ? "gold" : "blue";
+        ctx.fillStyle = npcHexaballType == 2 ? "#fff1b3" : "#9999ff";
+        ctx.fillRect(canvas.width * 0.8,canvas.height * 0.875 + 2,canvas.width * 0.2 - 4,canvas.height * 0.125 - 13);
+        ctx.strokeRect(canvas.width * 0.8,canvas.height * 0.875 + 2,canvas.width * 0.2 - 4,canvas.height * 0.125 - 13);
+        ctx.font = canvas.height * 0.06 + "px Menlo";
+        ctx.textAlign = "center";
+        ctx.fillStyle = "black";
+        ctx.fillText(npcDialogueItem == 2 ? "HEXABALL" : "1",canvas.width * 0.8 - 3,canvas.height * 0.8425 - 4);
+        ctx.font = canvas.height * 0.05 + "px Menlo";
+        ctx.fillText(npcDialogueItem == 2 ? "ULTRA" : "6",canvas.width * 0.9 - 3,canvas.height * 0.9625 - 10);
+        ctx.fillText(npcDialogueItem == 2 ? "MASTER" : "3",canvas.width * 0.7 - 1,canvas.height * 0.9625 - 10);
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = "black";
+        ctx.beginPath();
+        ctx.moveTo(canvas.width * 0.6,canvas.height * 0.875);
+        ctx.lineTo(canvas.width - 4,canvas.height * 0.875);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(canvas.width * 0.8 - 3,canvas.height * 0.875);
+        ctx.lineTo(canvas.width * 0.8 - 3,canvas.height - 1);
+        ctx.stroke();
+      }
       ctx.restore();
+      ctx.lineWidth = 2;
     }
     npcFlashingToggle += 0.025;
     if ( npcFlashingToggle >= 2 ) npcFlashingToggle = 0;
@@ -100,7 +135,7 @@ function renderNPC() {
 }
 
 function handleKeyboardNPC(key) {
-  if ( key == "ArrowDown" && npcDialogueItem != 1 ) {
+  if ( key == "ArrowDown" && npcDialogueItem != 1 && ! (npcDialogueItem == 2 && npcData.type == 1) ) {
     if ( npcReturnState == 0 ) {
       npcCharDrawn = 0;
       npcDialogueItem++;
@@ -112,6 +147,15 @@ function handleKeyboardNPC(key) {
   if ( npcDialogueItem == 1 ) {
     if ( key == "ArrowLeft" || key == "ArrowRight" ) {
       npcActiveResult = npcActiveResult == 0 ? -1 : 0;
+    } else if ( key == " " ) {
+      npcCharDrawn = 0;
+      npcDialogueItem++;
+    }
+  } else if ( npcDialogueItem == 2 && npcData.type == 1 ) {
+    if ( key == "ArrowUp" || key == "ArrowDown" ) {
+      npcHexaballType = [1,0,0][npcHexaballType];
+    } else if ( key == "ArrowLeft" || key == "ArrowRight" ) {
+      npcHexaballType = [0,2,1][npcHexaballType];
     } else if ( key == " " ) {
       npcCharDrawn = 0;
       npcDialogueItem++;
