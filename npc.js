@@ -7,6 +7,7 @@ var npcDialogueItem;
 var npcReturnState = 0;
 var npcActiveResult = 0;
 var npcHexaballType = 0;
+var npcHexaballCount = 0;
 var npcDialogue = [
   [`Welcome to SWISS CLINIC!`,`May we heal\nyour army?`,[`Well, thanks for coming anyway!`,`..........`],`All done! Thank you for coming!`],
   [`Welcome to SWISS CLINIC!`,`Do you want\na hexaball?`,[`Well, thanks for coming anyway!`,"What kind?"],`How many?`,`something something`],
@@ -96,16 +97,17 @@ function renderNPC() {
         ctx.lineTo(canvas.width * 0.8 - 3,canvas.height - 10);
         ctx.stroke();
       } else {
-        ctx.strokeStyle = npcHexaballType == 0 ? "gold" : "red";
-        ctx.fillStyle = npcHexaballType == 0 ? "#fff1b3" : "#ff9999";
+        var int = npcDialogueItem == 2 ? npcHexaballType : npcHexaballCount;
+        ctx.strokeStyle = int == 0 ? "gold" : "red";
+        ctx.fillStyle = int == 0 ? "#fff1b3" : "#ff9999";
         ctx.fillRect(canvas.width * 0.6 + 1,canvas.height * 0.75 + 10,canvas.width * 0.4 - 5,canvas.height * 0.125 - 12);
         ctx.strokeRect(canvas.width * 0.6 + 1,canvas.height * 0.75 + 10,canvas.width * 0.4 - 5,canvas.height * 0.125 - 12);
-        ctx.strokeStyle = npcHexaballType == 1 ? "gold" : "green";
-        ctx.fillStyle = npcHexaballType == 1 ? "#fff1b3" : "#99ff99";
+        ctx.strokeStyle = int == 1 ? "gold" : "green";
+        ctx.fillStyle = int == 1 ? "#fff1b3" : "#99ff99";
         ctx.fillRect(canvas.width * 0.6 + 1,canvas.height * 0.875 + 2,canvas.width * 0.2 - 6,canvas.height * 0.125 - 13);
         ctx.strokeRect(canvas.width * 0.6 + 1,canvas.height * 0.875 + 2,canvas.width * 0.2 - 6,canvas.height * 0.125 - 13);
-        ctx.strokeStyle = npcHexaballType == 2 ? "gold" : "blue";
-        ctx.fillStyle = npcHexaballType == 2 ? "#fff1b3" : "#9999ff";
+        ctx.strokeStyle = int == 2 ? "gold" : "blue";
+        ctx.fillStyle = int == 2 ? "#fff1b3" : "#9999ff";
         ctx.fillRect(canvas.width * 0.8,canvas.height * 0.875 + 2,canvas.width * 0.2 - 4,canvas.height * 0.125 - 13);
         ctx.strokeRect(canvas.width * 0.8,canvas.height * 0.875 + 2,canvas.width * 0.2 - 4,canvas.height * 0.125 - 13);
         ctx.font = canvas.height * 0.06 + "px Menlo";
@@ -135,7 +137,7 @@ function renderNPC() {
 }
 
 function handleKeyboardNPC(key) {
-  if ( key == "ArrowDown" && npcDialogueItem != 1 && ! (npcDialogueItem == 2 && npcData.type == 1) ) {
+  if ( key == "ArrowDown" && npcDialogueItem != 1 && ! ((npcDialogueItem == 2 || npcDialogueItem == 3) && npcData.type == 1) ) {
     if ( npcReturnState == 0 ) {
       npcCharDrawn = 0;
       npcDialogueItem++;
@@ -156,6 +158,15 @@ function handleKeyboardNPC(key) {
       npcHexaballType = [1,0,0][npcHexaballType];
     } else if ( key == "ArrowLeft" || key == "ArrowRight" ) {
       npcHexaballType = [0,2,1][npcHexaballType];
+    } else if ( key == " " ) {
+      npcCharDrawn = 0;
+      npcDialogueItem++;
+    }
+  } else if ( npcDialogueItem == 3 && npcData.type == 1 ) {
+    if ( key == "ArrowUp" || key == "ArrowDown" ) {
+      npcHexaballCount = [1,0,0][npcHexaballCount];
+    } else if ( key == "ArrowLeft" || key == "ArrowRight" ) {
+      npcHexaballCount = [0,2,1][npcHexaballCount];
     } else if ( key == " " ) {
       npcCharDrawn = 0;
       npcDialogueItem++;
