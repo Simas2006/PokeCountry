@@ -10,7 +10,7 @@ var npcHexaballType = 0;
 var npcHexaballCount = 0;
 var npcDialogue = [
   [`Welcome to SWISS CLINIC!`,`May we heal\nyour army?`,[`Well, thanks for coming anyway!`,`..........`],`All done! Thank you for coming!`],
-  [`Welcome to SWISS CLINIC!`,`Do you want\na hexaball?`,[`Well, thanks for coming anyway!`,"What kind?"],`How many?`,`something something`],
+  [`Welcome to SWISS CLINIC!`,`Do you want\na hexaball?`,[`Well, thanks for coming anyway!`,"What kind?"],`How many?`,[`Sorry, but you can't afford that..`,`Thanks for stopping by!`]],
   [`Hey, I'll trade ya (P1) for (P2)!`,`Whattaya\nsay?`,[`Pleasure doing business with you!`,`Well, that's a shame...`]]
 ];
 
@@ -172,8 +172,14 @@ function handleKeyboardNPC(key) {
     } else if ( key == "ArrowLeft" || key == "ArrowRight" ) {
       npcHexaballCount = [0,2,1][npcHexaballCount];
     } else if ( key == " " ) {
+      var price = [2,4,6][npcHexaballType] * [1,3,6][npcHexaballCount];
+      npcActiveResult = price <= mapBattlePoints ? 0 : -1;
       npcCharDrawn = 0;
       npcDialogueItem++;
+      if ( npcActiveResult == 0 ) {
+        mapBattlePoints -= price;
+        mapObjects[0].battleData.hexaballs[npcHexaballType] += [1,3,6][npcHexaballCount];
+      }
     }
   }
 }
