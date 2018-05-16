@@ -32,6 +32,10 @@ function renderNPC() {
       }
       if ( selected instanceof Array ) npcTextToDraw = selected[npcActiveResult + 1];
       else npcTextToDraw = selected;
+      if ( npcData.type == 1 && (npcDialogueItem == 2 || npcDialogueItem == 3) ) {
+        var price = [2,4,6][npcHexaballType] * [1,3,6][npcHexaballCount];
+        npcTextToDraw += `\n(${price}BP for ${[1,3,6][npcHexaballCount]})`;
+      }
       if ( npcDialogueItem + 1 >= npcDialogue[npcData.type].length || npcActiveResult == -1 ) npcReturnState = 1;
       else npcReturnState = 0;
     } else {
