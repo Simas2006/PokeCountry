@@ -11,7 +11,7 @@ var npcHexaballCount = 0;
 var npcDialogue = [
   [`Welcome to SWISS CLINIC!`,`May we heal\nyour army?`,[`Well, thanks for coming anyway!`,`..........`],`All done! Thank you for coming!`],
   [`Welcome to SWISS CLINIC!`,`Do you want\na hexaball?`,[`Well, thanks for coming anyway!`,"What kind?"],`How many?`,[`Sorry, but you can't afford that..`,`Thanks for stopping by!`]],
-  [`Hey, I'll trade ya (P1) for (P2)!`,`Whattaya\nsay?`,[`Pleasure doing business with you!`,`Well, that's a shame...`]]
+  [`Hey, I'll trade ya (P1) for (P2)!`,`Whattaya\nsay?`,`Wait, you don't have that!`,[``,`Well, that's a shame...`,`Pleasure doing business with you!`]]
 ];
 
 /*
@@ -26,12 +26,12 @@ function renderNPC() {
   if ( npcTextDrawing ) {
     if ( npcData.type < 3 ) {
       var selected = npcDialogue[npcData.type][npcDialogueItem];
-      if ( npcData.trade ) {
-        selected = selected.replace("(P1)",names[npcData.trade[0]].toUpperCase());
-        selected = selected.replace("(P2)",names[npcData.trade[1]].toUpperCase());
-      }
       if ( selected instanceof Array ) npcTextToDraw = selected[npcActiveResult + 1];
       else npcTextToDraw = selected;
+      if ( npcData.type == 2 && npcDialogueItem == 0 ) {
+        npcTextToDraw = npcTextToDraw.replace("(P1)",names[npcData.trade[0]].toUpperCase());
+        npcTextToDraw = npcTextToDraw.replace("(P2)",names[npcData.trade[1]].toUpperCase());
+      }
       if ( npcData.type == 1 && (npcDialogueItem == 2 || npcDialogueItem == 3) ) {
         var price = [2,4,6][npcHexaballType] * [1,3,6][npcHexaballCount];
         npcTextToDraw += `\n(${price}BP for ${[1,3,6][npcHexaballCount]})`;
@@ -156,6 +156,39 @@ function handleKeyboardNPC(key) {
     } else if ( key == " " ) {
       npcCharDrawn = 0;
       npcDialogueItem++;
+      if ( npcActiveResult == 0 ) {
+        var countries = mapObjects[0].battleData.party;
+        if ( npcData.type == 0 ) {
+          for ( var i = 0; i < countries.length; i++ ) {
+            countries[i].hp = [100];
+            countries[i].pp = [100,100,100,100];
+          }
+          mapObjects[0].battleData.hp = [100];
+          mapObjects[0].battleData.pp = [100,100,100,100];
+        } else if ( npcData.type == 2 ) {
+          var index = -1;
+          for ( var i = 0; i < countries.length; i++ ) {
+            if ( countries[i].country == npcData.trade[0] ) index = i;
+          }
+          if ( index > -1 ) {
+            countries.splice(index,1);
+            countries.push({
+              country: npcData.trade[1],
+              group: groups[npcData.trade[1]],
+              moves: npcData.trade[2],
+              hp: [100],
+              pp: [100,100,100,100],
+            });
+            npcActiveResult = 1;
+            npcDialogueItem++;
+          } else {
+            npcActiveResult = 0;
+          }
+        }
+      } else if ( npcActiveResult == -1 && npcData.type == 2 ) {
+        npcActiveResult = 0;
+        npcDialogueItem++;
+      }
     }
   } else if ( npcDialogueItem == 2 && npcData.type == 1 ) {
     if ( key == "ArrowUp" || key == "ArrowDown" ) {

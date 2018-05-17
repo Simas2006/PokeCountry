@@ -82,9 +82,13 @@ var mapMetadata = [
         },
         npcData: {
           trigger: true,
-          type: 1,
+          type: 2,
           dialogue: null,
-          trade: null
+          trade: [1,4,[
+            [4,1],
+            [5,2],
+            [6,0],
+          ]]
         }
       }
     ],
@@ -122,8 +126,8 @@ var mapObjects = [
       country: 0,
       visibleCountry: 0,
       active: -1,
-      hp: [100],
-      pp: [100,100,100,100],
+      hp: [50],
+      pp: [50,50,50,50],
       hexaballs: [0,0,0],
       party: [
         {
@@ -135,8 +139,8 @@ var mapObjects = [
             [2,3],
             [3,4]
           ],
-          hp: [100],
-          pp: [100,100,100,100]
+          hp: [50],
+          pp: [50,50,50,50]
         },
         {
           country: 2,
@@ -147,8 +151,8 @@ var mapObjects = [
             [2,3],
             [3,4]
           ],
-          hp: [100],
-          pp: [100,100,100,100]
+          hp: [50],
+          pp: [50,50,50,50]
         },
         {
           country: 3,
@@ -159,8 +163,8 @@ var mapObjects = [
             [2,3],
             [3,4]
           ],
-          hp: [100],
-          pp: [100,100,100,100]
+          hp: [50],
+          pp: [50,50,50,50]
         }
       ]
     }

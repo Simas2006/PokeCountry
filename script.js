@@ -14,7 +14,8 @@ var flags = [
   `000020000`, // Vietnam
   `070777070`  // Switzerland
 ].map(item => item.split("").map(jtem => parseInt(jtem)));
-var names = ["USA","Germany","Russia","China","Canada","France","Belarus","Vietnam","Switzerland"];
+var names =  ["USA","Germany","Russia","China","Canada","France","Belarus","Vietnam","Switzerland"];
+var groups = [0,    1,        2,       3,      0,       1,       2,        3,        -1];
 var moves = [
   {
     name: "WWI",
