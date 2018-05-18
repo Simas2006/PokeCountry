@@ -448,6 +448,7 @@ function battleDialogueIncrement() {
       battleDialogueItem = 2 + battleMovementPlayer;
       battleDialogueIncrement();
     } else {
+      if ( battleWinner == 0 ) battlePlayers[1].onDefeat();
       resetBattle();
       mapTrainerComplete(battleWinner);
     }

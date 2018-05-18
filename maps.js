@@ -64,7 +64,10 @@ var mapMetadata = [
               hp: [100],
               pp: [100,100,100,100],
             }
-          ]
+          ],
+          onDefeat: function() {
+            console.log("finished");
+          }
         },
         npcData: {
           trigger: false
