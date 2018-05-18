@@ -3,12 +3,12 @@ var maps = [
    00000000000000000000
    00113111111111111100
    00111111111111111100
-   00111111111111111100
-   00111111111111111100
-   00111111111111111100
-   00111111111111111100
-   00222222222222222200
-   00222222222222222200
+   00111111444444444400
+   00111111411111111400
+   00111111411111111400
+   00111111411111111400
+   00111111111111111400
+   00111111444444444400
    00222222222222222200
    00222222222222222200
    00222222222222222200
@@ -200,7 +200,7 @@ function renderMap() {
         Math.min(Math.max(i + mapPosition[0] - mapZoomLevel / 2,0),map[0].length - 1),
         Math.min(Math.max(j + mapPosition[1] - mapZoomLevel / 2,0),map.length - 1)
       ];
-      ctx.fillStyle = ["lightblue","green","white","black"][map[Math.floor(sum[1])][Math.floor(sum[0])]];
+      ctx.fillStyle = ["lightblue","green","white","black","brown"][map[Math.floor(sum[1])][Math.floor(sum[0])]];
       ctx.fillRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))) - 1,unit + 2,unit + 2);
       if ( mapEnableGrid ) {
         ctx.strokeRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))),unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))),unit,unit);
@@ -251,10 +251,10 @@ function renderMap() {
     }
   }
   if ( mapCanMove ) {
-    if ( mapKeypresses.up ) mapPosition[1] -= 0.04;
-    if ( mapKeypresses.down ) mapPosition[1] += 0.04;
-    if ( mapKeypresses.left ) mapPosition[0] -= 0.04;
-    if ( mapKeypresses.right ) mapPosition[0] += 0.04;
+    if ( mapKeypresses.up && maps[mapIndex][Math.floor(mapPosition[1])][Math.round(mapPosition[0])] != 4 ) mapPosition[1] -= 0.04;
+    if ( mapKeypresses.down && maps[mapIndex][Math.ceil(mapPosition[1])][Math.round(mapPosition[0])] != 4 ) mapPosition[1] += 0.04;
+    if ( mapKeypresses.left && maps[mapIndex][Math.round(mapPosition[1])][Math.floor(mapPosition[0])] != 4 ) mapPosition[0] -= 0.04;
+    if ( mapKeypresses.right && maps[mapIndex][Math.round(mapPosition[1])][Math.ceil(mapPosition[0])] != 4 ) mapPosition[0] += 0.04;
   }
   if ( map[Math.round(mapPosition[1])][Math.round(mapPosition[0])] == 0 && ! mapInExit ) {
     mapCanMove = false;
@@ -345,7 +345,6 @@ function mapBattleTrainer(index) {
     },1250);
   },1250);
 }
-
 
 function mapTrainerComplete(winner) {
   blurActive = 1;
