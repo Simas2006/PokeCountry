@@ -197,9 +197,15 @@ function renderBattle() {
     battleShakingTimer += battleShakingResult === false ? -5 : 1;
   }
   ctx.fillStyle = "black";
-  if ( battleDialogueItem == 0 ) battleTextToDraw = `${names[battlePlayers[1].country].toUpperCase()} wants to battle!`;
+  if ( battleDialogueItem == 0 ) {
+    battlePlayers[0].visibleCountry = battlePlayers[0].country;
+    battleTextToDraw = `${names[battlePlayers[1].country].toUpperCase()} wants to battle!`;
+  }
   if ( battleDialogueItem == 1 ) battleTextToDraw = `${names[battlePlayers[1].country].toUpperCase()} sent out ${names[battlePlayers[1].party[battlePlayers[1].active].country].toUpperCase()}!`;
-  if ( battleDialogueItem == 2 ) battleTextToDraw = `Go ${names[battlePlayers[0].party[battlePlayers[0].active].country].toUpperCase()}!`;
+  if ( battleDialogueItem == 2 ) {
+    battlePlayers[0].active = battlePlayers[0].faintedCountries;
+    battleTextToDraw = `Go ${names[battlePlayers[0].party[battlePlayers[0].active].country].toUpperCase()}!`;
+  }
   if ( battleDialogueItem == 3 ) {
     ctx.lineWidth = 5;
     if ( battleOutOfPP ) battleTextToDraw = `There isn't\nenough PP!`;
@@ -316,6 +322,7 @@ function renderBattle() {
     else battleTextToDraw = `${["You",names[battlePlayers[1].country].toUpperCase()][battleWinner]} won the battle${["!","..."][battleWinner]}`;
     battleSwapPlayer = battleWinner <= -1 ? battleFaintPlayer : -1;
     battleSwapTime = 0.01;
+    if ( battleFaintPlayer == 0 ) battlePlayers[0].faintedCountries++;
     setTimeout(function() {
       if ( battleWinner <= -1 ) {
         if ( ! trigger ) selectedObject.active++;

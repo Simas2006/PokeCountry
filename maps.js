@@ -74,6 +74,53 @@ var mapMetadata = [
         }
       },
       {
+        country: 4,
+        x: 5,
+        y: 10,
+        direction: 0,
+        colored: true,
+        exists: true,
+        battleData: {
+          trigger: true,
+          country: 4,
+          visibleCountry: 4,
+          active: -1,
+          hp: [100],
+          pp: [100,100,100,100],
+          skill: 0.4,
+          party: [
+            {
+              country: 5,
+              group: 2,
+              moves: [
+                [4,1],
+                [5,2],
+                [6,0],
+              ],
+              hp: [100],
+              pp: [100,100,100,100],
+            },
+            {
+              country: 6,
+              group: 2,
+              moves: [
+                [4,1],
+                [5,2],
+                [6,0],
+              ],
+              hp: [100],
+              pp: [100,100,100,100],
+            }
+          ],
+          onDefeat: function() {
+            console.log("finished");
+          }
+        },
+        npcData: {
+          trigger: false
+        }
+      },
+      {
         country: 8,
         x: 5,
         y: 5,
@@ -128,6 +175,7 @@ var mapObjects = [
     battleData: {
       country: 0,
       visibleCountry: 0,
+      faintedCountries: 0,
       active: -1,
       hp: [50],
       pp: [50,50,50,50],

@@ -165,6 +165,7 @@ function handleKeyboardNPC(key) {
           }
           mapObjects[0].battleData.hp = [100];
           mapObjects[0].battleData.pp = [100,100,100,100];
+          mapObjects[0].battleData.faintedCountries = 0;
         } else if ( npcData.type == 2 ) {
           var index = -1;
           for ( var i = 0; i < countries.length; i++ ) {
