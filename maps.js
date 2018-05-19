@@ -7,7 +7,7 @@ var maps = [
    00111111411111111400
    00111111411111111400
    00111111411111111400
-   00111111111111111400
+   00111111411111111400
    00111111444444444400
    00222222222222222200
    00222222222222222200
@@ -113,7 +113,10 @@ var mapMetadata = [
             }
           ],
           onDefeat: function() {
-            console.log("finished");
+            maps[mapIndex][5][8] = 1;
+            maps[mapIndex][6][8] = 1;
+            maps[mapIndex][7][8] = 1;
+            maps[mapIndex][8][8] = 1;
           }
         },
         npcData: {
@@ -260,7 +263,8 @@ function renderMap() {
   }
   for ( var i = 0; i < mapObjects.length; i++ ) {
     if ( ! mapObjects[i].exists ) continue;
-    ctx.fillStyle = "#000000";
+    ctx.strokeStyle = i == 0 ? "gold" : "black";
+    ctx.fillStyle = "black";
     var sum = [
       mapObjects[i].x == -1 ? mapZoomLevel / 2 : mapObjects[i].x - mapPosition[0] + (mapZoomLevel / 2),
       mapObjects[i].y == -1 ? mapZoomLevel / 2 : mapObjects[i].y - mapPosition[1] + (mapZoomLevel / 2)
@@ -284,6 +288,7 @@ function renderMap() {
     ctx.restore();
     var directions = [[0.5,0.8,0.4],[0.375,0.675,0.525],[0.5,0.2,0.4],[0.375,0.675,0.3]];
     ctx.fillStyle = "white";
+    ctx.strokeStyle = "black";
     ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.arc(unit * (sum[0] + directions[mapObjects[i].direction][0]),unit * (sum[1] + directions[mapObjects[i].direction][2]),unit / 7,0,2 * Math.PI);
