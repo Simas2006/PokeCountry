@@ -328,7 +328,7 @@ function renderMap() {
         Math.sqrt(
           Math.pow(Math.abs(mapPosition[0] - mapObjects[i].x),2) +
           Math.pow(Math.abs(mapPosition[1] - mapObjects[i].y),2)
-        ) <= 3 && ! mapInExit
+        ) <= 3 && ! mapInExit && mapObjects[0].battleData.faintedCountries < mapObjects[0].battleData.party.length
       ) {
         if ( ! mapInvincible ) mapBattleTrainer(i);
         triggered = true;
