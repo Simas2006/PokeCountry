@@ -1,4 +1,4 @@
-var gamemode = "map";
+var gamemode = "bossfight";
 var blurActive = 0;
 var blurDirection = 0;
 var canvas,ctx;
@@ -90,8 +90,10 @@ window.onload = function() {
   canvas.height = Math.min(window.innerWidth,window.innerHeight);
   ctx = canvas.getContext("2d");
   setInterval(function() {
+    ctx.textBaseline = "alphabetic";
     if ( gamemode == "map" ) renderMap();
     if ( gamemode == "battle" ) renderBattle();
+    if ( gamemode == "bossfight" ) renderBossFight();
     renderNPC();
     if ( blurActive > 0 ) {
       var size = Math.min(canvas.width,canvas.height);
