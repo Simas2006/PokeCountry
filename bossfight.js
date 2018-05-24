@@ -117,6 +117,10 @@ function renderBossFight() {
   }
   ctx.restore();
   if ( bossShowMoves ) {
+    var damageTimers = bossPlayer.party[0].moves.map((item,index) => [item[1] / moves[item[0]].power[groups[bossAttackCountry]] * 5,index]).sort((a,b) => b[0] - a[0]);
+    for ( var i = 0; i < damageTimers.length; i++ ) {
+      bossPlayerSpeed[i] = 1 / ((3 - damageTimers[i][1]) * 2 + 1);
+    }
     ctx.strokeStyle = "black";
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
@@ -134,6 +138,7 @@ function renderBossFight() {
       ctx.fillRect(i <= 1 ? 0 : canvas.width * 0.6,canvas.height * (0.35 + (i % 2 == 0 ? 0 : 0.175)),canvas.width * 0.4 * (bossPlayerTimers[i] / 100),canvas.height * 0.025);
       bossPlayerTimers[i] = Math.max(bossPlayerTimers[i] - bossPlayerSpeed[i],0);
     }
+    if ( bossPlayerTimers.filter(item => item > 0).length <= 0 ) bossShowMoves = false;
   }
 }
 
