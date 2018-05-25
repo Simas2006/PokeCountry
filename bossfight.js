@@ -45,15 +45,17 @@ var bossPlayer = {
     }
   ]
 }
-var bossPlayerX = 350;
+var bossPlayerX = 1000;
 var bossPlayerLives = 3;
 var bossPlayerTimers = [100,100,100,100];
 var bossPlayerSpeed = [0.75,0.375,0.1875,0.09375];
 var bossAttackCountry = 0;
 var bossAttackStage = 0;
-var bossAttackLives = 3;
+var bossAttackLives = 100;
 var bossAttackX = 100;
-var bossAttackY = 100;
+var bossAttackY = 400;
+var bossBoltTimer = -1;
+var bossSelectedMove = -1;
 var bossShowBolt = false;
 var bossShowMoves = true;
 
@@ -62,17 +64,27 @@ function renderBossFight() {
   ctx.fillStyle = "white";
   ctx.fillRect(0,0,canvas.width,canvas.height);
   ctx.strokeRect(0,0,canvas.width,canvas.height);
-  ctx.lineWidth = 5;
   if ( bossShowBolt ) {
     ctx.strokeStyle = "yellow";
     drawLightningBolt(bossPlayerX,canvas.height * 0.9,bossAttackX,bossAttackY);
     ctx.stroke();
+    if ( bossBoltTimer >= 450 ) {
+      bossBoltTimer = -1;
+      bossShowBolt = false;
+      var move = bossPlayer.party[0].moves[bossSelectedMove];
+      var damage = move[1] / moves[move[0]].power[groups[bossAttackCountry]] * 5;
+      setTimeout(function() {
+        bossAttackLives -= damage;
+      },1000);
+    }
   }
+  ctx.lineWidth = 5;
   ctx.strokeStyle = "black";
   drawRoundedRect(10,canvas.width * 0.025,canvas.height * 0.895,canvas.width * 0.45,canvas.height * 0.08);
   ctx.stroke();
   ctx.save();
   ctx.clip();
+  ctx.fillStyle = "white";
   ctx.fillRect(canvas.width * 0.025,canvas.height * 0.895,canvas.width * 0.45,canvas.height * 0.08);
   ctx.fillStyle = ["white","red","yellow","green"][bossPlayerLives];
   ctx.fillRect(canvas.width * 0.025,canvas.height * 0.895,canvas.width * 0.15 * bossPlayerLives,canvas.height * 0.08);
@@ -81,9 +93,10 @@ function renderBossFight() {
   ctx.stroke();
   ctx.save();
   ctx.clip();
+  ctx.fillStyle = "white";
   ctx.fillRect(canvas.width * 0.025,canvas.height * 0.025,canvas.width * 0.95,canvas.height * 0.08);
-  ctx.fillStyle = ["white","red","yellow","green"][bossAttackLives];
-  ctx.fillRect(canvas.width * 0.025,canvas.height * 0.025,canvas.width * 0.3166 * bossAttackLives,canvas.height * 0.08);
+  ctx.fillStyle = ["white","red","yellow","green","green"][Math.floor((bossAttackLives) / 33) + 1];
+  ctx.fillRect(canvas.width * 0.025,canvas.height * 0.025,canvas.width * 0.0095 * bossAttackLives,canvas.height * 0.08);
   ctx.restore();
   ctx.lineWidth = 1;
   ctx.beginPath();
@@ -119,7 +132,7 @@ function renderBossFight() {
   if ( bossShowMoves ) {
     var damageTimers = bossPlayer.party[0].moves.map((item,index) => [item[1] / moves[item[0]].power[groups[bossAttackCountry]] * 5,index]).sort((a,b) => b[0] - a[0]);
     for ( var i = 0; i < damageTimers.length; i++ ) {
-      bossPlayerSpeed[i] = 1 / ((3 - damageTimers[i][1]) * 2 + 1);
+      bossPlayerSpeed[i] = ((3 - damageTimers[i][1]) * 2 + 1) * 0.1;
     }
     ctx.strokeStyle = "black";
     ctx.textAlign = "left";
@@ -143,11 +156,12 @@ function renderBossFight() {
 }
 
 function drawLightningBolt(x1,y1,x2,y2) {
+  bossBoltTimer++;
+  if ( bossBoltTimer < 50 ) return;
+  else ctx.lineWidth = bossBoltTimer % 75 >= 38 ? 10 : 25;
   ctx.beginPath();
-  var distance = Math.sqrt(Math.pow(x2 - x1,2) + Math.pow(y2 - y1,2)) / 10;
+  var distance = (Math.sqrt(Math.pow(x2 - x1,2) + Math.pow(y2 - y1,2))) / 10;
   var angle = Math.atan2(y2 - y1,x2 - x1) * 180 / Math.PI;
-  x1 += canvas.width * 0.1 * Math.cos(Math.PI * angle / 180);
-  y1 += canvas.width * 0.1 * Math.sin(Math.PI * angle / 180);
   ctx.moveTo(x1,y1);
   angle += 45;
   for ( var i = 0; i < 10; i++ ) {
@@ -155,5 +169,14 @@ function drawLightningBolt(x1,y1,x2,y2) {
     x1 += distance * 1.5 * Math.cos(Math.PI * angle / 180);
     y1 += distance * 1.5 * Math.sin(Math.PI * angle / 180);
     ctx.lineTo(x1,y1);
+  }
+}
+
+function handleKeyboardBoss(key,down) {
+  if ( ["1","2","3","4"].indexOf(key) > -1 ) {
+    bossSelectedMove = ["1","2","3","4"].indexOf(key);
+    bossBoltTimer = 0;
+    bossShowBolt = true;
+    bossShowMoves = false;
   }
 }
