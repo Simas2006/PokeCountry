@@ -83,7 +83,7 @@ function renderBossFight() {
   ctx.strokeRect(0,0,canvas.width,canvas.height);
   if ( bossShowBolt ) {
     ctx.strokeStyle = "yellow";
-    drawLightningBolt(bossPlayerX,canvas.height * 0.9,bossAttackX,bossAttackY);
+    drawLightningBolt(bossPlayerX,bossPlayerY,bossAttackX,bossAttackY);
     ctx.stroke();
     if ( bossBoltTimer >= 450 ) {
       bossBoltTimer = -1;
