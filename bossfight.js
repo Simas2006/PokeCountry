@@ -55,8 +55,9 @@ var bossPlayerSpeed = [0.75,0.375,0.1875,0.09375];
 var bossAttackCountry = 0;
 var bossAttackStage = 0;
 var bossAttackLives = 100;
-var bossAttackX = 100;
-var bossAttackY = 100;
+var bossAttackX = 0;
+var bossAttackY = 0;
+var bossAttackDirection = 1;
 var bossAttackCanMove = false;
 var bossBoltTimer = -1;
 var bossSelectedMove = -1;
@@ -186,6 +187,13 @@ function renderBossFight() {
   if ( bossKeypresses.left && bossPlayerX >= 0 ) bossPlayerXVel = -(canvas.height * 0.005);
   if ( bossKeypresses.right && bossPlayerX <= canvas.width ) bossPlayerXVel = canvas.height * 0.005;
   if ( bossKeypresses.space && bossPlayerY >= canvas.height * 0.9 ) bossPlayerYVel = canvas.height * 0.005;
+  if ( bossAttackLives > 66 ) {
+    var w = canvas.width;
+    bossAttackY = (w / 2) - Math.pow(bossAttackX - (w / 2),2) / (w / 3) + (w / 6);
+    bossAttackX += 3 * bossAttackDirection;
+    if ( bossAttackX >= 1125 ) bossAttackDirection = -1;
+    if ( bossAttackX <= -125 ) bossAttackDirection = 1;
+  }
 }
 
 function drawLightningBolt(x1,y1,x2,y2) {
