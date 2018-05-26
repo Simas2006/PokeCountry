@@ -111,12 +111,14 @@ window.onload = function() {
       if ( npcTextDrawing ) handleKeyboardNPC(event.key);
       else if ( gamemode == "map" ) handleKeyboardMap(event.key,true);
       else if ( gamemode == "battle" ) handleKeyboardBattle(event.key);
+      else if ( gamemode == "bossfight" ) handleKeyboardBoss(event.key,true);
     }
     if ( ["1","2","3","4"].indexOf(event.key) > -1 ) handleKeyboardBoss(event.key,true);
   }
   window.onkeyup = function(event) {
     if ( event.key.startsWith("Arrow") || event.key == " " ) {
       if ( gamemode == "map" ) handleKeyboardMap(event.key,false);
+      else if ( gamemode == "bossfight" ) handleKeyboardBoss(event.key,false);
     }
   }
 }

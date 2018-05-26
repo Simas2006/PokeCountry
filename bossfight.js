@@ -45,7 +45,10 @@ var bossPlayer = {
     }
   ]
 }
-var bossPlayerX = 1000;
+var bossPlayerX = 0;
+var bossPlayerY = 100;
+var bossPlayerXVel = 0;
+var bossPlayerYVel = 0;
 var bossPlayerLives = 3;
 var bossPlayerTimers = [100,100,100,100];
 var bossPlayerSpeed = [0.75,0.375,0.1875,0.09375];
@@ -60,8 +63,14 @@ var bossSelectedMove = -1;
 var bossShowBolt = false;
 var bossShowMoves = true;
 var bossMovesInitialized = false;
+var bossKeypresses = {
+  left: false,
+  right: false,
+  space: false
+}
 
 function renderBossFight() {
+  // rendering code
   ctx.strokeStyle = "black";
   ctx.fillStyle = "white";
   ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -120,7 +129,7 @@ function renderBossFight() {
   }
   ctx.restore();
   ctx.beginPath();
-  ctx.arc(bossPlayerX,canvas.height * 0.9,canvas.width * 0.1,0,2 * Math.PI);
+  ctx.arc(bossPlayerX,bossPlayerY,canvas.width * 0.1,0,2 * Math.PI);
   ctx.stroke();
   ctx.save();
   ctx.clip();
@@ -131,7 +140,7 @@ function renderBossFight() {
       (j % 3 - 1.5) * (canvas.width * 0.1 / 1.5)
     ];
     ctx.fillStyle = ["red","orange","yellow","green","blue","purple","black","white"][flag[j]];
-    ctx.fillRect(bossPlayerX + pixelPosition[0],canvas.height * 0.9 + pixelPosition[1],canvas.width * 0.1 / 1.5,canvas.width * 0.1 / 1.5);
+    ctx.fillRect(bossPlayerX + pixelPosition[0],bossPlayerY + pixelPosition[1],canvas.width * 0.1 / 1.5,canvas.width * 0.1 / 1.5);
   }
   ctx.restore();
   if ( bossShowMoves ) {
@@ -167,6 +176,16 @@ function renderBossFight() {
     }
     if ( bossPlayerTimers.filter(item => item > 0).length <= 0 ) bossShowMoves = false;
   }
+  // internal game code
+  bossPlayerX += bossPlayerXVel;
+  bossPlayerXVel += Math.sign(-bossPlayerXVel) * 0.05;
+  if ( (bossPlayerXVel > -0.05 && bossPlayerXVel < 0.05) || (bossPlayerX < 0 || bossPlayerX > canvas.width) ) bossPlayerXVel = 0;
+  bossPlayerY -= bossPlayerYVel;
+  if ( bossPlayerYVel > 0 || bossPlayerY < canvas.height * 0.9 ) bossPlayerYVel -= canvas.height * 0.00006;
+  if ( bossPlayerY >= canvas.height * 0.9 ) bossPlayerYVel = 0;
+  if ( bossKeypresses.left && bossPlayerX >= 0 ) bossPlayerXVel = -(canvas.height * 0.005);
+  if ( bossKeypresses.right && bossPlayerX <= canvas.width ) bossPlayerXVel = canvas.height * 0.005;
+  if ( bossKeypresses.space && bossPlayerY >= canvas.height * 0.9 ) bossPlayerYVel = canvas.height * 0.005;
 }
 
 function drawLightningBolt(x1,y1,x2,y2) {
@@ -193,5 +212,9 @@ function handleKeyboardBoss(key,down) {
     bossBoltTimer = 0;
     bossShowBolt = true;
     bossShowMoves = false;
+  }
+  if ( ["ArrowLeft","ArrowRight"," "].indexOf(key) > -1 ) {
+    var index = ["left","right","space"][["ArrowLeft","ArrowRight"," "].indexOf(key)];
+    bossKeypresses[index] = down;
   }
 }
