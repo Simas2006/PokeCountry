@@ -54,15 +54,20 @@ var bossPlayerTimers = [100,100,100,100];
 var bossPlayerSpeed = [0.75,0.375,0.1875,0.09375];
 var bossAttackCountry = 0;
 var bossAttackStage = 0;
-var bossAttackLives = 100;
-var bossAttackX = 0;
-var bossAttackY = 0;
+var bossAttackLives = 65;
+var bossAttackX = 500;
+var bossAttackY = 320;
 var bossAttackDirection = 1;
+var bossAttackSeparation = 0;
 var bossAttackCanMove = false;
+var bossSteelX = 500;
+var bossSteelY = 320;
+var bossSteelTrigger = 0;
+var bossSteelDirection = 0;
 var bossBoltTimer = -1;
 var bossSelectedMove = -1;
 var bossShowBolt = false;
-var bossShowMoves = true;
+var bossShowMoves = false;
 var bossMovesInitialized = false;
 var bossKeypresses = {
   left: false,
@@ -113,36 +118,36 @@ function renderBossFight() {
   ctx.fillStyle = ["white","red","yellow","green","green"][Math.floor((bossAttackLives) / 33) + 1];
   ctx.fillRect(canvas.width * 0.025,canvas.height * 0.025,canvas.width * 0.0095 * bossAttackLives,canvas.height * 0.08);
   ctx.restore();
+  ctx.lineWidth = canvas.width * 0.03;
+  ctx.strokeStyle = "gray";
+  ctx.fillStyle = "lightgray";
+  if ( bossSteelTrigger >= 2 && bossAttackLives < 66 && bossAttackLives > 32 ) {
+    ctx.beginPath();
+    ctx.arc(bossSteelX,bossSteelY,canvas.width * 0.088,0,2 * Math.PI);
+    ctx.fill();
+    ctx.stroke();
+  }
   ctx.lineWidth = 1;
   ctx.beginPath();
-  ctx.arc(bossAttackX,bossAttackY,canvas.width * 0.2,0,2 * Math.PI);
+  ctx.arc(bossAttackX,bossAttackY,canvas.width * 0.2,Math.PI,2 * Math.PI);
   ctx.stroke();
   ctx.save();
   ctx.clip();
-  var flag = flags[bossAttackCountry];
-  for ( var j = 0; j < flag.length; j++ ) {
-    var pixelPosition = [
-      (Math.floor(j / 3) - 1.5) * (canvas.width * 0.2 / 1.5),
-      (j % 3 - 1.5) * (canvas.width * 0.2 / 1.5)
-    ];
-    ctx.fillStyle = ["red","orange","yellow","green","blue","purple","black","white"][flag[j]];
-    ctx.fillRect(bossAttackX + pixelPosition[0],bossAttackY + pixelPosition[1],canvas.width * 0.2 / 1.5,canvas.width * 0.2 / 1.5);
-  }
+  drawFlag(flags[bossAttackCountry],bossAttackX,bossAttackY,canvas.width * 0.2);
+  ctx.restore();
+  ctx.beginPath();
+  ctx.arc(bossAttackX - bossAttackSeparation,bossAttackY,canvas.width * 0.2,0,Math.PI);
+  ctx.stroke();
+  ctx.save();
+  ctx.clip();
+  drawFlag(flags[bossAttackCountry],bossAttackX - bossAttackSeparation,bossAttackY,canvas.width * 0.2);
   ctx.restore();
   ctx.beginPath();
   ctx.arc(bossPlayerX,bossPlayerY,canvas.width * 0.1,0,2 * Math.PI);
   ctx.stroke();
   ctx.save();
   ctx.clip();
-  var flag = flags[bossPlayer.party[bossPlayer.active].country];
-  for ( var j = 0; j < flag.length; j++ ) {
-    var pixelPosition = [
-      (Math.floor(j / 3) - 1.5) * (canvas.width * 0.1 / 1.5),
-      (j % 3 - 1.5) * (canvas.width * 0.1 / 1.5)
-    ];
-    ctx.fillStyle = ["red","orange","yellow","green","blue","purple","black","white"][flag[j]];
-    ctx.fillRect(bossPlayerX + pixelPosition[0],bossPlayerY + pixelPosition[1],canvas.width * 0.1 / 1.5,canvas.width * 0.1 / 1.5);
-  }
+  drawFlag(flags[bossPlayer.party[0].country],bossPlayerX,bossPlayerY,canvas.width * 0.1);
   ctx.restore();
   if ( bossShowMoves ) {
     var availableMoves = bossPlayer.party[0].moves;
@@ -186,13 +191,32 @@ function renderBossFight() {
   if ( bossPlayerY >= canvas.height * 0.9 ) bossPlayerYVel = 0;
   if ( bossKeypresses.left && bossPlayerX >= 0 ) bossPlayerXVel = -(canvas.height * 0.005);
   if ( bossKeypresses.right && bossPlayerX <= canvas.width ) bossPlayerXVel = canvas.height * 0.005;
-  if ( bossKeypresses.space && bossPlayerY >= canvas.height * 0.9 ) bossPlayerYVel = canvas.height * 0.005;
-  if ( bossAttackLives > 66 ) {
+  if ( bossKeypresses.space && bossPlayerY >= canvas.height * 0.9 ) bossPlayerYVel = canvas.height * 0.006;
+  if ( bossAttackLives > 65 ) {
     var w = canvas.width;
     bossAttackY = (w / 2) - Math.pow(bossAttackX - (w / 2),2) / (w / 3) + (w / 6);
     bossAttackX += 3 * bossAttackDirection;
     if ( bossAttackX >= 1125 ) bossAttackDirection = -1;
     if ( bossAttackX <= -125 ) bossAttackDirection = 1;
+  } else if ( bossAttackLives > 32 ) {
+    if ( bossSteelTrigger > 0 ) {
+      if ( bossAttackSeparation < canvas.width * 0.4 && bossSteelY < canvas.height * 0.8925 ) {
+        bossSteelX = bossAttackX;
+        bossSteelY = bossAttackY;
+        bossAttackSeparation += 3;
+        bossSteelTrigger = 2;
+      } else if ( bossSteelY < canvas.height * 0.8925 ) {
+        bossSteelY += 5;
+        bossSteelDirection = Math.sign(bossPlayerX - bossSteelX);
+      } else {
+        if ( bossAttackSeparation > 0 ) bossAttackSeparation -= 3;
+        bossSteelX += 3 * bossSteelDirection;
+        if ( bossSteelX < -100 || bossSteelX > canvas.width + 100 ) {
+          bossSteelY = 0;
+          bossSteelTrigger = 0;
+        }
+      }
+    }
   }
 }
 
@@ -210,6 +234,17 @@ function drawLightningBolt(x1,y1,x2,y2) {
     x1 += distance * 1.5 * Math.cos(Math.PI * angle / 180);
     y1 += distance * 1.5 * Math.sin(Math.PI * angle / 180);
     ctx.lineTo(x1,y1);
+  }
+}
+
+function drawFlag(flag,x,y,radius) {
+  for ( var j = 0; j < flag.length; j++ ) {
+    var pixelPosition = [
+      (Math.floor(j / 3) - 1.5) * (radius / 1.5),
+      (j % 3 - 1.5) * (radius / 1.5)
+    ];
+    ctx.fillStyle = ["red","orange","yellow","green","blue","purple","black","white"][flag[j]];
+    ctx.fillRect(x + pixelPosition[0],y + pixelPosition[1],radius / 1.5,radius / 1.5);
   }
 }
 
