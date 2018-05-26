@@ -53,13 +53,13 @@ var bossPlayerLives = 3;
 var bossPlayerTimers = [100,100,100,100];
 var bossPlayerSpeed = [0.75,0.375,0.1875,0.09375];
 var bossAttackCountry = 0;
-var bossAttackStage = 0;
 var bossAttackLives = 65;
 var bossAttackX = 500;
 var bossAttackY = 320;
 var bossAttackDirection = 1;
 var bossAttackSeparation = 0;
-var bossAttackCanMove = false;
+var bossAttackCanMove = true;
+var bossAttackCount = 0;
 var bossSteelX = 500;
 var bossSteelY = 320;
 var bossSteelTrigger = 0;
@@ -180,7 +180,10 @@ function renderBossFight() {
       ctx.fillRect(i <= 1 ? 0 : canvas.width * 0.6,canvas.height * (0.35 + (i % 2 == 0 ? 0 : 0.175)),canvas.width * 0.4 * (bossPlayerTimers[i] / 100),canvas.height * 0.025);
       bossPlayerTimers[i] = Math.max(bossPlayerTimers[i] - bossPlayerSpeed[i],0);
     }
-    if ( bossPlayerTimers.filter(item => item > 0).length <= 0 ) bossShowMoves = false;
+    if ( bossPlayerTimers.filter(item => item > 0).length <= 0 ) {
+      bossShowMoves = false;
+      bossAttackCanMove = true;
+    }
   }
   // internal game code
   bossPlayerX += bossPlayerXVel;
@@ -192,7 +195,7 @@ function renderBossFight() {
   if ( bossKeypresses.left && bossPlayerX >= 0 ) bossPlayerXVel = -(canvas.height * 0.005);
   if ( bossKeypresses.right && bossPlayerX <= canvas.width ) bossPlayerXVel = canvas.height * 0.005;
   if ( bossKeypresses.space && bossPlayerY >= canvas.height * 0.9 ) bossPlayerYVel = canvas.height * 0.006;
-  if ( bossAttackLives > 65 ) {
+  if ( bossAttackLives > 65 && bossAttackCanMove ) {
     var w = canvas.width;
     bossAttackY = (w / 2) - Math.pow(bossAttackX - (w / 2),2) / (w / 3) + (w / 6);
     bossAttackX += 3 * bossAttackDirection;
@@ -214,7 +217,23 @@ function renderBossFight() {
         if ( bossSteelX < -100 || bossSteelX > canvas.width + 100 ) {
           bossSteelY = 0;
           bossSteelTrigger = 0;
+          bossAttackCanMove = true;
         }
+      }
+    } else if ( bossAttackCanMove ) {
+      if ( bossAttackX > bossPlayerX + canvas.width * 0.2 && bossAttackDirection == 1 ) bossAttackDirection = -1;
+      else if ( bossAttackX < bossPlayerX - canvas.width * 0.2 && bossAttackDirection == -1 ) bossAttackDirection = 1;
+      bossAttackX += 3.5 * bossAttackDirection;
+      if ( Math.abs(bossAttackX - bossPlayerX) <= 5 ) {
+        if ( bossAttackCount == 1 ) {
+          bossSteelTrigger = 1;
+          bossAttackCanMove = false;
+        } else if ( bossAttackCount == 3 ) {
+          bossShowMoves = true;
+          bossAttackCanMove = false;
+        }
+        bossAttackCount++;
+        bossAttackCount %= 4;
       }
     }
   }
