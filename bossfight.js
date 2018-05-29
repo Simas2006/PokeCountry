@@ -238,7 +238,7 @@ function renderBossFight() {
         bossAttackCount %= 4;
       }
     }
-  } else {
+  } else if ( bossAttackCanMove ) {
     if ( bossAttackX > bossPlayerX + canvas.width * 0.2 && bossAttackY >= canvas.height * 0.8 && bossAttackDirection == 1 ) bossAttackDirection = -1;
     else if ( bossAttackX < bossPlayerX - canvas.width * 0.2 && bossAttackY >= canvas.height * 0.8 && bossAttackDirection == -1 ) bossAttackDirection = 1;
     bossAttackX += 3 * bossAttackDirection;
@@ -247,6 +247,14 @@ function renderBossFight() {
     bossAttackY -= 3 * bossAttackYVel;
     if ( bossAttackYVel > 0 || bossAttackY < canvas.height * 0.9 ) bossAttackYVel -= canvas.height * 0.00006;
     if ( bossAttackY >= canvas.height * 0.8 ) bossAttackYVel = 5;
+    if ( bossAttackYVel > 0 && bossAttackYVel < 0.05 ) {
+      if ( bossAttackCount == 1 ) {
+        bossShowMoves = true;
+        bossAttackCanMove = false;
+      }
+      bossAttackCount++;
+      bossAttackCount %= 3;
+    }
   }
 }
 
