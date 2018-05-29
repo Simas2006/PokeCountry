@@ -45,7 +45,7 @@ var bossPlayer = {
     }
   ]
 }
-var bossPlayerX = 500;
+var bossPlayerX = 0;
 var bossPlayerY = 100;
 var bossPlayerXVel = 0;
 var bossPlayerYVel = 0;
@@ -60,7 +60,8 @@ var bossAttackY = 320;
 var bossAttackYVel = 0;
 var bossAttackDirection = 1;
 var bossAttackSeparation = 0;
-var bossAttackCanMove = true;
+var bossAttackCanMove = false;
+var bossAttackRotation = 0;
 var bossAttackCount = 0;
 var bossSteelX = 500;
 var bossSteelY = 320;
@@ -92,6 +93,7 @@ function renderBossFight() {
       bossShowBolt = false;
       bossMovesInitialized = false;
       bossPlayerTimers = [100,100,100,100];
+      bossAttackRotation = 1;
       var move = bossPlayer.party[0].moves[bossSelectedMove];
       var damage = move[1] / moves[move[0]].power[groups[bossAttackCountry]] * 5;
       setTimeout(function() {
@@ -135,21 +137,21 @@ function renderBossFight() {
   ctx.stroke();
   ctx.save();
   ctx.clip();
-  drawFlag(flags[bossAttackCountry],bossAttackX,bossAttackY,canvas.width * 0.2);
+  drawFlag(flags[bossAttackCountry],bossAttackX,bossAttackY,canvas.width * 0.2,Math.floor(bossAttackRotation / 25));
   ctx.restore();
   ctx.beginPath();
   ctx.arc(bossAttackX - bossAttackSeparation,bossAttackY,canvas.width * 0.2,0,Math.PI);
   ctx.stroke();
   ctx.save();
   ctx.clip();
-  drawFlag(flags[bossAttackCountry],bossAttackX - bossAttackSeparation,bossAttackY,canvas.width * 0.2);
+  drawFlag(flags[bossAttackCountry],bossAttackX - bossAttackSeparation,bossAttackY,canvas.width * 0.2,Math.floor(bossAttackRotation / 25));
   ctx.restore();
   ctx.beginPath();
   ctx.arc(bossPlayerX,bossPlayerY,canvas.width * 0.1,0,2 * Math.PI);
   ctx.stroke();
   ctx.save();
   ctx.clip();
-  if ( bossPlayerInviniciblity % 10 > 0 || bossPlayerInviniciblity == 0 ) drawFlag(flags[bossPlayer.party[0].country],bossPlayerX,bossPlayerY,canvas.width * 0.1);
+  if ( bossPlayerInviniciblity % 10 > 0 || bossPlayerInviniciblity == 0 ) drawFlag(flags[bossPlayer.party[0].country],bossPlayerX,bossPlayerY,canvas.width * 0.1,0);
   ctx.restore();
   if ( bossShowMoves ) {
     var availableMoves = bossPlayer.party[0].moves;
@@ -189,6 +191,8 @@ function renderBossFight() {
     }
   }
   // internal game code
+  if ( bossAttackRotation > 0 ) bossAttackRotation++;
+  if ( bossAttackRotation >= 125 ) bossAttackRotation = 0;
   bossPlayerX += bossPlayerXVel;
   bossPlayerXVel += Math.sign(-bossPlayerXVel) * 0.05;
   if ( (bossPlayerXVel > -0.05 && bossPlayerXVel < 0.05) || (bossPlayerX < 0 || bossPlayerX > canvas.width) ) bossPlayerXVel = 0;
@@ -282,13 +286,17 @@ function drawLightningBolt(x1,y1,x2,y2) {
   }
 }
 
-function drawFlag(flag,x,y,radius) {
-  for ( var j = 0; j < flag.length; j++ ) {
-    var pixelPosition = [
-      (Math.floor(j / 3) - 1.5) * (radius / 1.5),
-      (j % 3 - 1.5) * (radius / 1.5)
-    ];
-    ctx.fillStyle = ["red","orange","yellow","green","blue","purple","black","white"][flag[j]];
+function drawFlag(flag,x,y,radius,rotation) {
+  var matrices = [
+    [[0,0],[0,1],[0,2],[1,0],[1,1],[1,2],[2,0],[2,1],[2,2]],
+    [[2,0],[1,0],[0,0],[2,1],[1,1],[0,1],[2,2],[1,2],[0,2]],
+    [[2,2],[2,1],[2,0],[1,2],[1,1],[1,0],[0,2],[0,1],[0,0]],
+    [[0,2],[1,2],[2,2],[0,1],[1,1],[2,1],[0,0],[1,0],[2,0]]
+  ];
+  for ( var i = 0; i < flag.length; i++ ) {
+    var pos = matrices[rotation % 4][i];
+    var pixelPosition = [(pos[0] - 1.5) * (radius / 1.5),(pos[1] - 1.5) * (radius / 1.5)];
+    ctx.fillStyle = ["red","orange","yellow","green","blue","purple","black","white"][flag[i]];
     ctx.fillRect(x + pixelPosition[0],y + pixelPosition[1],radius / 1.5,radius / 1.5);
   }
 }
