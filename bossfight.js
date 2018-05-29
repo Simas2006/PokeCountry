@@ -50,6 +50,7 @@ var bossPlayerY = 100;
 var bossPlayerXVel = 0;
 var bossPlayerYVel = 0;
 var bossPlayerLives = 3;
+var bossPlayerInviniciblity = 0;
 var bossPlayerTimers = [100,100,100,100];
 var bossPlayerSpeed = [0.75,0.375,0.1875,0.09375];
 var bossAttackCountry = 0;
@@ -107,7 +108,7 @@ function renderBossFight() {
   ctx.clip();
   ctx.fillStyle = "white";
   ctx.fillRect(canvas.width * 0.025,canvas.height * 0.895,canvas.width * 0.45,canvas.height * 0.08);
-  ctx.fillStyle = ["white","red","yellow","green"][bossPlayerLives];
+  ctx.fillStyle = ["white","red","yellow","green"][bossPlayerLives + (bossPlayerInviniciblity % 10 == 0 && bossPlayerInviniciblity != 0 ? 1 : 0)];
   ctx.fillRect(canvas.width * 0.025,canvas.height * 0.895,canvas.width * 0.15 * bossPlayerLives,canvas.height * 0.08);
   ctx.restore();
   drawRoundedRect(10,canvas.width * 0.025,canvas.height * 0.025,canvas.width * 0.95,canvas.height * 0.08);
@@ -148,7 +149,7 @@ function renderBossFight() {
   ctx.stroke();
   ctx.save();
   ctx.clip();
-  drawFlag(flags[bossPlayer.party[0].country],bossPlayerX,bossPlayerY,canvas.width * 0.1);
+  if ( bossPlayerInviniciblity % 10 > 0 || bossPlayerInviniciblity == 0 ) drawFlag(flags[bossPlayer.party[0].country],bossPlayerX,bossPlayerY,canvas.width * 0.1);
   ctx.restore();
   if ( bossShowMoves ) {
     var availableMoves = bossPlayer.party[0].moves;
@@ -255,6 +256,12 @@ function renderBossFight() {
       bossAttackCount++;
       bossAttackCount %= 3;
     }
+  }
+  if ( Math.sqrt(Math.pow(bossAttackX - bossPlayerX,2) + Math.pow(bossAttackY - bossPlayerY,2)) <= canvas.width * 0.3 && bossPlayerInviniciblity <= 0 ) {
+    bossPlayerLives--;
+    bossPlayerInviniciblity = 100;
+  } else if ( bossPlayerInviniciblity > 0 ) {
+    bossPlayerInviniciblity--;
   }
 }
 
