@@ -45,7 +45,7 @@ var bossPlayer = {
     }
   ]
 }
-var bossPlayerX = 0;
+var bossPlayerX = 500;
 var bossPlayerY = 100;
 var bossPlayerXVel = 0;
 var bossPlayerYVel = 0;
@@ -53,9 +53,10 @@ var bossPlayerLives = 3;
 var bossPlayerTimers = [100,100,100,100];
 var bossPlayerSpeed = [0.75,0.375,0.1875,0.09375];
 var bossAttackCountry = 0;
-var bossAttackLives = 65;
+var bossAttackLives = 32;
 var bossAttackX = 500;
 var bossAttackY = 320;
+var bossAttackYVel = 0;
 var bossAttackDirection = 1;
 var bossAttackSeparation = 0;
 var bossAttackCanMove = true;
@@ -182,6 +183,7 @@ function renderBossFight() {
     }
     if ( bossPlayerTimers.filter(item => item > 0).length <= 0 ) {
       bossShowMoves = false;
+      bossPlayerTimers = [100,100,100,100];
       bossAttackCanMove = true;
     }
   }
@@ -236,6 +238,15 @@ function renderBossFight() {
         bossAttackCount %= 4;
       }
     }
+  } else {
+    if ( bossAttackX > bossPlayerX + canvas.width * 0.2 && bossAttackY >= canvas.height * 0.8 && bossAttackDirection == 1 ) bossAttackDirection = -1;
+    else if ( bossAttackX < bossPlayerX - canvas.width * 0.2 && bossAttackY >= canvas.height * 0.8 && bossAttackDirection == -1 ) bossAttackDirection = 1;
+    bossAttackX += 3 * bossAttackDirection;
+    if ( bossAttackX > bossPlayerX + canvas.width * 0.2 && bossAttackYVel == 0 && bossAttackDirection == 1 ) bossAttackDirection = -1;
+    else if ( bossAttackX < bossPlayerX - canvas.width * 0.2 && bossAttackYVel == 0 && bossAttackDirection == -1 ) bossAttackDirection = 1;
+    bossAttackY -= 3 * bossAttackYVel;
+    if ( bossAttackYVel > 0 || bossAttackY < canvas.height * 0.9 ) bossAttackYVel -= canvas.height * 0.00006;
+    if ( bossAttackY >= canvas.height * 0.8 ) bossAttackYVel = 5;
   }
 }
 
