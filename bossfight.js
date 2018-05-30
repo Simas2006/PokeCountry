@@ -54,13 +54,13 @@ var bossPlayerInviniciblity = 0;
 var bossPlayerTimers = [100,100,100,100];
 var bossPlayerSpeed = [0.75,0.375,0.1875,0.09375];
 var bossAttackCountry = 0;
-var bossAttackLives = 32;
-var bossAttackX = 500;
+var bossAttackLives = 66;
+var bossAttackX = 0;
 var bossAttackY = 320;
 var bossAttackYVel = 0;
 var bossAttackDirection = 1;
 var bossAttackSeparation = 0;
-var bossAttackCanMove = false;
+var bossAttackCanMove = true;
 var bossAttackRotation = 0;
 var bossAttackCount = 0;
 var bossSteelX = 500;
@@ -208,6 +208,15 @@ function renderBossFight() {
     bossAttackX += 3 * bossAttackDirection;
     if ( bossAttackX >= 1125 ) bossAttackDirection = -1;
     if ( bossAttackX <= -125 ) bossAttackDirection = 1;
+    if ( bossAttackY > canvas.height * 0.25 && bossAttackY < canvas.height * 0.26 ) {
+      console.log("here")
+      bossAttackCount++;
+      bossAttackCount %= 3;
+      if ( bossAttackCount == 2 ) {
+        bossShowMoves = true;
+        bossAttackCanMove = false;
+      }
+    }
   } else if ( bossAttackLives > 32 ) {
     if ( bossSteelTrigger > 0 ) {
       if ( bossAttackSeparation < canvas.width * 0.4 && bossSteelY < canvas.height * 0.8925 ) {
