@@ -45,7 +45,7 @@ var bossPlayer = {
     }
   ]
 }
-var bossPlayerX = 0;
+var bossPlayerX = 500;
 var bossPlayerY = 100;
 var bossPlayerXVel = 0;
 var bossPlayerYVel = 0;
@@ -54,7 +54,7 @@ var bossPlayerInviniciblity = 0;
 var bossPlayerTimers = [100,100,100,100];
 var bossPlayerSpeed = [0.75,0.375,0.1875,0.09375];
 var bossAttackCountry = 0;
-var bossAttackLives = 66;
+var bossAttackLives = 100;
 var bossAttackX = 0;
 var bossAttackY = 320;
 var bossAttackYVel = 0;
@@ -209,7 +209,6 @@ function renderBossFight() {
     if ( bossAttackX >= 1125 ) bossAttackDirection = -1;
     if ( bossAttackX <= -125 ) bossAttackDirection = 1;
     if ( bossAttackY > canvas.height * 0.25 && bossAttackY < canvas.height * 0.26 ) {
-      console.log("here")
       bossAttackCount++;
       bossAttackCount %= 3;
       if ( bossAttackCount == 2 ) {
@@ -270,7 +269,7 @@ function renderBossFight() {
       bossAttackCount %= 3;
     }
   }
-  if ( Math.sqrt(Math.pow(bossAttackX - bossPlayerX,2) + Math.pow(bossAttackY - bossPlayerY,2)) <= canvas.width * 0.3 && bossPlayerInviniciblity <= 0 ) {
+  if ( (Math.sqrt(Math.pow(bossAttackX - bossPlayerX,2) + Math.pow(bossAttackY - bossPlayerY,2)) <= canvas.width * 0.3 || Math.sqrt(Math.pow(bossSteelX - bossPlayerX,2) + Math.pow(bossSteelY - bossPlayerY,2)) <= canvas.width * 0.103) && bossPlayerInviniciblity <= 0 ) { // TODO: make steelie give damage & playtest!
     bossPlayerLives--;
     bossPlayerInviniciblity = 100;
   } else if ( bossPlayerInviniciblity > 0 ) {
