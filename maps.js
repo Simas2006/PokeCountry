@@ -1,169 +1,20 @@
 var maps = [
-  `00000000000000000000
-   00000000000000000000
-   00113111111111111100
-   00111111111111111100
-   00111111444444444400
-   00111111411111111400
-   00111111411111111400
-   00111111411111111400
-   00111111411111111400
-   00111111444444444400
-   00222222222222222200
-   00222222222222222200
-   00222222222222222200
-   00222222222222222200
-   00000000000000000000
-   00000000000000000000`,
-  `00000
-   01110
-   01130
-   01110
-   00000`
+  `000000
+   000000
+   000000
+   000000
+   000000
+   000000`
 ].map(item => item.split("\n").map(jtem => jtem.trim().split("").map(ktem => parseInt(ktem))));
-// Groups: 0-3 [US,Russia,Europe,China]
-// Limit move levels to 1 <= x <= 5, except SURRENDER = 0
 var mapMetadata = [
   {
-    trainers: [
-      {
-        country: 4,
-        x: 2,
-        y: 10,
-        direction: 0,
-        colored: true,
-        exists: true,
-        battleData: {
-          trigger: true,
-          country: 4,
-          visibleCountry: 4,
-          active: -1,
-          hp: [100],
-          pp: [100,100,100,100],
-          skill: 0.4,
-          party: [
-            {
-              country: 5,
-              group: 2,
-              moves: [
-                [4,1],
-                [5,2],
-                [6,0],
-              ],
-              hp: [100],
-              pp: [100,100,100,100],
-            },
-            {
-              country: 6,
-              group: 2,
-              moves: [
-                [4,1],
-                [5,2],
-                [6,0],
-              ],
-              hp: [100],
-              pp: [100,100,100,100],
-            }
-          ],
-          onDefeat: function() {
-            console.log("finished");
-          }
-        },
-        npcData: {
-          trigger: false
-        }
-      },
-      {
-        country: 4,
-        x: 5,
-        y: 10,
-        direction: 0,
-        colored: true,
-        exists: true,
-        battleData: {
-          trigger: true,
-          country: 4,
-          visibleCountry: 4,
-          active: -1,
-          hp: [100],
-          pp: [100,100,100,100],
-          skill: 0.4,
-          party: [
-            {
-              country: 5,
-              group: 2,
-              moves: [
-                [4,1],
-                [5,2],
-                [6,0],
-              ],
-              hp: [100],
-              pp: [100,100,100,100],
-            },
-            {
-              country: 6,
-              group: 2,
-              moves: [
-                [4,1],
-                [5,2],
-                [6,0],
-              ],
-              hp: [100],
-              pp: [100,100,100,100],
-            }
-          ],
-          onDefeat: function() {
-            maps[mapIndex][5][8] = 1;
-            maps[mapIndex][6][8] = 1;
-            maps[mapIndex][7][8] = 1;
-            maps[mapIndex][8][8] = 1;
-          }
-        },
-        npcData: {
-          trigger: false
-        }
-      },
-      {
-        country: 8,
-        x: 5,
-        y: 5,
-        direction: 0,
-        exists: true,
-        colored: true,
-        battleData: {
-          trigger: false
-        },
-        npcData: {
-          trigger: true,
-          type: 2,
-          dialogue: null,
-          trade: [1,4,[
-            [4,1],
-            [5,2],
-            [6,0],
-          ]]
-        }
-      }
-    ],
-    warps: [
-      {
-        inloc: [4,2],
-        outloc: [2,2],
-        world: 1
-      }
-    ],
-    reset: [5,2]
-  },
-  {
     trainers: [],
-    warps: [
-      {
-        inloc: [3,2],
-        outloc: [2,2],
-        world: 0
-      }
-    ],
-    reset: [2,2]
+    warps: [],
+    tileData: {
+      tileset: ["black","gray"],
+      walls: [0,1]
+    },
+    reset: [1,1]
   }
 ];
 
@@ -254,7 +105,7 @@ function renderMap() {
         Math.min(Math.max(i + mapPosition[0] - mapZoomLevel / 2,0),map[0].length - 1),
         Math.min(Math.max(j + mapPosition[1] - mapZoomLevel / 2,0),map.length - 1)
       ];
-      ctx.fillStyle = ["lightblue","green","white","black","brown"][map[Math.floor(sum[1])][Math.floor(sum[0])]];
+      ctx.fillStyle = mapMetadata[mapIndex].tileData.tileset[map[Math.floor(sum[1])][Math.floor(sum[0])]] || "white";
       ctx.fillRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))) - 1,unit + 2,unit + 2);
       if ( mapEnableGrid ) {
         ctx.strokeRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))),unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))),unit,unit);
@@ -307,10 +158,11 @@ function renderMap() {
     }
   }
   if ( mapCanMove ) {
-    if ( mapKeypresses.up && maps[mapIndex][Math.floor(mapPosition[1])][Math.round(mapPosition[0])] != 4 ) mapPosition[1] -= 0.04;
-    if ( mapKeypresses.down && maps[mapIndex][Math.ceil(mapPosition[1])][Math.round(mapPosition[0])] != 4 ) mapPosition[1] += 0.04;
-    if ( mapKeypresses.left && maps[mapIndex][Math.round(mapPosition[1])][Math.floor(mapPosition[0])] != 4 ) mapPosition[0] -= 0.04;
-    if ( mapKeypresses.right && maps[mapIndex][Math.round(mapPosition[1])][Math.ceil(mapPosition[0])] != 4 ) mapPosition[0] += 0.04;
+    var walls = mapMetadata[mapIndex].tileData.walls;
+    if ( mapKeypresses.up && walls.indexOf(maps[mapIndex][Math.floor(mapPosition[1])][Math.round(mapPosition[0])]) <= -1 ) mapPosition[1] -= 0.04;
+    if ( mapKeypresses.down && walls.indexOf(maps[mapIndex][Math.ceil(mapPosition[1])][Math.round(mapPosition[0])]) <= -1 ) mapPosition[1] += 0.04;
+    if ( mapKeypresses.left && walls.indexOf(maps[mapIndex][Math.round(mapPosition[1])][Math.floor(mapPosition[0])]) <= -1 ) mapPosition[0] -= 0.04;
+    if ( mapKeypresses.right && walls.indexOf(maps[mapIndex][Math.round(mapPosition[1])][Math.ceil(mapPosition[0])]) <= -1 ) mapPosition[0] += 0.04;
   }
   if ( map[Math.round(mapPosition[1])][Math.round(mapPosition[0])] == 0 && ! mapInExit ) {
     mapCanMove = false;

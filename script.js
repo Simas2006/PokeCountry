@@ -1,4 +1,4 @@
-var gamemode = "bossfight";
+var gamemode = "map";
 var blurActive = 0;
 var blurDirection = 0;
 var canvas,ctx;
