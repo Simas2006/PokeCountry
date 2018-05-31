@@ -9,9 +9,9 @@ var maps = [
   0000000014444444100000000
   0000000001444441000000000
   0000000000144410000000000
+  0000000000166610000000000
   0000000000144410000000000
-  0000000000144410000000000
-  0000000000144410000000000
+  0000000000166610000000000
   0000000000144410000000000
   0000000011222331100000000
   0000000122222333310000000
@@ -26,19 +26,25 @@ var maps = [
   0000001555555555551000000
   0000001555555555551000000
   0000000155555555510000000
-  0000000011555551100000000
+  0000000011550551100000000
   0000000000111110000000000
   0000000000000000000000000`
 ].map(item => item.split("\n").map(jtem => jtem.trim().split("").map(ktem => parseInt(ktem))));
 var mapMetadata = [
   {
     trainers: [],
-    warps: [],
+    warps: [
+      {
+        world: 0,
+        inloc: [12,27],
+        outloc: [11,11]
+      }
+    ],
     tileData: {
-      tileset: ["black","cyan","#80bfff","#ff6666","white","#ff6666"],
-      walls: [0,1]
+      tileset: ["black","cyan","#80bfff","#ff6666","white","#ff6666","brown"],
+      walls: [1,6]
     },
-    reset: [11,2]
+    reset: [0,0]
   }
 ];
 
@@ -99,7 +105,7 @@ var mapObjects = [
     }
   }
 ];
-var mapPosition = [12,27];
+var mapPosition = [12,26];
 var mapIndex = 0;
 var mapBattlePoints = 0;
 var mapCurrentBattle;
@@ -175,7 +181,7 @@ function renderMap() {
   // internal game code
   var warps = mapMetadata[mapIndex].warps;
   for ( var i = 0; i < warps.length; i++ ) {
-    if ( Math.round(mapPosition[0]) == warps[i].inloc[0] && Math.round(mapPosition[1])  == warps[i].inloc[1] ) {
+    if ( Math.round(mapPosition[0]) == warps[i].inloc[0] && Math.round(mapPosition[1]) == warps[i].inloc[1] ) {
       openNewMap(warps[i].world,warps[i].outloc);
     }
   }
@@ -185,19 +191,6 @@ function renderMap() {
     if ( mapKeypresses.down && walls.indexOf(maps[mapIndex][Math.ceil(mapPosition[1])][Math.round(mapPosition[0])]) <= -1 ) mapPosition[1] += 0.04;
     if ( mapKeypresses.left && walls.indexOf(maps[mapIndex][Math.round(mapPosition[1])][Math.floor(mapPosition[0])]) <= -1 ) mapPosition[0] -= 0.04;
     if ( mapKeypresses.right && walls.indexOf(maps[mapIndex][Math.round(mapPosition[1])][Math.ceil(mapPosition[0])]) <= -1 ) mapPosition[0] += 0.04;
-  }
-  if ( map[Math.round(mapPosition[1])][Math.round(mapPosition[0])] == 0 && ! mapInExit ) {
-    mapCanMove = false;
-    mapInExit = true;
-    blurActive = 1;
-    setTimeout(function() {
-      mapPosition[0] = mapMetadata[mapIndex].reset[0];
-      mapPosition[1] = mapMetadata[mapIndex].reset[1];
-      setTimeout(function() {
-        mapCanMove = true;
-        mapInExit = false;
-      },1250);
-    },1250);
   }
   var triggered = false;
   for ( var i = 1; i < mapObjects.length; i++ ) {
