@@ -1,20 +1,44 @@
 var maps = [
-  `000000
-   000000
-   000000
-   000000
-   000000
-   000000`
+  `0000000000000000000000000
+  0000000001111111000000000
+  0000000014444444100000000
+  0000000014444444100000000
+  0000000014444444100000000
+  0000000014444444100000000
+  0000000014444444100000000
+  0000000014444444100000000
+  0000000001444441000000000
+  0000000000144410000000000
+  0000000000144410000000000
+  0000000000144410000000000
+  0000000000144410000000000
+  0000000000144410000000000
+  0000000011222331100000000
+  0000000122222333310000000
+  0000001222222333331000000
+  0000001222222333331000000
+  0011112222222333333111100
+  0144444444444444444444410
+  0144444444444444444444410
+  0144444444444444444444410
+  0144444444444444444444410
+  0011115555555555555111100
+  0000001555555555551000000
+  0000001555555555551000000
+  0000000155555555510000000
+  0000000011555551100000000
+  0000000000111110000000000
+  0000000000000000000000000`
 ].map(item => item.split("\n").map(jtem => jtem.trim().split("").map(ktem => parseInt(ktem))));
 var mapMetadata = [
   {
     trainers: [],
     warps: [],
     tileData: {
-      tileset: ["black","gray"],
+      tileset: ["black","cyan","#80bfff","#ff6666","white","#ff6666"],
       walls: [0,1]
     },
-    reset: [1,1]
+    reset: [11,2]
   }
 ];
 
@@ -75,7 +99,7 @@ var mapObjects = [
     }
   }
 ];
-var mapPosition = [2,2];
+var mapPosition = [12,27];
 var mapIndex = 0;
 var mapBattlePoints = 0;
 var mapCurrentBattle;
@@ -107,9 +131,7 @@ function renderMap() {
       ];
       ctx.fillStyle = mapMetadata[mapIndex].tileData.tileset[map[Math.floor(sum[1])][Math.floor(sum[0])]] || "white";
       ctx.fillRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))) - 1,unit + 2,unit + 2);
-      if ( mapEnableGrid ) {
-        ctx.strokeRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))),unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))),unit,unit);
-      }
+      if ( mapEnableGrid ) ctx.strokeRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))),unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))),unit,unit);
     }
   }
   for ( var i = 0; i < mapObjects.length; i++ ) {
