@@ -92,8 +92,9 @@ window.onload = function() {
   setInterval(function() {
     ctx.textBaseline = "alphabetic";
     if ( gamemode == "map" ) renderMap();
-    if ( gamemode == "battle" ) renderBattle();
-    if ( gamemode == "bossfight" ) renderBossFight();
+    else if ( gamemode == "battle" ) renderBattle();
+    else if ( gamemode == "bossfight" ) renderBossFight();
+    else throw new Error("Invalid gamemode");
     renderNPC();
     if ( blurActive > 0 ) {
       var size = Math.min(canvas.width,canvas.height);
