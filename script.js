@@ -96,6 +96,7 @@ window.onload = function() {
     else if ( gamemode == "bossfight" ) renderBossFight();
     else throw new Error("Invalid gamemode");
     renderNPC();
+    renderMenu();
     if ( blurActive > 0 ) {
       var size = Math.min(canvas.width,canvas.height);
       ctx.fillStyle = "black";
