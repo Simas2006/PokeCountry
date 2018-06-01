@@ -28,21 +28,48 @@ var maps = [
   0000000155555555510000000
   0000000011550551100000000
   0000000000111110000000000
-  0000000000000000000000000`
+  0000000000000000000000000`,
+  `000000000000000
+  011111111111110
+  012242232242210
+  013333333333310
+  012222222222210
+  012222222222210
+  012222222222210
+  012222222222210
+  012222222222210
+  010222222222410
+  011111111111110
+  000000000000000`
 ].map(item => item.split("\n").map(jtem => jtem.trim().split("").map(ktem => parseInt(ktem))));
 var mapMetadata = [
   {
     trainers: [],
     warps: [
       {
-        world: 0,
+        world: 1,
         inloc: [12,27],
-        outloc: [11,11]
+        outloc: [2,8]
       }
     ],
     tileData: {
       tileset: ["black","cyan","#80bfff","#ff6666","white","#ff6666","brown"],
       walls: [1,6]
+    },
+    reset: [0,0]
+  },
+  {
+    trainers: [],
+    warps: [
+      {
+        world: 0,
+        inloc: [2,9],
+        outloc: [12,26]
+      }
+    ],
+    tileData: {
+      tileset: ["black","cyan","#80bfff","brown","blue"],
+      walls: [1]
     },
     reset: [0,0]
   }
@@ -105,8 +132,8 @@ var mapObjects = [
     }
   }
 ];
-var mapPosition = [12,26];
-var mapIndex = 0;
+var mapPosition = [2,8];
+var mapIndex = 1;
 var mapBattlePoints = 0;
 var mapCurrentBattle;
 var mapCanMove = true;
