@@ -122,6 +122,7 @@ window.onload = function() {
       }
     }
     if ( ["1","2","3","4"].indexOf(event.key) > -1 ) handleKeyboardBoss(event.key,true);
+    if ( event.key == "m" && gamemode == "map" ) handleKeyboardMenu(event.key);
   }
   window.onkeyup = function(event) {
     if ( event.key.startsWith("Arrow") || event.key == " " ) {

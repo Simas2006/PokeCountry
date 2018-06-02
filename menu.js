@@ -1,4 +1,4 @@
-var menuActive = true;
+var menuActive = false;
 var menuTextList = ["","PARTY","ITEMS","NEW GAME"];
 var menuSubList = [];
 var menuConfirm = false;
@@ -111,5 +111,12 @@ function handleKeyboardMenu(key) {
         mapObjects[0].battleData.hexaballs.map((item,index) => `${["HEXA","MSTR","ULTRA"][index]}x${item}`)
       ][menuMode];
     }
+  }
+  if ( key == "m" ) {
+    menuActive = ! menuActive;
+    menuMode = 0;
+    menuSubSelected = -1;
+    menuMainSelected = 1;
+    menuTextList = ["","PARTY","ITEMS","NEW GAME"]
   }
 }
