@@ -1,5 +1,5 @@
 var menuActive = true;
-var menuTextList = ["","PARTY","ITEMS","NEW GAME",5,6,7,8,9];
+var menuTextList = ["","PARTY","ITEMS","NEW GAME"];
 var menuSubList = [];
 var menuConfirm = false;
 var menuMode = 0;
@@ -65,11 +65,13 @@ function handleKeyboardMenu(key) {
       menuMainSelected = 0;
       menuTextList = [
         ["ERROR"],
-        mapObjects[0].battleData.party.map(item => names[item.country].toUpperCase())
+        mapObjects[0].battleData.party.map(item => names[item.country].toUpperCase()),
+        mapObjects[0].battleData.hexaballs.map((item,index) => `${["HEXA","MSTR","ULTRA"][index]}x${item}`)
       ][menuMode];
       menuSubList = [
         ["ERROR"],
-        ["MOVE UP","MOVE DOWN","RELEASE"].slice(0,mapObjects[0].battleData.party.length > 1 ? 3 : 2)
+        ["MOVE UP","MOVE DOWN","RELEASE"].slice(0,mapObjects[0].battleData.party.length > 1 ? 3 : 2),
+        ["DROP ONE","DROP ALL"]
       ][menuMode];
     } else if ( menuMode == 0 && menuMainSelected == 3 ) {
       // run new game code
@@ -84,10 +86,6 @@ function handleKeyboardMenu(key) {
         } else {
           if ( menuSubSelected == 0 ) party.splice(menuMainSelected,1);
         }
-        menuTextList = [
-          ["ERROR"],
-          mapObjects[0].battleData.party.map(item => names[item.country].toUpperCase())
-        ][menuMode];
         if ( menuSubSelected < 2 ) {
           menuSubSelected = -1;
           menuMainSelected = 0;
@@ -98,7 +96,20 @@ function handleKeyboardMenu(key) {
           menuSubList = ["RELEASE","CANCEL"];
           menuConfirm = true;
         }
+      } else if ( menuMode == 2 ) {
+        var hexaballs = mapObjects[0].battleData.hexaballs;
+        if ( hexaballs[menuMainSelected] > 0 ) {
+          if ( menuSubSelected == 0 ) hexaballs[menuMainSelected]--;
+          else if ( menuSubSelected == 1 ) hexaballs[menuMainSelected] = 0;
+        }
+        menuSubSelected = -1;
+        menuMainSelected = 0;
       }
+      menuTextList = [
+        ["ERROR"],
+        mapObjects[0].battleData.party.map(item => names[item.country].toUpperCase()),
+        mapObjects[0].battleData.hexaballs.map((item,index) => `${["HEXA","MSTR","ULTRA"][index]}x${item}`)
+      ][menuMode];
     }
   }
 }
