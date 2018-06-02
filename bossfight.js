@@ -264,7 +264,7 @@ function renderBossFight() {
     else if ( bossAttackX < bossPlayerX - canvas.width * 0.2 && bossAttackYVel == 0 && bossAttackDirection == -1 ) bossAttackDirection = 1;
     bossAttackY -= 3 * bossAttackYVel;
     if ( bossAttackYVel > 0 || bossAttackY < canvas.height * 0.9 ) bossAttackYVel -= canvas.height * 0.00006;
-    if ( bossAttackY >= canvas.height * 0.8 ) bossAttackYVel = 5;
+    if ( bossAttackY >= canvas.height * 0.8 ) bossAttackYVel = canvas.height * 0.005;
     if ( bossAttackYVel > 0 && bossAttackYVel < 0.05 ) {
       if ( bossAttackCount == 1 ) {
         bossShowMoves = true;
@@ -291,7 +291,7 @@ function renderBossFight() {
   if ( bossPlayerLives <= 0 ) {
     activateExit(false);
   }
-  if ( (Math.sqrt(Math.pow(bossAttackX - bossPlayerX,2) + Math.pow(bossAttackY - bossPlayerY,2)) <= canvas.width * 0.3 || Math.sqrt(Math.pow(bossSteelX - bossPlayerX,2) + Math.pow(bossSteelY - bossPlayerY,2)) <= canvas.width * 0.103) && bossPlayerInviniciblity <= 0 ) { // TODO: make steelie give damage & playtest!
+  if ( (Math.sqrt(Math.pow(bossAttackX - bossPlayerX,2) + Math.pow(bossAttackY - bossPlayerY,2)) <= canvas.width * 0.3 || Math.sqrt(Math.pow(bossSteelX - bossPlayerX,2) + Math.pow(bossSteelY - bossPlayerY,2)) <= canvas.width * 0.103) && bossPlayerInviniciblity <= 0 ) {
     bossPlayerLives--;
     bossPlayerInviniciblity = 100;
   } else if ( bossPlayerInviniciblity > 0 ) {
