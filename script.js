@@ -1,4 +1,4 @@
-var gamemode = "map";
+var gamemode = "title";
 var blurActive = 0;
 var blurDirection = 0;
 var canvas,ctx;
@@ -94,6 +94,7 @@ window.onload = function() {
     if ( gamemode == "map" ) renderMap();
     else if ( gamemode == "battle" ) renderBattle();
     else if ( gamemode == "bossfight" ) renderBossFight();
+    else if ( gamemode == "title" ) renderTitle();
     else throw new Error("Invalid gamemode");
     renderNPC();
     renderMenu();
