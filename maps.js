@@ -125,63 +125,7 @@ var mapMetadata = [
   }
 ];
 
-var mapObjects = [
-  {
-    country: 0,
-    x: -1,
-    y: -1,
-    direction: 0,
-    colored: true,
-    exists: true,
-    battleData: {
-      country: 0,
-      visibleCountry: 0,
-      faintedCountries: 0,
-      active: -1,
-      hp: [50],
-      pp: [50,50,50,50],
-      hexaballs: [0,0,0],
-      party: [
-        {
-          country: 1,
-          group: 1,
-          moves: [
-            [0,1],
-            [1,2],
-            [2,3],
-            [3,4]
-          ],
-          hp: [50],
-          pp: [50,50,50,50]
-        },
-        {
-          country: 2,
-          group: 1,
-          moves: [
-            [0,1],
-            [1,2],
-            [2,3],
-            [3,4]
-          ],
-          hp: [50],
-          pp: [50,50,50,50]
-        },
-        {
-          country: 3,
-          group: 1,
-          moves: [
-            [0,1],
-            [1,2],
-            [2,3],
-            [3,4]
-          ],
-          hp: [50],
-          pp: [50,50,50,50]
-        }
-      ]
-    }
-  }
-];
+var mapObjects = [];
 var mapPosition = [1,1];
 var mapIndex = 2;
 var mapBattlePoints = 0;

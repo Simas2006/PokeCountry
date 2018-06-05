@@ -69,6 +69,39 @@ var moves = [
     onUse: function(object,party,player) {}
   }
 ];
+var initialData = [
+  {
+    country: 0,
+    x: -1,
+    y: -1,
+    direction: 0,
+    colored: true,
+    exists: true,
+    battleData: {
+      country: 0,
+      visibleCountry: 0,
+      faintedCountries: 0,
+      active: -1,
+      hp: [100],
+      pp: [100,100,100,100],
+      hexaballs: [0,0,0],
+      party: [
+        {
+          country: 0,
+          group: 1,
+          moves: [
+            [0,1],
+            [1,2],
+            [2,3],
+            [3,4]
+          ],
+          hp: [100],
+          pp: [100,100,100,100]
+        }
+      ]
+    }
+  }
+]
 
 function drawRoundedRect(radius,x,y,width,height) {
   ctx.beginPath();

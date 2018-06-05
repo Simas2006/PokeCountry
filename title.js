@@ -1,6 +1,7 @@
 var titleMode = 0;
 var titleCountryX = 0;
 var titleMoving = 0;
+var titleAskFinal = false;
 
 function renderTitle() {
   // rendering code
@@ -17,6 +18,14 @@ function renderTitle() {
   ctx.strokeStyle = "white";
   ctx.textAlign = "center";
   ctx.strokeText("PokeCountry",canvas.width * 0.5,canvas.height * 0.25);
+  ctx.font = canvas.width * 0.025 + "px Menlo";
+  ctx.fillStyle = "white";
+  if ( titleAskFinal ) {
+    ctx.fillText("Press Space to start",canvas.width * 0.5,canvas.height * 0.5);
+  } else {
+    ctx.fillText("Pick a character to play as:",canvas.width * 0.5,canvas.height * 0.5);
+    ctx.fillText(Math.abs(titleCountryX - Math.round(titleCountryX)) < 0.01 ? names[Math.round(titleCountryX)] : "",canvas.width * 0.5,canvas.height * 0.5375);
+  }
   ctx.strokeStyle = "white";
   var radius = canvas.width * 0.11;
   for ( var i = 0; i < names.length; i++ ) {
