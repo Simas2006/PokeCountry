@@ -49,3 +49,27 @@ function renderTitle() {
     if ( Math.abs(titleCountryX - Math.round(titleCountryX)) < 0.01 ) titleMoving = 0;
   }
 }
+
+function handleKeyboardTitle(key) {
+  if ( key == "ArrowLeft" && titleCountryX > 0 && ! titleAskFinal ) titleMoving = -1;
+  if ( key == "ArrowRight" && titleCountryX < names.length - 3 && ! titleAskFinal ) titleMoving = 1;
+  if ( key == " " ) {
+    if ( ! titleAskFinal ) {
+      titleAskFinal = true;
+    } else {
+      mapObjects.unshift({
+        country: titleCountryX,
+        x: -1,
+        y: -1,
+        direction: 0,
+        colored: true,
+        exists: true,
+        battleData: initialBattleData[Math.round(titleCountryX)]
+      });
+      blurActive = 1;
+      setTimeout(function() {
+        gamemode = "map";
+      },1250);
+    }
+  }
+}

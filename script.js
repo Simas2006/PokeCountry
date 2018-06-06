@@ -69,37 +69,29 @@ var moves = [
     onUse: function(object,party,player) {}
   }
 ];
-var initialData = [
+var initialBattleData = [
   {
     country: 0,
-    x: -1,
-    y: -1,
-    direction: 0,
-    colored: true,
-    exists: true,
-    battleData: {
-      country: 0,
-      visibleCountry: 0,
-      faintedCountries: 0,
-      active: -1,
-      hp: [100],
-      pp: [100,100,100,100],
-      hexaballs: [0,0,0],
-      party: [
-        {
-          country: 0,
-          group: 1,
-          moves: [
-            [0,1],
-            [1,2],
-            [2,3],
-            [3,4]
-          ],
-          hp: [100],
-          pp: [100,100,100,100]
-        }
-      ]
-    }
+    visibleCountry: 0,
+    faintedCountries: 0,
+    active: -1,
+    hp: [100],
+    pp: [100,100,100,100],
+    hexaballs: [0,0,0],
+    party: [
+      {
+        country: 0,
+        group: 1,
+        moves: [
+          [0,1],
+          [1,2],
+          [2,3],
+          [3,4]
+        ],
+        hp: [100],
+        pp: [100,100,100,100]
+      }
+    ]
   }
 ]
 
@@ -153,6 +145,8 @@ window.onload = function() {
         handleKeyboardBattle(event.key);
       } else if ( gamemode == "bossfight" ) {
         handleKeyboardBoss(event.key,true);
+      } else if ( gamemode == "title" ) {
+        handleKeyboardTitle(event.key,true);
       }
     }
     if ( ["1","2","3","4"].indexOf(event.key) > -1 ) handleKeyboardBoss(event.key,true);
