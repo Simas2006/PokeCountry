@@ -119,7 +119,7 @@ var mapMetadata = [
     warps: [],
     tileData: {
       tileset: ["lightblue","green","white","rgb(241,210,171)"],
-      walls: []
+      walls: [0]
     },
     reset: [1,1]
   }
