@@ -12,10 +12,18 @@ var flags = [
   `444777000`, // France
   `777003003`, // Belarus
   `000020000`, // Vietnam
+  `000707000`, // Canada
+  `444777000`, // France
+  `777003003`, // Belarus
+  `000020000`, // Vietnam
+  `000707000`, // Canada
+  `444777000`, // France
+  `777003003`, // Belarus
+  `000020000`, // Vietnam
   `070777070`  // Switzerland
 ].map(item => item.split("").map(jtem => parseInt(jtem)));
-var names =  ["USA","Germany","Russia","China","Canada","France","Belarus","Vietnam","Switzerland"];
-var groups = [0,    1,        2,       3,      0,       1,       2,        3,        -1];
+var names =  ["USA","Germany","Russia","China","Canada","France","Belarus","Vietnam","Canada","France","Belarus","Vietnam","Canada","France","Belarus","Vietnam","Switzerland"];
+var groups = [0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3,-1];
 var moves = [
   {
     name: "WWI",
