@@ -1,6 +1,7 @@
 var titleMode = 1;
 var titleCountryX = -6.5;
 var titleMoving = 0;
+var titleStopped = false;
 var titleAskFinal = false;
 var titleWinner = 0;
 var titleWinYMod = 0;
@@ -121,12 +122,12 @@ function renderTitle() {
     ctx.stroke();
   }
   // internal game code
-  if ( titleMoving != 0 ) {
+  if ( titleMode == 0 ) {
     titleCountryX += titleMoving * 0.05;
     if ( Math.abs(titleCountryX - Math.round(titleCountryX)) < 0.01 ) titleMoving = 0;
   }
   if ( titleMode == 1 ) {
-    titleCountryX += 0.01;
+    if ( ! titleStopped ) titleCountryX += 0.01;
     if ( titleWinYVel > 0 || titleWinYMod > 0 ) {
       titleWinYMod += titleWinYVel;
       titleWinYVel -= 0.1;
@@ -140,6 +141,7 @@ function renderTitle() {
       titleBounceVel -= 0.05;
       titleCountryX -= (titleBounceVel + 1) * 0.125;
       titleBounceYMod += titleBounceVel * 7.5;
+      titleStopped = true;
     }
   }
 }
