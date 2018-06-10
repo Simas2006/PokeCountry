@@ -132,7 +132,6 @@ function renderTitle() {
       ctx.fillRect(0,0,canvas.width,canvas.height);
     }
     ctx.globalAlpha = 1;
-    ctx.save();
     ctx.beginPath();
     ctx.arc(canvas.width * 0.5,titleGhostY * 1.5,titleGhostY,0,2 * Math.PI);
     ctx.fill();
@@ -146,6 +145,7 @@ function renderTitle() {
     ctx.lineTo(canvas.width * 0.5 + (titleGhostY * 0.666),titleGhostY * 3.5);
     ctx.lineTo(canvas.width * 0.5 + titleGhostY,titleGhostY * 2.75);
     ctx.fill();
+    ctx.save();
     ctx.beginPath();
     ctx.arc(canvas.width * 0.5,titleGhostY * 1.5,titleGhostY * 0.8,0,2 * Math.PI);
     ctx.clip();
@@ -157,6 +157,16 @@ function renderTitle() {
       ctx.fillRect(canvas.width * 0.5 + pixelPosition[0],titleGhostY * 1.5 + pixelPosition[1],radius / 1.5,radius / 1.5);
     }
     ctx.restore();
+    ctx.fillStyle = "white";
+    ctx.strokeStyle = "black";
+    ctx.beginPath();
+    ctx.arc(canvas.width * 0.5 - (titleGhostY * 0.333),titleGhostY * 1.2,titleGhostY * 0.225,0,2 * Math.PI);
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(canvas.width * 0.5 + (titleGhostY * 0.333),titleGhostY * 1.2,titleGhostY * 0.225,0,2 * Math.PI);
+    ctx.fill();
+    ctx.stroke();
   }
   // internal game code
   if ( titleMode == 0 ) {
