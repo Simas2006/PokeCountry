@@ -1,14 +1,18 @@
 var titleMode = 1;
-var titleCountryX = 0;
+var titleCountryX = -5;
 var titleMoving = 0;
 var titleAskFinal = false;
 var titleWinner = 1;
+var titleWinYMod = 0;
+var titleWinYVel = 0;
 
 function renderTitle() {
   // rendering code
   ctx.globalAlpha = 1;
   ctx.fillStyle = "white";
   ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.strokeStyle = "black";
+  ctx.strokeRect(0,0,canvas.width,canvas.height);
   if ( titleMode == 0 ) {
     var image = document.getElementById("image");
     ctx.drawImage(image,0,0,canvas.width,canvas.height);
@@ -40,10 +44,11 @@ function renderTitle() {
       else radius = canvas.width * 0.065;
     }
     var xm = trueRadius * [2.5,1.9][titleMode] * (i - titleCountryX) + (titleMode == 1 ? trueRadius * Math.floor(i / 4) : 0);
+    var ym = (Math.floor(i / 4) == groups[titleWinner] ? -titleWinYMod : 0);
     ctx.strokeStyle = "black";
     ctx.save();
     ctx.beginPath();
-    ctx.arc(canvas.width * 0.5 + xm,canvas.height * [0.7,0.6][titleMode],radius,0,2 * Math.PI);
+    ctx.arc(canvas.width * 0.5 + xm,canvas.height * [0.7,0.6][titleMode] + ym,radius,0,2 * Math.PI);
     if ( titleMode == 1 ) ctx.stroke();
     ctx.clip();
     for ( var j = 0; j < flags[i].length; j++ ) {
@@ -51,15 +56,15 @@ function renderTitle() {
       var pixelPosition = [(pos[0] - 1.5) * (radius / 1.5),(pos[1] - 1.5) * (radius / 1.5)];
       if ( titleMode == 0 ) ctx.globalAlpha = Math.abs(titleCountryX - i) < 0.99 ? 1 : 0.5;
       ctx.fillStyle = ["red","orange","yellow","green","blue","purple","black","white"][flags[i][j]];
-      ctx.fillRect(canvas.width * 0.5 + xm + pixelPosition[0],canvas.height * [0.7,0.6][titleMode] + pixelPosition[1],radius / 1.5,radius / 1.5);
+      ctx.fillRect(canvas.width * 0.5 + xm + pixelPosition[0],canvas.height * [0.7,0.6][titleMode] + ym + pixelPosition[1],radius / 1.5,radius / 1.5);
       ctx.fillStyle = "white";
       ctx.strokeStyle = "black";
       ctx.beginPath();
-      ctx.arc(canvas.width * [0.45,0.45,0.475][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)] + xm,canvas.height * [0.65,0.55,0.575][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)],trueRadius * [0.25,0.4,0.2][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)],0,2 * Math.PI);
+      ctx.arc(canvas.width * [0.45,0.45,0.475][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)] + xm,canvas.height * [0.65,0.55,0.575][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)] + ym,trueRadius * [0.25,0.4,0.2][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)],0,2 * Math.PI);
       ctx.fill();
       ctx.stroke();
       ctx.beginPath();
-      ctx.arc(canvas.width * [0.55,0.55,0.525][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)] + xm,canvas.height * [0.65,0.55,0.575][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)],trueRadius * [0.25,0.4,0.2][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)],0,2 * Math.PI);
+      ctx.arc(canvas.width * [0.55,0.55,0.525][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)] + xm,canvas.height * [0.65,0.55,0.575][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)] + ym,trueRadius * [0.25,0.4,0.2][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)],0,2 * Math.PI);
       ctx.fill();
       ctx.stroke();
     }
@@ -88,28 +93,28 @@ function renderTitle() {
     var billboardlx = canvas.width * (0.5 + 0.065 * 1.9 * ((groups[titleWinner] * 4 - 0.5) - titleCountryX) + 0.065 * groups[titleWinner]);
     var billboardgx = canvas.width * (0.5 + 0.065 * 1.9 * ((groups[titleWinner] * 4 + 3.5) - titleCountryX) + 0.065 * groups[titleWinner]);
     ctx.fillStyle = "brown";
-    ctx.fillRect(billboardlx + canvas.width * 0.0125,canvas.height * 0.225,canvas.width * 0.026,canvas.height * 0.265);
-    ctx.fillRect(billboardgx - canvas.width * 0.09,canvas.height * 0.225,canvas.width * 0.026,canvas.height * 0.265);
+    ctx.fillRect(billboardlx + canvas.width * 0.0125,canvas.height * 0.225 - titleWinYMod,canvas.width * 0.026,canvas.height * 0.265);
+    ctx.fillRect(billboardgx - canvas.width * 0.09,canvas.height * 0.225 - titleWinYMod,canvas.width * 0.026,canvas.height * 0.265);
     ctx.fillStyle = "green";
-    ctx.fillRect(billboardlx - canvas.width * 0.025,canvas.height * 0.225,billboardgx - billboardlx,canvas.height * 0.175);
+    ctx.fillRect(billboardlx - canvas.width * 0.025,canvas.height * 0.225 - titleWinYMod,billboardgx - billboardlx,canvas.height * 0.175);
     ctx.textAlign = "center";
     ctx.fillStyle = "black";
     ctx.font = canvas.width * 0.075 + "px Menlo";
-    ctx.fillText("WE   ",billboardlx + (billboardgx - billboardlx) * 0.275,canvas.height * 0.3435);
+    ctx.fillText("WE   ",billboardlx + (billboardgx - billboardlx) * 0.275,canvas.height * 0.3435 - titleWinYMod);
     ctx.font = canvas.width * 0.1 + "px Menlo";
-    ctx.fillText("   ♡ ",billboardlx + (billboardgx - billboardlx) * 0.275,canvas.height * 0.35);
+    ctx.fillText("   ♡ ",billboardlx + (billboardgx - billboardlx) * 0.275,canvas.height * 0.35 - titleWinYMod);
     ctx.beginPath();
-    ctx.arc(billboardlx + (billboardgx - billboardlx) * 0.75,canvas.height * 0.3125,canvas.width * 0.075,0,2 * Math.PI);
+    ctx.arc(billboardlx + (billboardgx - billboardlx) * 0.75,canvas.height * 0.3125 - titleWinYMod,canvas.width * 0.075,0,2 * Math.PI);
     ctx.stroke();
     ctx.beginPath();
-    ctx.moveTo(billboardlx + (billboardgx - billboardlx) * 0.6,canvas.height * 0.3125);
-    ctx.lineTo(billboardlx + (billboardgx - billboardlx) * 0.9,canvas.height * 0.3125);
+    ctx.moveTo(billboardlx + (billboardgx - billboardlx) * 0.6,canvas.height * 0.3125 - titleWinYMod);
+    ctx.lineTo(billboardlx + (billboardgx - billboardlx) * 0.9,canvas.height * 0.3125 - titleWinYMod);
     ctx.stroke();
     ctx.beginPath();
-    ctx.arc(billboardlx + (billboardgx - billboardlx) * 0.675,canvas.height * 0.2875,canvas.width * 0.015,0,2 * Math.PI);
+    ctx.arc(billboardlx + (billboardgx - billboardlx) * 0.675,canvas.height * 0.2875 - titleWinYMod,canvas.width * 0.015,0,2 * Math.PI);
     ctx.stroke();
     ctx.beginPath();
-    ctx.arc(billboardlx + (billboardgx - billboardlx) * 0.825,canvas.height * 0.2875,canvas.width * 0.015,0,2 * Math.PI);
+    ctx.arc(billboardlx + (billboardgx - billboardlx) * 0.825,canvas.height * 0.2875 - titleWinYMod,canvas.width * 0.015,0,2 * Math.PI);
     ctx.stroke();
   }
   // internal game code
@@ -117,7 +122,15 @@ function renderTitle() {
     titleCountryX += titleMoving * 0.05;
     if ( Math.abs(titleCountryX - Math.round(titleCountryX)) < 0.01 ) titleMoving = 0;
   }
-  if ( titleMode == 1 ) titleCountryX += 0.01;
+  if ( titleMode == 1 ) {
+    titleCountryX += 0.01;
+    if ( titleWinYVel > 0 || titleWinYMod > 0 ) {
+      titleWinYMod += titleWinYVel;
+      titleWinYVel -= 0.1;
+    } else {
+      titleWinYVel = 4;
+    }
+  }
 }
 
 function handleKeyboardTitle(key) {
