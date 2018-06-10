@@ -1,4 +1,4 @@
-var titleMode = 2;
+var titleMode = 1;
 var titleCountryX = -6.5;
 var titleMoving = 0;
 var titleStopped = 0;
@@ -182,7 +182,7 @@ function renderTitle() {
     } else if ( titleStopped == 1 ) {
       setTimeout(function() {
         titleMode = 2;
-      },750);
+      },1250);
       titleStopped = 2;
     }
   }
