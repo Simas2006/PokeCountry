@@ -4,23 +4,23 @@ var blurDirection = 0;
 var canvas,ctx;
 
 var flags = [
-  `440440070`, // US
+  `440440070`, // US       // US TEAM
   `602602602`, // Germany
   `740740740`, // Russia
   `200000000`, // China
-  `000707000`, // Canada
+  `000707000`, // Canada  // EU TEAM
   `444777000`, // France
   `777003003`, // Belarus
   `000020000`, // Vietnam
-  `000707000`, // Canada
+  `000707000`, // Canada  // RUSSIA TEAM
   `444777000`, // France
   `777003003`, // Belarus
   `000020000`, // Vietnam
-  `000707000`, // Canada
+  `000707000`, // Canada  // CHINA TEAM
   `444777000`, // France
   `777003003`, // Belarus
   `000020000`, // Vietnam
-  `070777070`  // Switzerland
+  `070777070`  // Switzerland // NO TEAM
 ].map(item => item.split("").map(jtem => parseInt(jtem)));
 var names =  ["USA","Germany","Russia","China","Canada","France","Belarus","Vietnam","Canada","France","Belarus","Vietnam","Canada","France","Belarus","Vietnam","Switzerland"];
 var groups = [0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3,-1];
