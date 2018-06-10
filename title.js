@@ -9,7 +9,7 @@ var titleWinYVel = 0;
 var titleLoseYMod = 0;
 var titleBounceVel = 0;
 var titleBounceYMod = 0;
-var titleGhostY = 1;
+var titleGhostY = -35;
 
 function renderTitle() {
   // rendering code
@@ -17,8 +17,6 @@ function renderTitle() {
   ctx.globalAlpha = 1;
   ctx.fillStyle = "white";
   ctx.fillRect(0,0,canvas.width,canvas.height);
-  ctx.strokeStyle = "black";
-  ctx.strokeRect(0,0,canvas.width,canvas.height);
   if ( titleMode == 0 ) {
     var image = document.getElementById("image");
     ctx.drawImage(image,0,0,canvas.width,canvas.height);
@@ -30,7 +28,9 @@ function renderTitle() {
   ctx.font = canvas.width * 0.125 + "px Menlo";
   ctx.strokeStyle = "white";
   ctx.textAlign = "center";
-  ctx.strokeText("PokeCountry",canvas.width * 0.5,canvas.height * 0.25);
+  if ( titleMode == 0 ) {
+    ctx.strokeText("PokeCountry",canvas.width * 0.5,canvas.height * 0.25);
+  }
   ctx.font = canvas.width * 0.035 + "px Menlo";
   ctx.fillStyle = "white";
   if ( titleMode == 0 ) {
@@ -125,8 +125,13 @@ function renderTitle() {
     ctx.arc(billboardlx + (billboardgx - billboardlx) * 0.825,canvas.height * 0.2875 - titleWinYMod,canvas.width * 0.015,0,2 * Math.PI);
     ctx.stroke();
   }
-  if ( titleMode == 2 ) {
+  if ( titleMode == 2 && titleGhostY > 0 ) {
     ctx.fillStyle = "black";
+    if ( titleGhostY > canvas.height * 0.5 ) {
+      ctx.globalAlpha = (titleGhostY - canvas.height * 0.5) / (canvas.height * 0.95);
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+    }
+    ctx.globalAlpha = 1;
     ctx.save();
     ctx.beginPath();
     ctx.arc(canvas.width * 0.5,titleGhostY * 1.5,titleGhostY,0,2 * Math.PI);
@@ -181,6 +186,7 @@ function renderTitle() {
       titleStopped = 2;
     }
   }
+  if ( titleMode == 2 ) titleGhostY++;
 }
 
 function handleKeyboardTitle(key) {
