@@ -1,7 +1,7 @@
-var titleMode = 1;
+var titleMode = 2;
 var titleCountryX = -6.5;
 var titleMoving = 0;
-var titleStopped = false;
+var titleStopped = 0;
 var titleAskFinal = false;
 var titleWinner = 0;
 var titleWinYMod = 0;
@@ -9,9 +9,11 @@ var titleWinYVel = 0;
 var titleLoseYMod = 0;
 var titleBounceVel = 0;
 var titleBounceYMod = 0;
+var titleGhostY = 1;
 
 function renderTitle() {
   // rendering code
+  ctx.lineWidth = 1;
   ctx.globalAlpha = 1;
   ctx.fillStyle = "white";
   ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -39,40 +41,42 @@ function renderTitle() {
       ctx.fillText(Math.abs(titleCountryX - Math.round(titleCountryX)) < 0.01 ? names[Math.round(titleCountryX)] : "",canvas.width * 0.5,canvas.height * 0.5375);
     }
   }
-  var radius = canvas.width * 0.11;
-  var trueRadius = canvas.width * [0.11,0.065][titleMode];
-  for ( var i = 0; i < [names.length,16][titleMode]; i++ ) {
-    if ( names[i] == "Switzerland" ) continue;
-    if ( titleMode == 1 ) {
-      if ( i % 4 == 0 ) radius = canvas.width * 0.1;
-      else radius = canvas.width * 0.065;
-    }
-    var xm = trueRadius * [2.5,1.9][titleMode] * (i - titleCountryX) + (titleMode == 1 ? trueRadius * Math.floor(i / 4) : 0);
-    var ym = (Math.floor(i / 4) == groups[titleWinner] ? -titleWinYMod : 0) + (Math.floor(i / 4) == ((groups[titleWinner] + 2) % 4) ? titleLoseYMod : 0);
-    ctx.strokeStyle = "black";
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(canvas.width * 0.5 + xm,canvas.height * [0.7,0.6][titleMode] + ym,radius,0,2 * Math.PI);
-    if ( titleMode == 1 ) ctx.stroke();
-    ctx.clip();
-    for ( var j = 0; j < flags[i].length; j++ ) {
-      var pos = [Math.floor(j / 3),j % 3];
-      var pixelPosition = [(pos[0] - 1.5) * (radius / 1.5),(pos[1] - 1.5) * (radius / 1.5)];
-      if ( titleMode == 0 ) ctx.globalAlpha = Math.abs(titleCountryX - i) < 0.99 ? 1 : 0.5;
-      ctx.fillStyle = ["red","orange","yellow","green","blue","purple","black","white"][flags[i][j]];
-      ctx.fillRect(canvas.width * 0.5 + xm + pixelPosition[0],canvas.height * [0.7,0.6][titleMode] + ym + pixelPosition[1],radius / 1.5,radius / 1.5);
-      ctx.fillStyle = Math.floor(i / 4) == (groups[titleWinner] + 2) % 4 && titleLoseYMod <= 1.2 && titleMode == 1 ? "red" : "white";
+  if ( titleMode < 2 ) {
+    var radius = canvas.width * 0.11;
+    var trueRadius = canvas.width * [0.11,0.065][titleMode];
+    for ( var i = 0; i < [names.length,16][titleMode]; i++ ) {
+      if ( names[i] == "Switzerland" ) continue;
+      if ( titleMode == 1 ) {
+        if ( i % 4 == 0 ) radius = canvas.width * 0.1;
+        else radius = canvas.width * 0.065;
+      }
+      var xm = trueRadius * [2.5,1.9][titleMode] * (i - titleCountryX) + (titleMode == 1 ? trueRadius * Math.floor(i / 4) : 0);
+      var ym = (Math.floor(i / 4) == groups[titleWinner] ? -titleWinYMod : 0) + (Math.floor(i / 4) == ((groups[titleWinner] + 2) % 4) ? titleLoseYMod : 0);
       ctx.strokeStyle = "black";
+      ctx.save();
       ctx.beginPath();
-      ctx.arc(canvas.width * [0.45,0.45,0.475][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)] + xm,canvas.height * [0.65,0.55,0.575][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)] + ym,trueRadius * [0.25,0.4,0.2][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)],0,2 * Math.PI);
-      ctx.fill();
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(canvas.width * [0.55,0.55,0.525][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)] + xm,canvas.height * [0.65,0.55,0.575][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)] + ym,trueRadius * [0.25,0.4,0.2][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)],0,2 * Math.PI);
-      ctx.fill();
-      ctx.stroke();
+      ctx.arc(canvas.width * 0.5 + xm,canvas.height * [0.7,0.6][titleMode] + ym,radius,0,2 * Math.PI);
+      if ( titleMode == 1 ) ctx.stroke();
+      ctx.clip();
+      for ( var j = 0; j < flags[i].length; j++ ) {
+        var pos = [Math.floor(j / 3),j % 3];
+        var pixelPosition = [(pos[0] - 1.5) * (radius / 1.5),(pos[1] - 1.5) * (radius / 1.5)];
+        if ( titleMode == 0 ) ctx.globalAlpha = Math.abs(titleCountryX - i) < 0.99 ? 1 : 0.5;
+        ctx.fillStyle = ["red","orange","yellow","green","blue","purple","black","white"][flags[i][j]];
+        ctx.fillRect(canvas.width * 0.5 + xm + pixelPosition[0],canvas.height * [0.7,0.6][titleMode] + ym + pixelPosition[1],radius / 1.5,radius / 1.5);
+        ctx.fillStyle = Math.floor(i / 4) == (groups[titleWinner] + 2) % 4 && titleLoseYMod <= 1.2 && titleMode == 1 ? "red" : "white";
+        ctx.strokeStyle = "black";
+        ctx.beginPath();
+        ctx.arc(canvas.width * [0.45,0.45,0.475][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)] + xm,canvas.height * [0.65,0.55,0.575][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)] + ym,trueRadius * [0.25,0.4,0.2][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)],0,2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(canvas.width * [0.55,0.55,0.525][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)] + xm,canvas.height * [0.65,0.55,0.575][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)] + ym,trueRadius * [0.25,0.4,0.2][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)],0,2 * Math.PI);
+        ctx.fill();
+        ctx.stroke();
+      }
+      ctx.restore();
     }
-    ctx.restore();
   }
   if ( titleMode == 1 ) {
     radius = canvas.width * 0.11;
@@ -121,13 +125,41 @@ function renderTitle() {
     ctx.arc(billboardlx + (billboardgx - billboardlx) * 0.825,canvas.height * 0.2875 - titleWinYMod,canvas.width * 0.015,0,2 * Math.PI);
     ctx.stroke();
   }
+  if ( titleMode == 2 ) {
+    ctx.fillStyle = "black";
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(canvas.width * 0.5,titleGhostY * 1.5,titleGhostY,0,2 * Math.PI);
+    ctx.fill();
+    ctx.fillRect(canvas.width * 0.5 - titleGhostY,titleGhostY * 1.5,titleGhostY * 2,titleGhostY * 1.25);
+    ctx.beginPath();
+    ctx.moveTo(canvas.width * 0.5 - titleGhostY,titleGhostY * 2.75);
+    ctx.lineTo(canvas.width * 0.5 - (titleGhostY * 0.666),titleGhostY * 3.5);
+    ctx.lineTo(canvas.width * 0.5 - (titleGhostY * 0.333),titleGhostY * 2.75);
+    ctx.lineTo(canvas.width * 0.5,titleGhostY * 3.5);
+    ctx.lineTo(canvas.width * 0.5 + (titleGhostY * 0.333),titleGhostY * 2.75);
+    ctx.lineTo(canvas.width * 0.5 + (titleGhostY * 0.666),titleGhostY * 3.5);
+    ctx.lineTo(canvas.width * 0.5 + titleGhostY,titleGhostY * 2.75);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(canvas.width * 0.5,titleGhostY * 1.5,titleGhostY * 0.8,0,2 * Math.PI);
+    ctx.clip();
+    var radius = titleGhostY * 0.8;
+    for ( var i = 0; i < flags[titleWinner].length; i++ ) {
+      var pos = [Math.floor(i / 3),i % 3];
+      var pixelPosition = [(pos[0] - 1.5) * (radius / 1.5),(pos[1] - 1.5) * (radius / 1.5)];
+      ctx.fillStyle = ["red","orange","yellow","green","blue","purple","black","white"][flags[titleWinner][i]];
+      ctx.fillRect(canvas.width * 0.5 + pixelPosition[0],titleGhostY * 1.5 + pixelPosition[1],radius / 1.5,radius / 1.5);
+    }
+    ctx.restore();
+  }
   // internal game code
   if ( titleMode == 0 ) {
     titleCountryX += titleMoving * 0.05;
     if ( Math.abs(titleCountryX - Math.round(titleCountryX)) < 0.01 ) titleMoving = 0;
   }
   if ( titleMode == 1 ) {
-    if ( ! titleStopped ) titleCountryX += 0.01;
+    if ( titleStopped == 0 ) titleCountryX += 0.01;
     if ( titleWinYVel > 0 || titleWinYMod > 0 ) {
       titleWinYMod += titleWinYVel;
       titleWinYVel -= 0.1;
@@ -141,7 +173,12 @@ function renderTitle() {
       titleBounceVel -= 0.05;
       titleCountryX -= (titleBounceVel + 1) * 0.125;
       titleBounceYMod += titleBounceVel * 7.5;
-      titleStopped = true;
+      titleStopped = 1;
+    } else if ( titleStopped == 1 ) {
+      setTimeout(function() {
+        titleMode = 2;
+      },750);
+      titleStopped = 2;
     }
   }
 }
