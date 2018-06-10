@@ -21,7 +21,7 @@ function renderTitle() {
   ctx.strokeStyle = "white";
   ctx.textAlign = "center";
   ctx.strokeText("PokeCountry",canvas.width * 0.5,canvas.height * 0.25);
-  ctx.font = canvas.width * 0.025 + "px Menlo";
+  ctx.font = canvas.width * 0.035 + "px Menlo";
   ctx.fillStyle = "white";
   if ( titleMode == 0 ) {
     if ( titleAskFinal ) {
@@ -55,11 +55,11 @@ function renderTitle() {
       ctx.fillStyle = "white";
       ctx.strokeStyle = "black";
       ctx.beginPath();
-      ctx.arc(canvas.width * 0.45 + xm,canvas.height * [0.65,0.55,0.575][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)],trueRadius * [0.25,0.4,0.2][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)],0,2 * Math.PI);
+      ctx.arc(canvas.width * [0.45,0.45,0.475][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)] + xm,canvas.height * [0.65,0.55,0.575][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)],trueRadius * [0.25,0.4,0.2][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)],0,2 * Math.PI);
       ctx.fill();
       ctx.stroke();
       ctx.beginPath();
-      ctx.arc(canvas.width * 0.55 + xm,canvas.height * [0.65,0.55,0.575][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)],trueRadius * [0.25,0.4,0.2][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)],0,2 * Math.PI);
+      ctx.arc(canvas.width * [0.55,0.55,0.525][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)] + xm,canvas.height * [0.65,0.55,0.575][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)],trueRadius * [0.25,0.4,0.2][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)],0,2 * Math.PI);
       ctx.fill();
       ctx.stroke();
     }
@@ -92,6 +92,25 @@ function renderTitle() {
     ctx.fillRect(billboardgx - canvas.width * 0.09,canvas.height * 0.225,canvas.width * 0.026,canvas.height * 0.265);
     ctx.fillStyle = "green";
     ctx.fillRect(billboardlx - canvas.width * 0.025,canvas.height * 0.225,billboardgx - billboardlx,canvas.height * 0.175);
+    ctx.textAlign = "center";
+    ctx.fillStyle = "black";
+    ctx.font = canvas.width * 0.075 + "px Menlo";
+    ctx.fillText("WE   ",billboardlx + (billboardgx - billboardlx) * 0.275,canvas.height * 0.3435);
+    ctx.font = canvas.width * 0.1 + "px Menlo";
+    ctx.fillText("   ♡ ",billboardlx + (billboardgx - billboardlx) * 0.275,canvas.height * 0.35);
+    ctx.beginPath();
+    ctx.arc(billboardlx + (billboardgx - billboardlx) * 0.75,canvas.height * 0.3125,canvas.width * 0.075,0,2 * Math.PI);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(billboardlx + (billboardgx - billboardlx) * 0.6,canvas.height * 0.3125);
+    ctx.lineTo(billboardlx + (billboardgx - billboardlx) * 0.9,canvas.height * 0.3125);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(billboardlx + (billboardgx - billboardlx) * 0.675,canvas.height * 0.2875,canvas.width * 0.015,0,2 * Math.PI);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(billboardlx + (billboardgx - billboardlx) * 0.825,canvas.height * 0.2875,canvas.width * 0.015,0,2 * Math.PI);
+    ctx.stroke();
   }
   // internal game code
   if ( titleMoving != 0 ) {
