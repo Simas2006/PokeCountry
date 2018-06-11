@@ -173,19 +173,19 @@ function renderTitle() {
     titleCountryX += titleMoving * 0.05;
     if ( Math.abs(titleCountryX - Math.round(titleCountryX)) < 0.01 ) titleMoving = 0;
   }
-  if ( titleMode == 1 ) {
+  if ( titleMode == 1 ) { // width = 384
     if ( titleStopped == 0 ) titleCountryX += 0.01;
     if ( titleWinYVel > 0 || titleWinYMod > 0 ) {
       titleWinYMod += titleWinYVel;
-      titleWinYVel -= 0.1;
+      titleWinYVel -= canvas.width * 0.0002;
     } else {
-      titleWinYVel = 4;
+      titleWinYVel = canvas.width * 0.0104;
     }
     if ( Math.floor(titleCountryX) == (groups[titleWinner] + 2) % 4 * 4 + 1 ) titleLoseYMod = 1;
     titleLoseYMod *= 1.075;
-    if ( Math.round(titleCountryX) == 19 ) titleBounceVel = 1;
+    if ( Math.round(titleCountryX) == 19 ) titleBounceVel = canvas.width * 0.0026;
     if ( titleBounceVel > 0 || titleBounceYMod > 0 ) {
-      titleBounceVel -= 0.05;
+      titleBounceVel -= canvas.width * 0.00013;
       titleCountryX -= (titleBounceVel + 1) * 0.125;
       titleBounceYMod += titleBounceVel * 7.5;
       titleStopped = 1;
@@ -196,7 +196,7 @@ function renderTitle() {
       titleStopped = 2;
     }
   }
-  if ( titleMode == 2 ) titleGhostY++;
+  if ( titleMode == 2 ) titleGhostY += canvas.width * 0.0026;
 }
 
 function handleKeyboardTitle(key) {
