@@ -128,7 +128,7 @@ window.onload = function() {
     else if ( gamemode == "battle" ) renderBattle();
     else if ( gamemode == "bossfight" ) renderBossFight();
     else if ( gamemode == "title" ) renderTitle();
-    else throw new Error("Invalid gamemode");
+    else if ( gamemode != "stop" ) throw new Error("Invalid gamemode");
     renderNPC();
     renderMenu();
     if ( blurActive > 0 ) {

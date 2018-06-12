@@ -173,7 +173,7 @@ function renderTitle() {
     titleCountryX += titleMoving * 0.05;
     if ( Math.abs(titleCountryX - Math.round(titleCountryX)) < 0.01 ) titleMoving = 0;
   }
-  if ( titleMode == 1 ) { // width = 384
+  if ( titleMode == 1 ) {
     if ( titleStopped == 0 ) titleCountryX += 0.01;
     if ( titleWinYVel > 0 || titleWinYMod > 0 ) {
       titleWinYMod += titleWinYVel;
@@ -196,7 +196,17 @@ function renderTitle() {
       titleStopped = 2;
     }
   }
-  if ( titleMode == 2 ) titleGhostY += canvas.width * 0.0026;
+  if ( titleMode == 2 ) {
+    titleGhostY += canvas.height * 0.0026;
+    if ( titleGhostY >= canvas.height * 1.45 ) {
+      setTimeout(function() {
+        var wins = localStorage.getItem("wins") || "";
+        if ( wins.indexOf(["u","e","r","c"][groups[titleWinner]]) <= -1 ) localStorage.setItem("wins",wins + ["u","e","r","c"][groups[titleWinner]]);
+        location.reload();
+      },1500);
+      gamemode = "stop";
+    }
+  }
 }
 
 function handleKeyboardTitle(key) {
