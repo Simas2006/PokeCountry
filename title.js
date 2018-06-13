@@ -1,8 +1,8 @@
-var titleMode = 1;
-var titleCountryX = -6.5;
+var titleMode = 0;
+var titleCountryX = 0;
 var titleMoving = 0;
 var titleStopped = 0;
-var titleAskFinal = false;
+var titleAskNumber = 0;
 var titleWinner = 0;
 var titleWinYMod = 0;
 var titleWinYVel = 0;
@@ -34,7 +34,7 @@ function renderTitle() {
   ctx.font = canvas.width * 0.035 + "px Menlo";
   ctx.fillStyle = "white";
   if ( titleMode == 0 ) {
-    if ( titleAskFinal ) {
+    if ( titleAskNumber > 0 ) {
       ctx.fillText("Press Space to start",canvas.width * 0.5,canvas.height * 0.5);
     } else {
       ctx.fillText("Pick a character to play as:",canvas.width * 0.5,canvas.height * 0.5);
@@ -213,9 +213,9 @@ function handleKeyboardTitle(key) {
   if ( key == "ArrowLeft" && Math.round(titleCountryX) > 0 && ! titleAskFinal && titleMode == 0 ) titleMoving = -1;
   if ( key == "ArrowRight" && Math.round(titleCountryX) < names.length - 2 && ! titleAskFinal && titleMode == 0 ) titleMoving = 1;
   if ( key == " " && titleMode == 0 ) {
-    if ( ! titleAskFinal ) {
-      titleAskFinal = true;
-    } else {
+    if ( titleAskNumber == 0 ) {
+      titleAskNumber = 1;
+    } else if ( titleAskNumber == 1 ) {
       mapObjects.unshift({
         country: titleCountryX,
         x: -1,
@@ -229,6 +229,7 @@ function handleKeyboardTitle(key) {
       setTimeout(function() {
         gamemode = "map";
       },1250);
+      titleAskNumber = 2;
     }
   }
 }
