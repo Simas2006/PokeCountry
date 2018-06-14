@@ -29,18 +29,23 @@ function renderMenu() {
     }
   }
   if ( menuMode == 0 ) {
-    ctx.fillStyle = "#00aaff";
-    ctx.beginPath();
-    ctx.arc(canvas.width * 0.69,canvas.height * 0.075 + 10,canvas.width * 0.05,0,2 * Math.PI);
-    ctx.fill();
-    ctx.lineWidth = canvas.width * 0.01;
-    ctx.strokeStyle = "#0000ff";
-    ctx.beginPath();
-    ctx.arc(canvas.width * 0.69,canvas.height * 0.075 + 10,canvas.width * 0.035,0,2 * Math.PI);
-    ctx.stroke();
-    ctx.fillStyle = "#0000ff";
-    drawStar(canvas.width * 0.69,canvas.height * 0.075 + 10,5,canvas.width * 0.0275,canvas.width * 0.01);
-    ctx.fill();
+    for ( var i = 0; i < 4; i++ ) {
+      var x = canvas.width * 0.6725 + canvas.width * 0.085 * i;
+      if ( completedGyms[["us","eu","ru","ch"][i]] ) {
+        ctx.fillStyle = ["#00aaff","#ffaa00","#777777","#ff7700"][i];
+        ctx.beginPath();
+        ctx.arc(x,canvas.height * 0.075 + 10,canvas.width * 0.0425,0,2 * Math.PI);
+        ctx.fill();
+        ctx.lineWidth = canvas.width * 0.01;
+        ctx.strokeStyle = ["blue","yellow","white","red"][i];
+        ctx.beginPath();
+        ctx.arc(x,canvas.height * 0.075 + 10,canvas.width * 0.0275,0,2 * Math.PI);
+        ctx.stroke();
+        ctx.fillStyle = ["blue","yellow","white","red"][i];
+        drawStar(x,canvas.height * 0.075 + 10,5,canvas.width * 0.0185,canvas.width * 0.01);
+        ctx.fill();
+      }
+    }
   }
   if ( menuSubSelected > -1 ) {
     ctx.fillStyle = "white";
