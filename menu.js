@@ -115,7 +115,7 @@ function handleKeyboardMenu(key) {
         ["DROP ONE","DROP ALL"]
       ][menuMode];
     } else if ( menuMode == 0 && menuMainSelected == 3 ) {
-      // run new game code
+      if ( confirm("This will DELETE ALL CURRENT GAME DATA (except home screen badges).\nAre you sure you want to continue?") ) location.reload();
     } else if ( menuSubSelected <= -1 ) {
       menuSubSelected = 0;
     } else {
