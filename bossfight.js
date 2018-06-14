@@ -1,52 +1,6 @@
-var bossPlayer = {
-  country: 0,
-  visibleCountry: 0,
-  faintedCountries: 0,
-  active: 0,
-  hp: [50],
-  pp: [50,50,50,50],
-  hexaballs: [0,0,0],
-  party: [
-    {
-      country: 1,
-      group: 1,
-      moves: [
-        [0,1],
-        [1,2],
-        [2,3],
-        [3,4]
-      ],
-      hp: [50],
-      pp: [50,50,50,50]
-    },
-    {
-      country: 2,
-      group: 1,
-      moves: [
-        [0,1],
-        [1,2],
-        [2,3],
-        [3,4]
-      ],
-      hp: [50],
-      pp: [50,50,50,50]
-    },
-    {
-      country: 3,
-      group: 1,
-      moves: [
-        [0,1],
-        [1,2],
-        [2,3],
-        [3,4]
-      ],
-      hp: [50],
-      pp: [50,50,50,50]
-    }
-  ]
-}
+var bossPlayer; // mapObjects[0].battleData
 var bossFightFinished = false;
-var bossPlayerX = 500;
+var bossPlayerX = 0;
 var bossPlayerY = 100;
 var bossPlayerXVel = 0;
 var bossPlayerYVel = 0;
@@ -54,8 +8,8 @@ var bossPlayerLives = 3;
 var bossPlayerInviniciblity = 0;
 var bossPlayerTimers = [100,100,100,100];
 var bossPlayerSpeed = [0.75,0.375,0.1875,0.09375];
-var bossAttackCountry = 0;
-var bossAttackLives = 1;
+var bossAttackCountry;
+var bossAttackLives = 100;
 var bossAttackX = 0;
 var bossAttackY = 320;
 var bossAttackYVel = 0;
@@ -84,10 +38,8 @@ function renderBossFight() {
   // rendering code
   if ( bossFightFinished ) return;
   ctx.lineWidth = 1;
-  ctx.strokeStyle = "black";
   ctx.fillStyle = "white";
   ctx.fillRect(0,0,canvas.width,canvas.height);
-  ctx.strokeRect(0,0,canvas.width,canvas.height);
   if ( bossShowBolt ) {
     bossBoltTimer++;
     ctx.lineWidth = bossBoltTimer % 75 >= 38 ? 10 : 25;
@@ -334,7 +286,9 @@ function activateExit(successful) {
   setTimeout(function() {
     if ( successful ) {
       gamemode = "title";
-      //titleMode = 1;
+      titleMode = 1;
+      titleWinner = mapObjects[0].country;
+      titleCountryX = -6.5;
     } else {
       gamemode = "map";
       mapIndex = 0;
