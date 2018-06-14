@@ -1,6 +1,12 @@
 var gamemode = "title";
 var blurActive = 0;
 var blurDirection = 0;
+var completedGyms = {
+  us: false,
+  eu: false,
+  ru: false,
+  ch: false
+}
 var canvas,ctx;
 
 var flags = [
@@ -119,11 +125,11 @@ function drawRoundedRect(radius,x,y,width,height) {
 
 window.onload = function() {
   canvas = document.getElementById("canvas");
-  canvas.width = Math.min(window.innerWidth,window.innerHeight);
-  canvas.height = Math.min(window.innerWidth,window.innerHeight);
   ctx = canvas.getContext("2d");
   setInterval(function() {
     ctx.textBaseline = "alphabetic";
+    canvas.width = Math.min(window.innerWidth,window.innerHeight);
+    canvas.height = Math.min(window.innerWidth,window.innerHeight);
     if ( gamemode == "map" ) renderMap();
     else if ( gamemode == "battle" ) renderBattle();
     else if ( gamemode == "bossfight" ) renderBossFight();

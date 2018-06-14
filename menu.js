@@ -14,6 +14,7 @@ function renderMenu() {
   ctx.stroke();
   ctx.fill();
   ctx.fillStyle = "black";
+  ctx.textAlign = "left";
   ctx.font = canvas.width * 0.06 + "px Menlo";
   for ( var i = 0; i < menuTextList.length; i++ ) {
     var y = canvas.height * 0.1 * (i + 1) + 10;
@@ -26,6 +27,20 @@ function renderMenu() {
       ctx.closePath();
       ctx.fill();
     }
+  }
+  if ( menuMode == 0 ) {
+    ctx.fillStyle = "#00aaff";
+    ctx.beginPath();
+    ctx.arc(canvas.width * 0.69,canvas.height * 0.075 + 10,canvas.width * 0.05,0,2 * Math.PI);
+    ctx.fill();
+    ctx.lineWidth = canvas.width * 0.01;
+    ctx.strokeStyle = "#0000ff";
+    ctx.beginPath();
+    ctx.arc(canvas.width * 0.69,canvas.height * 0.075 + 10,canvas.width * 0.035,0,2 * Math.PI);
+    ctx.stroke();
+    ctx.fillStyle = "#0000ff";
+    drawStar(canvas.width * 0.69,canvas.height * 0.075 + 10,5,canvas.width * 0.0275,canvas.width * 0.01);
+    ctx.fill();
   }
   if ( menuSubSelected > -1 ) {
     ctx.fillStyle = "white";
@@ -47,6 +62,27 @@ function renderMenu() {
       }
     }
   }
+}
+
+function drawStar(cx,cy,spikes,outerRadius,innerRadius) {
+  var rotation = Math.PI / 2 * 3;
+  var x = cx;
+  var y = cy;
+  var step = Math.PI / spikes;
+  ctx.beginPath();
+  ctx.moveTo(cx,cy - outerRadius)
+  for ( var i = 0; i < spikes; i++ ) {
+    x = cx + Math.cos(rotation) * outerRadius;
+    y = cy + Math.sin(rotation) * outerRadius;
+    ctx.lineTo(x,y);
+    rotation += step;
+    x = cx + Math.cos(rotation) * innerRadius;
+    y = cy + Math.sin(rotation) * innerRadius;
+    ctx.lineTo(x,y);
+    rotation += step;
+  }
+  ctx.lineTo(cx,cy - outerRadius);
+  ctx.closePath();
 }
 
 function handleKeyboardMenu(key) {
