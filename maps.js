@@ -103,9 +103,9 @@ var mapMetadata = [
     trainers: [],
     warps: [
       {
-        world: 0,
+        world: 2,
         inloc: [2,9],
-        outloc: [12,26]
+        outloc: [1,1]
       }
     ],
     tileData: {
@@ -126,8 +126,8 @@ var mapMetadata = [
 ];
 
 var mapObjects = [];
-var mapPosition = [1,1];
-var mapIndex = 2;
+var mapPosition = [2,4];
+var mapIndex = 1;
 var mapBattlePoints = 0;
 var mapCurrentBattle;
 var mapCanMove = true;
@@ -142,6 +142,7 @@ var mapKeypresses = {
 
 var mapZoomLevel = 12;
 var mapEnableGrid = false;
+var mapCheckTriggerMaps = [2];
 
 function renderMap() {
   // rendering code
@@ -200,10 +201,25 @@ function renderMap() {
     ctx.stroke();
   }
   // internal game code
+  var triggered = false;
   var warps = mapMetadata[mapIndex].warps;
   for ( var i = 0; i < warps.length; i++ ) {
     if ( Math.round(mapPosition[0]) == warps[i].inloc[0] && Math.round(mapPosition[1]) == warps[i].inloc[1] ) {
-      openNewMap(warps[i].world,warps[i].outloc);
+      if ( mapCheckTriggerMaps.indexOf(warps[i].world) <= -1 || (completedGyms.us || completedGyms.eu || completedGyms.ru || completedGyms.ch) ) {
+        openNewMap(warps[i].world,warps[i].outloc);
+      } else {
+        if ( ! npcTextDrawing && ! mapInvincible && ! mapKeypresses.down ) {
+          npcData = {
+            type: 3,
+            dialogue: "Try beating a gym before continuing."
+          }
+          npcDialogueItem = 0;
+          npcCharDrawn = 0;
+          npcActiveResult = 0;
+          npcTextDrawing = true;
+        }
+        triggered = true;
+      }
     }
   }
   if ( mapCanMove ) {
@@ -213,7 +229,6 @@ function renderMap() {
     if ( mapKeypresses.left && walls.indexOf(maps[mapIndex][Math.round(mapPosition[1])][Math.floor(mapPosition[0])]) <= -1 ) mapPosition[0] -= 0.04;
     if ( mapKeypresses.right && walls.indexOf(maps[mapIndex][Math.round(mapPosition[1])][Math.ceil(mapPosition[0])]) <= -1 ) mapPosition[0] += 0.04;
   }
-  var triggered = false;
   for ( var i = 1; i < mapObjects.length; i++ ) {
     if ( ! mapObjects[i].exists ) continue;
     if ( mapObjects[i].battleData.trigger ) {
@@ -226,7 +241,7 @@ function renderMap() {
         if ( ! mapInvincible ) mapBattleTrainer(i);
         triggered = true;
       }
-    } else {
+    } else if ( mapObjects[i].npcData.trigger ) {
       if (
         Math.sqrt(
           Math.pow(Math.abs(mapPosition[0] - mapObjects[i].x),2) +

@@ -155,7 +155,7 @@ window.onload = function() {
         handleKeyboardNPC(event.key);
       } else if ( gamemode == "map" ) {
         if ( ! menuActive ) handleKeyboardMap(event.key,true);
-        handleKeyboardMenu(event.key);
+        else handleKeyboardMenu(event.key);
       } else if ( gamemode == "battle" ) {
         handleKeyboardBattle(event.key);
       } else if ( gamemode == "bossfight" ) {
@@ -164,7 +164,7 @@ window.onload = function() {
         handleKeyboardTitle(event.key,true);
       }
     }
-    if ( ["1","2","3","4"].indexOf(event.key) > -1 ) handleKeyboardBoss(event.key,true);
+    if ( ["1","2","3","4"].indexOf(event.key) > -1 && gamemode == "bossfight" ) handleKeyboardBoss(event.key,true);
     if ( event.key == "m" && gamemode == "map" ) handleKeyboardMenu(event.key);
   }
   window.onkeyup = function(event) {
