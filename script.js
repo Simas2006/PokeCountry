@@ -127,6 +127,7 @@ window.onload = function() {
   canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d");
   setInterval(function() {
+    if ( ! localStorage.getItem("wins") ) localStorage.setItem("wins","");
     ctx.textBaseline = "alphabetic";
     canvas.width = Math.min(window.innerWidth,window.innerHeight);
     canvas.height = Math.min(window.innerWidth,window.innerHeight);

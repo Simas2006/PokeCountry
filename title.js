@@ -78,6 +78,25 @@ function renderTitle() {
       ctx.restore();
     }
   }
+  if ( titleMode == 0 ) {
+    for ( var i = 0; i < 4; i++ ) {
+      var x = canvas.width * 0.6725 + canvas.width * 0.085 * i;
+      if ( localStorage.getItem("wins").indexOf("uerc".split("")[i]) > -1 ) {
+        ctx.fillStyle = ["#00aaff","#ff7700","#777777","#ff7700"][i];
+        ctx.beginPath();
+        ctx.arc(x,canvas.width * 0.0425 + 10,canvas.width * 0.0425,0,2 * Math.PI);
+        ctx.fill();
+        ctx.lineWidth = canvas.width * 0.01;
+        ctx.strokeStyle = ["blue","yellow","white","red"][i];
+        ctx.beginPath();
+        ctx.arc(x,canvas.height * 0.0425 + 10,canvas.width * 0.0275,0,2 * Math.PI);
+        ctx.stroke();
+        ctx.fillStyle = "gold";
+        drawStar(x,canvas.height * 0.0425 + 10,5,canvas.width * 0.0185,canvas.width * 0.01);
+        ctx.fill();
+      }
+    }
+  }
   if ( titleMode == 1 ) {
     radius = canvas.width * 0.11;
     ctx.save();
