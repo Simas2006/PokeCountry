@@ -9,7 +9,7 @@ var bossPlayerInviniciblity = 0;
 var bossPlayerTimers = [100,100,100,100];
 var bossPlayerSpeed = [0.75,0.375,0.1875,0.09375];
 var bossAttackCountry;
-var bossAttackLives = 1;
+var bossAttackLives = 100;
 var bossAttackX = 0;
 var bossAttackY = 0;
 var bossAttackYVel = 0;
@@ -294,7 +294,7 @@ function activateExit(successful) {
       gamemode = "title";
       titleMode = 1;
       titleWinner = mapObjects[0].country;
-      titleCountryX = -6.5;
+      titleCountryX = -8.5;
     } else {
       gamemode = "map";
       mapIndex = groups[mapObjects[0].country];
