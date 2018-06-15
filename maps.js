@@ -158,7 +158,13 @@ var mapMetadata = [
           direction: 0,
           colored: true,
           exists: true,
-          battleData: {}
+          battleData: {
+            trigger: false
+          },
+          npcData: {
+            trigger: false
+          },
+          enterBossFight: true
         }
       ],
       warps: [],
@@ -188,7 +194,7 @@ var mapObjects = [
   }
 ];
 var mapPosition = [2,2];
-var mapIndex = 0;
+var mapIndex = 3;
 var mapMetadataID = 0;
 var mapBattlePoints = 0;
 var mapCurrentBattle;

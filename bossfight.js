@@ -11,14 +11,14 @@ var bossPlayerSpeed = [0.75,0.375,0.1875,0.09375];
 var bossAttackCountry;
 var bossAttackLives = 100;
 var bossAttackX = 0;
-var bossAttackY = 320;
+var bossAttackY = 0;
 var bossAttackYVel = 0;
 var bossAttackDirection = 1;
 var bossAttackSeparationX = 0;
 var bossAttackSeparationY = 0;
 var bossAttackCanMove = true;
 var bossAttackRotation = 0;
-var bossAttackCount = 0;
+var bossAttackCount = -2;
 var bossSteelX = 500;
 var bossSteelY = 320;
 var bossSteelTrigger = 0;
@@ -101,7 +101,7 @@ function renderBossFight() {
   ctx.stroke();
   ctx.save();
   ctx.clip();
-  drawFlag(flags[bossAttackCountry],bossAttackX + bossAttackSeparationX,bossAttackY + bossAttackSeparationY,canvas.width * 0.2,Math.floor(bossAttackRotation / 25));
+  drawFlag(flags[bossAttackCountry],bossAttackX - bossAttackSeparationX,bossAttackY + bossAttackSeparationY,canvas.width * 0.2,Math.floor(bossAttackRotation / 25));
   ctx.restore();
   ctx.beginPath();
   ctx.arc(bossPlayerX,bossPlayerY,canvas.width * 0.1,0,2 * Math.PI);
@@ -163,8 +163,8 @@ function renderBossFight() {
     var w = canvas.width;
     bossAttackY = (w / 2) - Math.pow(bossAttackX - (w / 2),2) / (w / 3) + (w / 6);
     bossAttackX += 3 * bossAttackDirection;
-    if ( bossAttackX >= 1125 ) bossAttackDirection = -1;
-    if ( bossAttackX <= -125 ) bossAttackDirection = 1;
+    if ( bossAttackX >= (canvas.width * 1.125) ) bossAttackDirection = -1;
+    if ( bossAttackX <= -(canvas.width * 0.125) ) bossAttackDirection = 1;
     if ( bossAttackY > canvas.height * 0.25 && bossAttackY < canvas.height * 0.26 ) {
       bossAttackCount++;
       bossAttackCount %= 3;
