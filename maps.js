@@ -144,7 +144,14 @@ var mapMetadata = [
   [
     {
       trainers: [],
-      warps: [],
+      warps: [
+        {
+          world: 1,
+          inloc: [2,2],
+          outloc: [2,8],
+          metaID: 0
+        }
+      ],
       tileData: {
         tileset: ["lightblue","green","white","#f1d2ab"],
         walls: [0]
@@ -197,7 +204,7 @@ var mapKeypresses = {
 
 var mapZoomLevel = 12;
 var mapEnableGrid = false;
-var mapCheckTriggerMaps = [2];
+var mapCheckTriggerMaps = [1,2];
 
 function renderMap() {
   // rendering code
@@ -260,7 +267,7 @@ function renderMap() {
   var warps = mapMetadata[mapIndex][mapMetadataID].warps;
   for ( var i = 0; i < warps.length; i++ ) {
     if ( Math.round(mapPosition[0]) == warps[i].inloc[0] && Math.round(mapPosition[1]) == warps[i].inloc[1] ) {
-      if ( mapCheckTriggerMaps.indexOf(warps[i].world) <= -1 || (completedGyms.us || completedGyms.eu || completedGyms.ru || completedGyms.ch) ) {
+      if ( mapCheckTriggerMaps.indexOf(warps[i].world) <= -1 || mapCheckTriggerMaps.indexOf(mapIndex) <= -1 || (completedGyms.us || completedGyms.eu || completedGyms.ru || completedGyms.ch) ) {
         openNewMap(warps[i].world,warps[i].outloc,warps[i].metaID);
       } else {
         if ( ! npcTextDrawing && ! mapInvincible && ! mapKeypresses.down ) {
