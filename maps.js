@@ -92,60 +92,82 @@ var maps = [
   00000000000000000000000000000000000000000000000000000000000000000000000000`
 ].map(item => item.split("\n").map(jtem => jtem.trim().split("").map(ktem => parseInt(ktem))));
 var mapMetadata = [
-  {
-    trainers: [],
-    warps: [
-      {
-        world: 1,
-        inloc: [12,27],
-        outloc: [2,8]
+  [
+    {
+      trainers: [],
+      warps: [
+        {
+          world: 1,
+          inloc: [12,27],
+          outloc: [2,8]
+        }
+      ],
+      tileData: {
+        tileset: ["black","cyan","#80bfff","#ff6666","white","#ff6666","brown"],
+        walls: [1,6]
       }
-    ],
-    tileData: {
-      tileset: ["black","cyan","#80bfff","#ff6666","white","#ff6666","brown"],
-      walls: [1,6]
-    }
-  },
-  {
-    trainers: [],
-    warps: [
-      {
-        world: 2,
-        inloc: [2,9],
-        outloc: [1,1]
+    },
+    {
+      trainers: [],
+      warps: [
+        {
+          world: 1,
+          inloc: [12,27],
+          outloc: [2,8]
+        }
+      ],
+      tileData: {
+        tileset: ["black","yellow","black","black","#fdcf04","#ff6666","brown"],
+        walls: [1,6]
       }
-    ],
-    tileData: {
-      tileset: ["black","cyan","#80bfff","brown","blue"],
-      walls: [1]
-    }
-  },
-  {
-    trainers: [],
-    warps: [],
-    tileData: {
-      tileset: ["lightblue","green","white","rgb(241,210,171)"],
-      walls: [0]
-    }
-  },
-  {
-    trainers: [
-      {
-        country: 0,
-        x: 69,
-        y: 4,
-        direction: 0,
-        colored: true,
-        exists: true,
-        battleData: {}
+    },
+  ],
+  [
+    {
+      trainers: [],
+      warps: [
+        {
+          world: 2,
+          inloc: [2,9],
+          outloc: [1,1]
+        }
+      ],
+      tileData: {
+        tileset: ["black","cyan","#80bfff","brown","blue"],
+        walls: [1]
       }
-    ],
-    warps: [],
-    tileData: {
-      tileset: ["black","brown","black","white"],
-      walls: [1]
+    },
+  ],
+  [
+    {
+      trainers: [],
+      warps: [],
+      tileData: {
+        tileset: ["lightblue","green","white","#f1d2ab"],
+        walls: [0]
+      }
+    },
+  ],
+  [
+    {
+      trainers: [
+        {
+          country: 0,
+          x: 69,
+          y: 4,
+          direction: 0,
+          colored: true,
+          exists: true,
+          battleData: {}
+        }
+      ],
+      warps: [],
+      tileData: {
+        tileset: ["black","brown","black","white"],
+        walls: [1]
+      }
     }
-  }
+  ]
 ];
 
 var mapObjects = [
@@ -165,8 +187,9 @@ var mapObjects = [
     enterBossFight: true
   }
 ];
-var mapPosition = [2,4];
-var mapIndex = 3;
+var mapPosition = [2,2];
+var mapIndex = 0;
+var mapMetadataID = 0;
 var mapBattlePoints = 0;
 var mapCurrentBattle;
 var mapCanMove = true;
@@ -196,7 +219,7 @@ function renderMap() {
         Math.min(Math.max(i + mapPosition[0] - mapZoomLevel / 2,0),map[0].length - 1),
         Math.min(Math.max(j + mapPosition[1] - mapZoomLevel / 2,0),map.length - 1)
       ];
-      ctx.fillStyle = mapMetadata[mapIndex].tileData.tileset[map[Math.floor(sum[1])][Math.floor(sum[0])]] || "white";
+      ctx.fillStyle = mapMetadata[mapIndex][mapMetadataID].tileData.tileset[map[Math.floor(sum[1])][Math.floor(sum[0])]] || "white";
       ctx.fillRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))) - 1,unit + 2,unit + 2);
       if ( mapEnableGrid ) ctx.strokeRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))),unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))),unit,unit);
     }
@@ -241,7 +264,7 @@ function renderMap() {
   }
   // internal game code
   var triggered = false;
-  var warps = mapMetadata[mapIndex].warps;
+  var warps = mapMetadata[mapIndex][mapMetadataID].warps;
   for ( var i = 0; i < warps.length; i++ ) {
     if ( Math.round(mapPosition[0]) == warps[i].inloc[0] && Math.round(mapPosition[1]) == warps[i].inloc[1] ) {
       if ( mapCheckTriggerMaps.indexOf(warps[i].world) <= -1 || (completedGyms.us || completedGyms.eu || completedGyms.ru || completedGyms.ch) ) {
@@ -262,11 +285,11 @@ function renderMap() {
     }
   }
   if ( mapCanMove ) {
-    var walls = mapMetadata[mapIndex].tileData.walls;
-    if ( mapKeypresses.up && walls.indexOf(maps[mapIndex][Math.floor(mapPosition[1])][Math.round(mapPosition[0])]) <= -1 ) mapPosition[1] -= 0.04;
-    if ( mapKeypresses.down && walls.indexOf(maps[mapIndex][Math.ceil(mapPosition[1])][Math.round(mapPosition[0])]) <= -1 ) mapPosition[1] += 0.04;
-    if ( mapKeypresses.left && walls.indexOf(maps[mapIndex][Math.round(mapPosition[1])][Math.floor(mapPosition[0])]) <= -1 ) mapPosition[0] -= 0.04;
-    if ( mapKeypresses.right && walls.indexOf(maps[mapIndex][Math.round(mapPosition[1])][Math.ceil(mapPosition[0])]) <= -1 ) mapPosition[0] += 0.04;
+    var walls = mapMetadata[mapIndex][mapMetadataID].tileData.walls;
+    if ( mapKeypresses.up && walls.indexOf(map[Math.floor(mapPosition[1])][Math.round(mapPosition[0])]) <= -1 ) mapPosition[1] -= 0.04;
+    if ( mapKeypresses.down && walls.indexOf(map[Math.ceil(mapPosition[1])][Math.round(mapPosition[0])]) <= -1 ) mapPosition[1] += 0.04;
+    if ( mapKeypresses.left && walls.indexOf(map[Math.round(mapPosition[1])][Math.floor(mapPosition[0])]) <= -1 ) mapPosition[0] -= 0.04;
+    if ( mapKeypresses.right && walls.indexOf(map[Math.round(mapPosition[1])][Math.ceil(mapPosition[0])]) <= -1 ) mapPosition[0] += 0.04;
   }
   for ( var i = 1; i < mapObjects.length; i++ ) {
     if ( ! mapObjects[i].exists ) continue;
@@ -317,16 +340,17 @@ function renderMap() {
   if ( ! triggered ) mapInvincible = false;
 }
 
-function openNewMap(index,newloc) {
+function openNewMap(index,newloc,metaid) {
   if ( mapInExit ) return;
   mapCanMove = false;
   mapInExit = true;
   blurActive = 1;
   setTimeout(function() {
     mapIndex = index;
+    mapMetadataID = metaid;
     mapPosition[0] = newloc[0];
     mapPosition[1] = newloc[1];
-    mapObjects = [mapObjects[0]].concat(mapMetadata[mapIndex].trainers);
+    mapObjects = [mapObjects[0]].concat(mapMetadata[mapIndex][mapMetadataID].trainers);
     setTimeout(function() {
       mapCanMove = true;
       mapInExit = false;
@@ -339,7 +363,7 @@ function mapBattleTrainer(index) {
   mapCanMove = false;
   mapObjects[0].colored = false;
   if ( mapObjects[index] ) mapObjects[index].colored = false;
-  battlePlayers = [mapObjects[0].battleData,mapMetadata[mapIndex].trainers[index - 1].battleData];
+  battlePlayers = [mapObjects[0].battleData,mapMetadata[mapIndex][mapMetadataID].trainers[index - 1].battleData];
   mapCurrentBattle = index;
   setTimeout(function() {
     blurActive = 1;
@@ -379,11 +403,11 @@ function mapTrainerComplete(winner) {
     gamemode = "map";
     if ( winner == 0 ) {
       mapObjects[mapCurrentBattle].exists = false;
-      mapMetadata[mapIndex].trainers[mapCurrentBattle - 1].exists = false;
+      mapMetadata[mapIndex][mapMetadataID].trainers[mapCurrentBattle - 1].exists = false;
     } else {
       mapInvincible = true;
       mapObjects[mapCurrentBattle].colored = true;
-      mapMetadata[mapIndex].trainers[mapCurrentBattle - 1].colored = true;
+      mapMetadata[mapIndex][mapMetadataID].trainers[mapCurrentBattle - 1].colored = true;
     }
     mapObjects[0].colored = true;
     mapKeypresses = {
