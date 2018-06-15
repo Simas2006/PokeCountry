@@ -1,4 +1,4 @@
-var bossPlayer; // mapObjects[0].battleData
+var bossPlayer;
 var bossFightFinished = false;
 var bossPlayerX = 0;
 var bossPlayerY = 100;
@@ -237,12 +237,8 @@ function renderBossFight() {
     drawLightningBolt(0,bossAttackY,canvas.width,bossAttackY);
     ctx.stroke();
   }
-  if ( bossAttackSeparationY > canvas.height && ! bossFightFinished ) {
-    activateExit(true);
-  }
-  if ( bossPlayerLives <= 0 ) {
-    activateExit(false);
-  }
+  if ( bossAttackSeparationY > canvas.height && ! bossFightFinished ) activateExit(true);
+  if ( bossPlayerLives <= 0 ) activateExit(false);
   if ( (Math.sqrt(Math.pow(bossAttackX - bossPlayerX,2) + Math.pow(bossAttackY - bossPlayerY,2)) <= canvas.width * 0.3 || Math.sqrt(Math.pow(bossSteelX - bossPlayerX,2) + Math.pow(bossSteelY - bossPlayerY,2)) <= canvas.width * 0.103) && bossPlayerInviniciblity <= 0 ) {
     bossPlayerLives--;
     bossPlayerInviniciblity = 100;
@@ -291,9 +287,10 @@ function activateExit(successful) {
       titleCountryX = -6.5;
     } else {
       gamemode = "map";
-      mapIndex = 0;
-      mapPosition = [2,2];
+      mapIndex = groups[mapObjects[0].country];
+      mapPosition = [[2,2]][groups[mapObjects[0].country]];
       mapObjects = [mapObjects[0]].concat(mapMetadata[mapIndex].trainers);
+      mapObjects[0].colored = true;
     }
   },1250);
 }

@@ -1,5 +1,4 @@
 var maps = [
-  // make pcs + gyms have little houses if is home gym/pc
   `0000000000000000000000000
   0000000001111111000000000
   0000000014444444100000000
@@ -130,7 +129,17 @@ var mapMetadata = [
     }
   },
   {
-    trainers: [],
+    trainers: [
+      {
+        country: 0,
+        x: 69,
+        y: 4,
+        direction: 0,
+        colored: true,
+        exists: true,
+        battleData: {}
+      }
+    ],
     warps: [],
     tileData: {
       tileset: ["black","brown","black","white"],
@@ -139,7 +148,23 @@ var mapMetadata = [
   }
 ];
 
-var mapObjects = [];
+var mapObjects = [
+  {
+    country: 0,
+    x: 69,
+    y: 4,
+    direction: 0,
+    colored: true,
+    exists: true,
+    battleData: {
+      trigger: false
+    },
+    npcData: {
+      trigger: false
+    },
+    enterBossFight: true
+  }
+];
 var mapPosition = [2,4];
 var mapIndex = 3;
 var mapBattlePoints = 0;
@@ -277,6 +302,16 @@ function renderMap() {
         }
         triggered = true;
       }
+    } else if ( mapObjects[i].enterBossFight ) {
+      if (
+        Math.sqrt(
+          Math.pow(Math.abs(mapPosition[0] - mapObjects[i].x),2) +
+          Math.pow(Math.abs(mapPosition[1] - mapObjects[i].y),2)
+        ) <= 2 && ! mapInExit
+      ) {
+        if ( ! mapInvincible ) mapEnterBossFight(i);
+        triggered = true;
+      }
     }
   }
   if ( ! triggered ) mapInvincible = false;
@@ -313,6 +348,25 @@ function mapBattleTrainer(index) {
       battleSwapDirection = 1;
       battleSwapPlayer = -1;
       gamemode = "battle";
+      mapCanMove = true;
+      mapInExit = false;
+    },1250);
+  },1250);
+}
+
+function mapEnterBossFight(index) {
+  mapInExit = true;
+  mapCanMove = false;
+  mapObjects[0].colored = false;
+  if ( mapObjects[index] ) mapObjects[index].colored = false;
+  bossPlayer = mapObjects[0].battleData;
+  bossAttackCountry = mapObjects[index].country;
+  bossPlayerX = canvas.width * 0.25;
+  bossPlayerY = canvas.height * 0.9;
+  setTimeout(function() {
+    blurActive = 1;
+    setTimeout(function() {
+      gamemode = "bossfight";
       mapCanMove = true;
       mapInExit = false;
     },1250);
