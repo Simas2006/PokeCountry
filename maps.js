@@ -99,7 +99,8 @@ var mapMetadata = [
         {
           world: 1,
           inloc: [12,27],
-          outloc: [2,8]
+          outloc: [2,8],
+          metaID: 0
         }
       ],
       tileData: {
@@ -113,7 +114,8 @@ var mapMetadata = [
         {
           world: 1,
           inloc: [12,27],
-          outloc: [2,8]
+          outloc: [2,8],
+          metaID: 0
         }
       ],
       tileData: {
@@ -129,7 +131,8 @@ var mapMetadata = [
         {
           world: 2,
           inloc: [2,9],
-          outloc: [1,1]
+          outloc: [1,1],
+          metaID: 0
         }
       ],
       tileData: {
@@ -176,27 +179,10 @@ var mapMetadata = [
   ]
 ];
 
-var mapObjects = [
-  {
-    country: 0,
-    x: 69,
-    y: 4,
-    direction: 0,
-    colored: true,
-    exists: true,
-    battleData: {
-      trigger: false
-    },
-    npcData: {
-      trigger: false
-    },
-    enterBossFight: true
-  }
-];
+var mapObjects = [];
 var mapPosition = [2,2];
-var mapIndex = 3;
+var mapIndex = 0;
 var mapMetadataID = 0;
-var mapBattlePoints = 0;
 var mapCurrentBattle;
 var mapCanMove = true;
 var mapInExit = false;
@@ -205,7 +191,8 @@ var mapKeypresses = {
   up: false,
   down: false,
   left: false,
-  right: false
+  right: false,
+  x: false
 }
 
 var mapZoomLevel = 12;
@@ -274,7 +261,7 @@ function renderMap() {
   for ( var i = 0; i < warps.length; i++ ) {
     if ( Math.round(mapPosition[0]) == warps[i].inloc[0] && Math.round(mapPosition[1]) == warps[i].inloc[1] ) {
       if ( mapCheckTriggerMaps.indexOf(warps[i].world) <= -1 || (completedGyms.us || completedGyms.eu || completedGyms.ru || completedGyms.ch) ) {
-        openNewMap(warps[i].world,warps[i].outloc);
+        openNewMap(warps[i].world,warps[i].outloc,warps[i].metaID);
       } else {
         if ( ! npcTextDrawing && ! mapInvincible && ! mapKeypresses.down ) {
           npcData = {
@@ -291,11 +278,12 @@ function renderMap() {
     }
   }
   if ( mapCanMove ) {
+    var speed = mapKeypresses.x ? 0.0825 : 0.045;
     var walls = mapMetadata[mapIndex][mapMetadataID].tileData.walls;
-    if ( mapKeypresses.up && walls.indexOf(map[Math.floor(mapPosition[1])][Math.round(mapPosition[0])]) <= -1 ) mapPosition[1] -= 0.04;
-    if ( mapKeypresses.down && walls.indexOf(map[Math.ceil(mapPosition[1])][Math.round(mapPosition[0])]) <= -1 ) mapPosition[1] += 0.04;
-    if ( mapKeypresses.left && walls.indexOf(map[Math.round(mapPosition[1])][Math.floor(mapPosition[0])]) <= -1 ) mapPosition[0] -= 0.04;
-    if ( mapKeypresses.right && walls.indexOf(map[Math.round(mapPosition[1])][Math.ceil(mapPosition[0])]) <= -1 ) mapPosition[0] += 0.04;
+    if ( mapKeypresses.up && walls.indexOf(map[Math.floor(mapPosition[1])][Math.round(mapPosition[0])]) <= -1 ) mapPosition[1] -= speed;
+    if ( mapKeypresses.down && walls.indexOf(map[Math.ceil(mapPosition[1])][Math.round(mapPosition[0])]) <= -1 ) mapPosition[1] += speed;
+    if ( mapKeypresses.left && walls.indexOf(map[Math.round(mapPosition[1])][Math.floor(mapPosition[0])]) <= -1 ) mapPosition[0] -= speed;
+    if ( mapKeypresses.right && walls.indexOf(map[Math.round(mapPosition[1])][Math.ceil(mapPosition[0])]) <= -1 ) mapPosition[0] += speed;
   }
   for ( var i = 1; i < mapObjects.length; i++ ) {
     if ( ! mapObjects[i].exists ) continue;
@@ -432,6 +420,7 @@ function handleKeyboardMap(key,down) {
   if ( key == "ArrowDown" ) mapKeypresses.down = down;
   if ( key == "ArrowLeft" ) mapKeypresses.left = down;
   if ( key == "ArrowRight" ) mapKeypresses.right = down;
+  if ( key == "x" ) mapKeypresses.x = down;
   var index = ["ArrowRight","ArrowDown","ArrowLeft","ArrowUp"].indexOf(key);
   if ( index > -1 && down ) mapObjects[0].direction = index;
 }

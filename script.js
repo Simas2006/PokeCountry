@@ -10,23 +10,23 @@ var completedGyms = {
 var canvas,ctx;
 
 var flags = [
-  `440440070`, // US       // US TEAM
+  `440440070`, // US
   `602602602`, // Germany
   `740740740`, // Russia
   `200000000`, // China
-  `000707000`, // Canada  // EU TEAM
+  `000707000`, // Canada
   `444777000`, // France
   `777003003`, // Belarus
   `000020000`, // Vietnam
-  `000707000`, // Canada  // RUSSIA TEAM
+  `000707000`, // Canada
   `444777000`, // France
   `777003003`, // Belarus
   `000020000`, // Vietnam
-  `000707000`, // Canada  // CHINA TEAM
+  `000707000`, // Canada
   `444777000`, // France
   `777003003`, // Belarus
   `000020000`, // Vietnam
-  `070777070`  // Switzerland // NO TEAM
+  `070777070`  // Switzerland
 ].map(item => item.split("").map(jtem => parseInt(jtem)));
 var names =  ["USA","Germany","Russia","China","Canada","France","Belarus","Vietnam","Canada","France","Belarus","Vietnam","Canada","France","Belarus","Vietnam","Switzerland"];
 var groups = [0,1,2,3,0,1,2,3,0,1,2,3,0,1,2,3,-1];
@@ -165,12 +165,14 @@ window.onload = function() {
       }
     }
     if ( ["1","2","3","4"].indexOf(event.key) > -1 && gamemode == "bossfight" ) handleKeyboardBoss(event.key,true);
-    if ( event.key == "m" && gamemode == "map" ) handleKeyboardMenu(event.key);
+    if ( event.key == "m" && gamemode == "map" ) handleKeyboardMenu(event.key,true);
+    if ( event.key == "x" && gamemode == "map" ) handleKeyboardMap(event.key,true);
   }
   window.onkeyup = function(event) {
     if ( event.key.startsWith("Arrow") || event.key == " " ) {
       if ( gamemode == "map" ) handleKeyboardMap(event.key,false);
       else if ( gamemode == "bossfight" ) handleKeyboardBoss(event.key,false);
     }
+    if ( event.key == "x" && gamemode == "map" ) handleKeyboardMap(event.key,false);
   }
 }
