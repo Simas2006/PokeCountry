@@ -9,7 +9,7 @@ var bossPlayerInviniciblity = 0;
 var bossPlayerTimers = [100,100,100,100];
 var bossPlayerSpeed = [0.75,0.375,0.1875,0.09375];
 var bossAttackCountry;
-var bossAttackLives = 100;
+var bossAttackLives = 1;
 var bossAttackX = 0;
 var bossAttackY = 0;
 var bossAttackYVel = 0;
@@ -96,6 +96,16 @@ function renderBossFight() {
   ctx.clip();
   drawFlag(flags[bossAttackCountry],bossAttackX,bossAttackY - bossAttackSeparationY,canvas.width * 0.2,Math.floor(bossAttackRotation / 25));
   ctx.restore();
+  ctx.fillStyle = "white";
+  ctx.strokeStyle = "black";
+  ctx.beginPath();
+  ctx.arc(bossAttackX - canvas.width * 0.075,bossAttackY - bossAttackSeparationY - canvas.width * 0.075,canvas.width * 0.05,0,2 * Math.PI);
+  ctx.fill();
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(bossAttackX + canvas.width * 0.075,bossAttackY - bossAttackSeparationY - canvas.width * 0.075,canvas.width * 0.05,0,2 * Math.PI);
+  ctx.fill();
+  ctx.stroke();
   ctx.beginPath();
   ctx.arc(bossAttackX - bossAttackSeparationX,bossAttackY + bossAttackSeparationY,canvas.width * 0.2,0,Math.PI);
   ctx.stroke();
@@ -195,8 +205,8 @@ function renderBossFight() {
     } else if ( bossAttackCanMove ) {
       if ( bossAttackX > bossPlayerX + canvas.width * 0.2 && bossAttackDirection == 1 ) bossAttackDirection = -1;
       else if ( bossAttackX < bossPlayerX - canvas.width * 0.2 && bossAttackDirection == -1 ) bossAttackDirection = 1;
-      bossAttackX += 3.5 * bossAttackDirection;
-      if ( Math.abs(bossAttackX - bossPlayerX) <= 5 ) {
+      bossAttackX += canvas.width * 0 * bossAttackDirection;
+      if ( Math.abs(bossAttackX - bossPlayerX) <= canvas.width * 0.005 ) {
         if ( bossAttackCount == 1 ) {
           bossSteelTrigger = 1;
           bossAttackCanMove = false;
@@ -211,10 +221,10 @@ function renderBossFight() {
   } else if ( bossAttackCanMove ) {
     if ( bossAttackX > bossPlayerX + canvas.width * 0.2 && bossAttackY >= canvas.height * 0.8 && bossAttackDirection == 1 ) bossAttackDirection = -1;
     else if ( bossAttackX < bossPlayerX - canvas.width * 0.2 && bossAttackY >= canvas.height * 0.8 && bossAttackDirection == -1 ) bossAttackDirection = 1;
-    bossAttackX += 3 * bossAttackDirection;
+    bossAttackX += canvas.width * 0.00375 * bossAttackDirection;
     if ( bossAttackX > bossPlayerX + canvas.width * 0.2 && bossAttackYVel == 0 && bossAttackDirection == 1 ) bossAttackDirection = -1;
     else if ( bossAttackX < bossPlayerX - canvas.width * 0.2 && bossAttackYVel == 0 && bossAttackDirection == -1 ) bossAttackDirection = 1;
-    bossAttackY -= 3 * bossAttackYVel;
+    bossAttackY -= canvas.width * 0.0075 * bossAttackYVel;
     if ( bossAttackYVel > 0 || bossAttackY < canvas.height * 0.9 ) bossAttackYVel -= canvas.height * 0.00006;
     if ( bossAttackY >= canvas.height * 0.8 ) bossAttackYVel = canvas.height * 0.005;
     if ( bossAttackYVel > 0 && bossAttackYVel < 0.05 ) {
@@ -288,8 +298,9 @@ function activateExit(successful) {
     } else {
       gamemode = "map";
       mapIndex = groups[mapObjects[0].country];
+      mapMetadataID = 0;
       mapPosition = [[2,2]][groups[mapObjects[0].country]];
-      mapObjects = [mapObjects[0]].concat(mapMetadata[mapIndex].trainers);
+      mapObjects = [mapObjects[0]].concat(mapMetadata[mapIndex][0].trainers);
       mapObjects[0].colored = true;
     }
   },1250);
