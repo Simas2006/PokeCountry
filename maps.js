@@ -144,14 +144,7 @@ var mapMetadata = [
   [
     {
       trainers: [],
-      warps: [
-        {
-          world: 1,
-          inloc: [2,2],
-          outloc: [2,8],
-          metaID: 0
-        }
-      ],
+      warps: [],
       tileData: {
         tileset: ["lightblue","green","white","#f1d2ab"],
         walls: [0]
@@ -188,7 +181,7 @@ var mapMetadata = [
 
 var mapObjects = [];
 var mapPosition = [2,2];
-var mapIndex = 0;
+var mapIndex = 2;
 var mapMetadataID = 0;
 var mapCurrentBattle;
 var mapCanMove = true;
@@ -222,6 +215,28 @@ function renderMap() {
       ctx.fillStyle = mapMetadata[mapIndex][mapMetadataID].tileData.tileset[map[Math.floor(sum[1])][Math.floor(sum[0])]] || "white";
       ctx.fillRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))) - 1,unit + 2,unit + 2);
       if ( mapEnableGrid ) ctx.strokeRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))),unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))),unit,unit);
+    }
+  }
+  var gymx = 3;
+  var gymy = 3;
+  for ( var i = 0; i < mapZoomLevel + 1; i++ ) {
+    for ( var j = 0; j < mapZoomLevel + 1; j++ ) {
+      var sum = [
+        Math.min(Math.max(i + mapPosition[0] - mapZoomLevel / 2,0),map[0].length - 1),
+        Math.min(Math.max(j + mapPosition[1] - mapZoomLevel / 2,0),map.length - 1)
+      ];
+      if ( sum[0] >= gymx && sum[0] <= gymx + 5 && sum[1] >= gymy && sum[1] <= gymy + 7 ) {
+        var rx = Math.floor(sum[0] - gymx)
+        var ry = Math.floor(sum[1] - gymy);
+        if ( rx != 2 && ry == 0 ) continue;
+        if ( (rx == 0 || rx == 4) && ry == 1 ) continue;
+        ctx.fillStyle = (rx == 2 && ry == 4) ? "red" : "black";
+        ctx.fillRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))) - 1,unit + 2,unit + 2);
+        if ( rx != 2 || ry != 4 ) {
+          ctx.fillStyle = (rx == 2 && ry >= 5) ? "black" : "rgb(83,47,14)";
+          ctx.fillRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))) - 1,unit + 2,(unit * 0.5) + 1);
+        }
+      }
     }
   }
   for ( var i = 0; i < mapObjects.length; i++ ) {
