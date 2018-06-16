@@ -50,10 +50,6 @@ var maps = [
   02222222222222222220
   02222222222222222220
   02222222222222222220
-  02222222222222222220
-  02222222222222222220
-  02222222222222222220
-  02222222222222222220
   01111111111111111110
   01111111111111111110
   01111111111111111110
@@ -64,14 +60,6 @@ var maps = [
   01111111111111111110
   01111111111111111110
   01111111111111111110
-  01111111111111111110
-  01111111111111111110
-  01111111111111111110
-  01111111111111111110
-  03333333333333333330
-  03333333333333333330
-  03333333333333333330
-  03333333333333333330
   03333333333333333330
   03333333333333333330
   03333333333333333330
@@ -219,6 +207,8 @@ function renderMap() {
   }
   var gymx = 3;
   var gymy = 3;
+  var pcx = 9;
+  var pcy = 7;
   for ( var i = 0; i < mapZoomLevel + 1; i++ ) {
     for ( var j = 0; j < mapZoomLevel + 1; j++ ) {
       var sum = [
@@ -234,7 +224,34 @@ function renderMap() {
         ctx.fillRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))) - 1,unit + 2,unit + 2);
         if ( rx != 2 || ry != 4 ) {
           ctx.fillStyle = (rx == 2 && ry >= 5) ? "black" : "rgb(83,47,14)";
-          ctx.fillRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))) - 1,unit + 2,(unit * 0.5) + 1);
+          ctx.fillRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))) - 1,unit + 2,(unit * 0.5) + 2);
+        }
+      }
+      if ( sum[0] >= pcx && sum[0] <= pcx + 5 && sum[1] >= pcy && sum[1] <= pcy + 3 ) {
+        var rx = Math.floor(sum[0] - pcx)
+        var ry = Math.floor(sum[1] - pcy);
+        ctx.fillStyle = "#eeeeee";
+        ctx.fillRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))) - 1,unit + 2,unit + 2);
+        if ( rx == 3 && ry != 0 ) {
+          ctx.fillStyle = "black";
+          ctx.fillRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))) - 1,unit + 2,unit + 2);
+        }
+        ctx.fillStyle = "red";
+        if ( rx == 0 ) ctx.fillRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))) - 1,(unit * 0.1) + 2,unit + 2);
+        if ( rx == 4 ) ctx.fillRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0])) + 0.9) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))) - 1,(unit * 0.1) + 2,unit + 2);
+        if ( ry == 0 ) ctx.fillRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))) - 1,unit + 2,(unit * 0.1) + 2);
+        if ( rx == 3 && ry == 1 ) {
+          ctx.fillStyle = "black";
+          ctx.strokeStyle = "black";
+          ctx.font = (unit * 0.5) + "px Menlo";
+          ctx.textAlign = "center";
+          ctx.textBaseline = "middle";
+          ctx.fillText("S",unit * (i - (mapPosition[0] - Math.floor(mapPosition[0])) - 0.75) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1])) + 0.25) - 1);
+          ctx.fillText("C",unit * (i - (mapPosition[0] - Math.floor(mapPosition[0])) - 0.25) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1])) + 0.75) - 1);
+          ctx.beginPath();
+          ctx.moveTo(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))) - 1);
+          ctx.lineTo(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0])) - 1) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1])) + 1) - 1);
+          ctx.stroke();
         }
       }
     }
