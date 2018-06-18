@@ -218,13 +218,29 @@ function renderMap() {
       if ( sum[0] >= gymx && sum[0] <= gymx + 5 && sum[1] >= gymy && sum[1] <= gymy + 7 ) {
         var rx = Math.floor(sum[0] - gymx)
         var ry = Math.floor(sum[1] - gymy);
-        if ( rx != 2 && ry == 0 ) continue;
-        if ( (rx == 0 || rx == 4) && ry == 1 ) continue;
-        ctx.fillStyle = (rx == 2 && ry == 4) ? "red" : "black";
-        ctx.fillRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))) - 1,unit + 2,unit + 2);
-        if ( rx != 2 || ry != 4 ) {
-          ctx.fillStyle = (rx == 2 && ry >= 5) ? "black" : "rgb(83,47,14)";
-          ctx.fillRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))) - 1,unit + 2,(unit * 0.5) + 2);
+        if ( ! ((rx == 0 || rx == 4) && ry == 0) ) {
+          ctx.fillStyle = (rx == 2 && ry == 4) ? "red" : "black";
+          ctx.fillRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))) - 1,unit + 2,unit + 2);
+          if ( rx != 2 || ry != 4 ) {
+            ctx.fillStyle = (rx == 2 && ry >= 5) ? "black" : "rgb(83,47,14)";
+            ctx.fillRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))) - 1,unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))) - 1,unit + 2,(unit * 0.5) + 2);
+          }
+        } else if ( rx == 0 && ry == 0 ) {
+          ctx.fillStyle = "rgb(83,47,14)";
+          ctx.beginPath();
+          ctx.moveTo(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0])) + 1),unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))),unit + 2,unit + 2);
+          ctx.lineTo(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))),unit * (j - (mapPosition[1] - Math.floor(mapPosition[1])) + 1),unit + 2,unit + 2);
+          ctx.lineTo(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0])) + 1),unit * (j - (mapPosition[1] - Math.floor(mapPosition[1])) + 1),unit + 2,unit + 2);
+          ctx.closePath();
+          ctx.fill();
+        } else if ( rx == 4 && ry == 0 ) {
+          ctx.fillStyle = "rgb(83,47,14)";
+          ctx.beginPath();
+          ctx.moveTo(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))),unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))),unit + 2,unit + 2);
+          ctx.lineTo(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0])) + 1),unit * (j - (mapPosition[1] - Math.floor(mapPosition[1])) + 1),unit + 2,unit + 2);
+          ctx.lineTo(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))),unit * (j - (mapPosition[1] - Math.floor(mapPosition[1])) + 1),unit + 2,unit + 2);
+          ctx.closePath();
+          ctx.fill();
         }
       }
       if ( sum[0] >= pcx && sum[0] <= pcx + 5 && sum[1] >= pcy && sum[1] <= pcy + 3 ) {
