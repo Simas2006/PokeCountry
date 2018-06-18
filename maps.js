@@ -336,7 +336,7 @@ function renderMap() {
     var speed = mapKeypresses.x ? 0.0825 : 0.045;
     var walls = mapMetadata[mapIndex][mapMetadataID].tileData.walls;
     var gymtrigger = [
-      ! (mapPosition[0] >= gymx - 1 && mapPosition[0] <= gymx + 5 && mapPosition[1] >= gymy && mapPosition[1] <= gymy + 7),
+      ! (mapPosition[0] >= gymx - 1 && mapPosition[0] <= gymx + 5 && mapPosition[1] >= gymy && mapPosition[1] <= gymy + 7) || Math.round(mapPosition[0]) == gymx + 2,
       ! (mapPosition[0] >= gymx - 1 && mapPosition[0] <= gymx + 5 && mapPosition[1] >= gymy - 1 && mapPosition[1] <= gymy + 6),
       ! (mapPosition[0] >= gymx && mapPosition[0] <= gymx + 5 && mapPosition[1] >= gymy - 1 && mapPosition[1] <= gymy + 7),
       ! (mapPosition[0] >= gymx - 1 && mapPosition[0] <= gymx + 4 && mapPosition[1] >= gymy - 1 && mapPosition[1] <= gymy + 7),
