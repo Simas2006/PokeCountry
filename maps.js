@@ -205,9 +205,9 @@ function renderMap() {
       if ( mapEnableGrid ) ctx.strokeRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))),unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))),unit,unit);
     }
   }
-  var gymx = 3;
+  var gymx = 4;
   var gymy = 3;
-  var pcx = 9;
+  var pcx = 11;
   var pcy = 7;
   for ( var i = 0; i < mapZoomLevel + 1; i++ ) {
     for ( var j = 0; j < mapZoomLevel + 1; j++ ) {
@@ -319,10 +319,22 @@ function renderMap() {
   if ( mapCanMove ) {
     var speed = mapKeypresses.x ? 0.0825 : 0.045;
     var walls = mapMetadata[mapIndex][mapMetadataID].tileData.walls;
-    if ( mapKeypresses.up && walls.indexOf(map[Math.floor(mapPosition[1])][Math.round(mapPosition[0])]) <= -1 ) mapPosition[1] -= speed;
-    if ( mapKeypresses.down && walls.indexOf(map[Math.ceil(mapPosition[1])][Math.round(mapPosition[0])]) <= -1 ) mapPosition[1] += speed;
-    if ( mapKeypresses.left && walls.indexOf(map[Math.round(mapPosition[1])][Math.floor(mapPosition[0])]) <= -1 ) mapPosition[0] -= speed;
-    if ( mapKeypresses.right && walls.indexOf(map[Math.round(mapPosition[1])][Math.ceil(mapPosition[0])]) <= -1 ) mapPosition[0] += speed;
+    var gymtrigger = [
+      ! (mapPosition[0] >= gymx - 1 && mapPosition[0] <= gymx + 5 && mapPosition[1] >= gymy && mapPosition[1] <= gymy + 7),
+      ! (mapPosition[0] >= gymx - 1 && mapPosition[0] <= gymx + 5 && mapPosition[1] >= gymy - 1 && mapPosition[1] <= gymy + 6),
+      ! (mapPosition[0] >= gymx && mapPosition[0] <= gymx + 5 && mapPosition[1] >= gymy - 1 && mapPosition[1] <= gymy + 7),
+      ! (mapPosition[0] >= gymx - 1 && mapPosition[0] <= gymx + 4 && mapPosition[1] >= gymy - 1 && mapPosition[1] <= gymy + 7),
+    ];
+    var pctrigger = [
+      ! (mapPosition[0] >= pcx - 1 && mapPosition[0] <= pcx + 5 && mapPosition[1] >= pcy && mapPosition[1] <= pcy + 3) || Math.round(mapPosition[0]) == pcx + 3,
+      ! (mapPosition[0] >= pcx - 1 && mapPosition[0] <= pcx + 5 && mapPosition[1] >= pcy - 1 && mapPosition[1] <= pcy + 2),
+      ! (mapPosition[0] >= pcx && mapPosition[0] <= pcx + 5 && mapPosition[1] >= pcy - 1 && mapPosition[1] <= pcy + 3),
+      ! (mapPosition[0] >= pcx - 1 && mapPosition[0] <= pcx + 4 && mapPosition[1] >= pcy - 1 && mapPosition[1] <= pcy + 3)
+    ];
+    if ( mapKeypresses.up && walls.indexOf(map[Math.floor(mapPosition[1])][Math.round(mapPosition[0])]) <= -1 && gymtrigger[0] && pctrigger[0] ) mapPosition[1] -= speed;
+    if ( mapKeypresses.down && walls.indexOf(map[Math.ceil(mapPosition[1])][Math.round(mapPosition[0])]) <= -1 && gymtrigger[1] && pctrigger[1] ) mapPosition[1] += speed;
+    if ( mapKeypresses.left && walls.indexOf(map[Math.round(mapPosition[1])][Math.floor(mapPosition[0])]) <= -1 && gymtrigger[2] && pctrigger[2] ) mapPosition[0] -= speed;
+    if ( mapKeypresses.right && walls.indexOf(map[Math.round(mapPosition[1])][Math.ceil(mapPosition[0])]) <= -1 && gymtrigger[3] && pctrigger[3] ) mapPosition[0] += speed;
   }
   for ( var i = 1; i < mapObjects.length; i++ ) {
     if ( ! mapObjects[i].exists ) continue;
