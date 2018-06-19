@@ -10,7 +10,7 @@ var titleLoseYMod = 0;
 var titleBounceVel = 0;
 var titleBounceYMod = 0;
 var titleGhostY = -35;
-var titleEndGameActive = false;
+var titleEndGameActive = 0;
 
 function renderTitle() {
   // rendering code
@@ -155,12 +155,24 @@ function renderTitle() {
     ctx.lineTo(canvas.width * 0.5 + titleGhostY,titleGhostY * 2.75);
     ctx.fill();
     ctx.save();
-    ctx.beginPath();
-    ctx.arc(canvas.width * 0.5,titleGhostY * 1.5,titleGhostY * 0.8,0,2 * Math.PI);
-    ctx.clip();
     var radius = titleGhostY * 0.8;
-    drawFlag(flags[titleWinner],canvas.width * 0.5,titleGhostY * 1.5,radius,0);
-    ctx.restore();
+    if ( titleEndGameActive > -1 ) {
+      ctx.beginPath();
+      ctx.moveTo(canvas.width * 0.5,titleGhostY * 1.5);
+      ctx.arc(canvas.width * 0.5,titleGhostY * 1.5,radius,0,2 * Math.PI);
+      ctx.stroke();
+      ctx.clip();
+      drawFlag(flags[Math.floor(titleEndGameActive)],canvas.width * 0.5,titleGhostY * 1.5,radius,0);
+      ctx.restore();
+      titleEndGameActive += 0.125;
+      titleEndGameActive %= 4;
+    } else {
+      ctx.beginPath();
+      ctx.arc(canvas.width * 0.5,titleGhostY * 1.5,radius,0,2 * Math.PI);
+      ctx.clip();
+      drawFlag(flags[titleWinner],canvas.width * 0.5,titleGhostY * 1.5,radius,0);
+      ctx.restore();
+    }
     ctx.fillStyle = "white";
     ctx.strokeStyle = "black";
     ctx.beginPath();
