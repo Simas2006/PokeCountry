@@ -214,7 +214,7 @@ function renderTitle() {
   }
   if ( titleMode == 2 ) {
     titleGhostY += canvas.height * 0.0026;
-    if ( titleGhostY >= canvas.height * 1.45 ) {
+    if ( titleGhostY >= canvas.height * 1.65 ) {
       setTimeout(function() {
         var wins = localStorage.getItem("wins") || "";
         if ( wins.indexOf(["u","e","r","c"][groups[titleWinner]]) <= -1 ) localStorage.setItem("wins",wins + ["u","e","r","c"][groups[titleWinner]]);

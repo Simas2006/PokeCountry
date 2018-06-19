@@ -154,6 +154,10 @@ window.onload = function() {
     else if ( gamemode != "stop" ) throw new Error("Invalid gamemode");
     renderNPC();
     renderMenu();
+    if ( gamemode == "stop" ) {
+      ctx.fillStyle = "black";
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+    }
     if ( blurActive > 0 ) {
       var size = Math.min(canvas.width,canvas.height);
       ctx.fillStyle = "black";
