@@ -10,6 +10,7 @@ var titleLoseYMod = 0;
 var titleBounceVel = 0;
 var titleBounceYMod = 0;
 var titleGhostY = -35;
+var titleFinalActive = false;
 
 function renderTitle() {
   // rendering code
@@ -229,8 +230,8 @@ function renderTitle() {
 }
 
 function handleKeyboardTitle(key) {
-  if ( key == "ArrowLeft" && Math.round(titleCountryX) > 0 && ! titleAskFinal && titleMode == 0 ) titleMoving = -1;
-  if ( key == "ArrowRight" && Math.round(titleCountryX) < names.length - 2 && ! titleAskFinal && titleMode == 0 ) titleMoving = 1;
+  if ( key == "ArrowLeft" && Math.round(titleCountryX) > 0 && titleAskNumber == 0 && titleMode == 0 ) titleMoving = -1;
+  if ( key == "ArrowRight" && Math.round(titleCountryX) < names.length - 2 && titleAskNumber == 0 && titleMode == 0 ) titleMoving = 1;
   if ( key == " " && titleMode == 0 ) {
     if ( titleAskNumber == 0 ) {
       titleAskNumber = 1;
