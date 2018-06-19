@@ -218,9 +218,23 @@ function renderTitle() {
       setTimeout(function() {
         var wins = localStorage.getItem("wins") || "";
         if ( wins.indexOf(["u","e","r","c"][groups[titleWinner]]) <= -1 ) localStorage.setItem("wins",wins + ["u","e","r","c"][groups[titleWinner]]);
-        location.reload();
+        if ( titleEndGameActive <= -1 ) location.reload();
       },1500);
       gamemode = "stop";
+    }
+  }
+}
+
+function renderStop() {
+  ctx.fillStyle = "black";
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  if ( titleEndGameActive > -1 ) {
+    var message = ["My name is sage","I am beige","And also a havanage"];
+    ctx.font = canvas.width * 0.06 + "px Menlo";
+    ctx.fillStyle = "white";
+    ctx.textAlign = "center";
+    for ( var i = 0; i < message.length; i++ ) {
+      ctx.fillText(message[i],canvas.width * 0.5,canvas.height * (0.25 + 0.06 * i));
     }
   }
 }

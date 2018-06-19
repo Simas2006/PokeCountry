@@ -151,13 +151,10 @@ window.onload = function() {
     else if ( gamemode == "battle" ) renderBattle();
     else if ( gamemode == "bossfight" ) renderBossFight();
     else if ( gamemode == "title" ) renderTitle();
-    else if ( gamemode != "stop" ) throw new Error("Invalid gamemode");
+    else if ( gamemode == "stop" ) renderStop();
+    else throw new Error("Invalid gamemode");
     renderNPC();
     renderMenu();
-    if ( gamemode == "stop" ) {
-      ctx.fillStyle = "black";
-      ctx.fillRect(0,0,canvas.width,canvas.height);
-    }
     if ( blurActive > 0 ) {
       var size = Math.min(canvas.width,canvas.height);
       ctx.fillStyle = "black";
