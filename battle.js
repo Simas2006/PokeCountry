@@ -313,7 +313,7 @@ function renderBattle() {
     var trigger = false;
     if ( battleChangePlayer > -1 ) {
       battlePlayers[0].party.splice(battlePlayers[0].active,0,battlePlayers[0].party.splice(battleChangePlayer,1)[0]);
-      battleChangePlayer = -1;
+      battleChangePlayer = -2;
       trigger = true;
     }
     var selectedObject = battlePlayers[battleFaintPlayer];
@@ -341,7 +341,7 @@ function renderBattle() {
   if ( battleDialogueItem == 12 && ! battleCaptureComplete ) {
     if ( battleShakingResult ) {
       battleFaintPlayer = 1;
-      battlePlayers[0].party.push(battlePlayers[1].party[battlePlayers[1].active]);
+      if ( battlePlayers[0].party.length < 8 ) battlePlayers[0].party.push(battlePlayers[1].party[battlePlayers[1].active]);
       battleTextToDraw = `You captured ${names[battlePlayers[1].party[battlePlayers[1].active].country].toUpperCase()}!`;
     } else {
       battleTextToDraw = `${names[battlePlayers[1].party[battlePlayers[1].active].country].toUpperCase()} got away!`;
@@ -453,7 +453,8 @@ function battleDialogueIncrement() {
     battleDialogueIncrement();
   } else if ( battleDialogueItem == 10 ) {
     if ( battleWinner <= -1 ) {
-      battleMovementPlayer = battleMovementPlayer == 0 ? 1 : 0;
+      if ( battleChangePlayer > -2 ) battleMovementPlayer = battleMovementPlayer == 0 ? 1 : 0;
+      battleChangePlayer = -1;
       battleDialogueItem = 2 + battleMovementPlayer;
       battleDialogueIncrement();
     } else {
