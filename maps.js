@@ -136,6 +136,10 @@ var mapMetadata = [
       tileData: {
         tileset: ["lightblue","green","white","#f1d2ab"],
         walls: [0]
+      },
+      onScreenObjects: {
+        gym: {x: 11,y: 11},
+        pc: {x: 4,y: 4}
       }
     },
   ],
@@ -205,17 +209,17 @@ function renderMap() {
       if ( mapEnableGrid ) ctx.strokeRect(unit * (i - (mapPosition[0] - Math.floor(mapPosition[0]))),unit * (j - (mapPosition[1] - Math.floor(mapPosition[1]))),unit,unit);
     }
   }
-  var gymx = 4;
-  var gymy = 3;
-  var pcx = 11;
-  var pcy = 7;
+  var gymx = mapMetadata[mapIndex][mapMetadataID].onScreenObjects.gym.x;
+  var gymy = mapMetadata[mapIndex][mapMetadataID].onScreenObjects.gym.y;
+  var pcx = mapMetadata[mapIndex][mapMetadataID].onScreenObjects.pc.x;
+  var pcy = mapMetadata[mapIndex][mapMetadataID].onScreenObjects.pc.y;
   for ( var i = 0; i < mapZoomLevel + 1; i++ ) {
     for ( var j = 0; j < mapZoomLevel + 1; j++ ) {
       var sum = [
         Math.min(Math.max(i + mapPosition[0] - mapZoomLevel / 2,0),map[0].length - 1),
         Math.min(Math.max(j + mapPosition[1] - mapZoomLevel / 2,0),map.length - 1)
       ];
-      if ( sum[0] >= gymx && sum[0] <= gymx + 5 && sum[1] >= gymy && sum[1] <= gymy + 7 ) {
+      if ( gymx >= 0 && sum[0] >= gymx && sum[0] <= gymx + 5 && sum[1] >= gymy && sum[1] <= gymy + 7 ) {
         var rx = Math.floor(sum[0] - gymx)
         var ry = Math.floor(sum[1] - gymy);
         if ( ! ((rx == 0 || rx == 4) && ry == 0) ) {
@@ -243,7 +247,7 @@ function renderMap() {
           ctx.fill();
         }
       }
-      if ( sum[0] >= pcx && sum[0] <= pcx + 5 && sum[1] >= pcy && sum[1] <= pcy + 3 ) {
+      if ( pcx >= 0 && sum[0] >= pcx && sum[0] <= pcx + 5 && sum[1] >= pcy && sum[1] <= pcy + 3 ) {
         var rx = Math.floor(sum[0] - pcx)
         var ry = Math.floor(sum[1] - pcy);
         ctx.fillStyle = "#eeeeee";
@@ -347,6 +351,8 @@ function renderMap() {
       ! (mapPosition[0] >= pcx && mapPosition[0] <= pcx + 5 && mapPosition[1] >= pcy - 1 && mapPosition[1] <= pcy + 3),
       ! (mapPosition[0] >= pcx - 1 && mapPosition[0] <= pcx + 4 && mapPosition[1] >= pcy - 1 && mapPosition[1] <= pcy + 3)
     ];
+    if ( mapMetadata[mapIndex][mapMetadataID].onScreenObjects.gym.x <= -1 ) gymtrigger = [true,true,true,true];
+    if ( mapMetadata[mapIndex][mapMetadataID].onScreenObjects.pc.x <= -1 ) pctrigger = [true,true,true,true];
     if ( mapKeypresses.up && walls.indexOf(map[Math.floor(mapPosition[1])][Math.round(mapPosition[0])]) <= -1 && gymtrigger[0] && pctrigger[0] ) mapPosition[1] -= speed;
     if ( mapKeypresses.down && walls.indexOf(map[Math.ceil(mapPosition[1])][Math.round(mapPosition[0])]) <= -1 && gymtrigger[1] && pctrigger[1] ) mapPosition[1] += speed;
     if ( mapKeypresses.left && walls.indexOf(map[Math.round(mapPosition[1])][Math.floor(mapPosition[0])]) <= -1 && gymtrigger[2] && pctrigger[2] ) mapPosition[0] -= speed;
