@@ -480,7 +480,7 @@ function handleKeyboardBattle(key) {
       if ( key == "ArrowDown" ) battleBoxSelected = Math.min(battleBoxSelected + 1,battleBoxItems[battleSelectedOption].length - 1);
     }
   }
-  if ( key == "ArrowDown" && battleDialogueItem != 3 ) battleDialogueIncrement();
+  if ( key == "ArrowDown" && battleDialogueItem != 3 && battleDialogueItem != 4 && battleCharDrawn >= battleTextToDraw.length ) battleDialogueIncrement();
   if ( key == " " && battleDialogueItem == 3 ) {
     if ( battleSelectedOption <= -1 ) {
       battleOutOfCountries = false;
