@@ -10,7 +10,7 @@ var titleLoseYMod = 0;
 var titleBounceVel = 0;
 var titleBounceYMod = 0;
 var titleGhostY = -35;
-var titleFinalActive = false;
+var titleEndGameActive = false;
 
 function renderTitle() {
   // rendering code
@@ -59,24 +59,18 @@ function renderTitle() {
       ctx.arc(canvas.width * 0.5 + xm,canvas.height * [0.7,0.6][titleMode] + ym,radius,0,2 * Math.PI);
       if ( titleMode == 1 ) ctx.stroke();
       ctx.clip();
-      for ( var j = 0; j < flags[i].length; j++ ) {
-        var pos = [Math.floor(j / 3),j % 3];
-        var pixelPosition = [(pos[0] - 1.5) * (radius / 1.5),(pos[1] - 1.5) * (radius / 1.5)];
-        if ( titleMode == 0 ) ctx.globalAlpha = Math.abs(titleCountryX - i) < 0.99 ? 1 : 0.5;
-        ctx.fillStyle = ["red","orange","yellow","green","blue","purple","black","white"][flags[i][j]];
-        ctx.fillRect(canvas.width * 0.5 + xm + pixelPosition[0],canvas.height * [0.7,0.6][titleMode] + ym + pixelPosition[1],radius / 1.5,radius / 1.5);
-        ctx.fillStyle = Math.floor(i / 4) == (groups[titleWinner] + 2) % 4 && titleLoseYMod <= 1.2 && titleMode == 1 ? "red" : "white";
-        ctx.strokeStyle = "black";
-        ctx.beginPath();
-        ctx.arc(canvas.width * [0.45,0.45,0.475][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)] + xm,canvas.height * [0.65,0.55,0.575][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)] + ym,trueRadius * [0.25,0.4,0.2][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)],0,2 * Math.PI);
-        ctx.fill();
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.arc(canvas.width * [0.55,0.55,0.525][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)] + xm,canvas.height * [0.65,0.55,0.575][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)] + ym,trueRadius * [0.25,0.4,0.2][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)],0,2 * Math.PI);
-        ctx.fill();
-        ctx.stroke();
-      }
+      drawFlag(flags[i],canvas.width * 0.5 + xm,canvas.height * [0.7,0.6][titleMode] + ym,radius,0);
       ctx.restore();
+      ctx.fillStyle = Math.floor(i / 4) == (groups[titleWinner] + 2) % 4 && titleLoseYMod <= 1.2 && titleMode == 1 ? "red" : "white";
+      ctx.strokeStyle = "black";
+      ctx.beginPath();
+      ctx.arc(canvas.width * [0.45,0.45,0.475][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)] + xm,canvas.height * [0.65,0.55,0.575][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)] + ym,trueRadius * [0.25,0.4,0.2][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)],0,2 * Math.PI);
+      ctx.fill();
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(canvas.width * [0.55,0.55,0.525][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)] + xm,canvas.height * [0.65,0.55,0.575][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)] + ym,trueRadius * [0.25,0.4,0.2][titleMode + (titleMode == 1 && i % 4 > 0 ? 1 : 0)],0,2 * Math.PI);
+      ctx.fill();
+      ctx.stroke();
     }
   }
   if ( titleMode == 0 ) {
@@ -105,12 +99,7 @@ function renderTitle() {
     ctx.arc(canvas.width * 0.5,canvas.height * 0.71 - titleBounceYMod,radius,0,2 * Math.PI);
     ctx.stroke();
     ctx.clip();
-    for ( var i = 0; i < flags[titleWinner].length; i++ ) {
-      var pos = [Math.floor(i / 3),i % 3];
-      var pixelPosition = [(pos[0] - 1.5) * (radius / 1.5),(pos[1] - 1.5) * (radius / 1.5)];
-      ctx.fillStyle = ["red","orange","yellow","green","blue","purple","black","white"][flags[titleWinner][i]];
-      ctx.fillRect(canvas.width * 0.5 + pixelPosition[0],canvas.height * 0.71 - titleBounceYMod + pixelPosition[1],radius / 1.5,radius / 1.5);
-    }
+    drawFlag(flags[titleWinner],canvas.width * 0.5,canvas.height * 0.71 - titleBounceYMod,radius,0);
     ctx.fillStyle = "white";
     ctx.strokeStyle = "black";
     ctx.beginPath();
@@ -170,12 +159,7 @@ function renderTitle() {
     ctx.arc(canvas.width * 0.5,titleGhostY * 1.5,titleGhostY * 0.8,0,2 * Math.PI);
     ctx.clip();
     var radius = titleGhostY * 0.8;
-    for ( var i = 0; i < flags[titleWinner].length; i++ ) {
-      var pos = [Math.floor(i / 3),i % 3];
-      var pixelPosition = [(pos[0] - 1.5) * (radius / 1.5),(pos[1] - 1.5) * (radius / 1.5)];
-      ctx.fillStyle = ["red","orange","yellow","green","blue","purple","black","white"][flags[titleWinner][i]];
-      ctx.fillRect(canvas.width * 0.5 + pixelPosition[0],titleGhostY * 1.5 + pixelPosition[1],radius / 1.5,radius / 1.5);
-    }
+    drawFlag(flags[titleWinner],canvas.width * 0.5,titleGhostY * 1.5,radius,0);
     ctx.restore();
     ctx.fillStyle = "white";
     ctx.strokeStyle = "black";

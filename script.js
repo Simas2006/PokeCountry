@@ -124,6 +124,21 @@ function drawRoundedRect(radius,x,y,width,height) {
   ctx.closePath();
 }
 
+function drawFlag(flag,x,y,radius,rotation) {
+  var matrices = [
+    [[0,0],[0,1],[0,2],[1,0],[1,1],[1,2],[2,0],[2,1],[2,2]],
+    [[2,0],[1,0],[0,0],[2,1],[1,1],[0,1],[2,2],[1,2],[0,2]],
+    [[2,2],[2,1],[2,0],[1,2],[1,1],[1,0],[0,2],[0,1],[0,0]],
+    [[0,2],[1,2],[2,2],[0,1],[1,1],[2,1],[0,0],[1,0],[2,0]]
+  ];
+  for ( var i = 0; i < flag.length; i++ ) {
+    var pos = matrices[rotation % 4][i];
+    var pixelPosition = [(pos[0] - 1.5) * (radius / 1.5),(pos[1] - 1.5) * (radius / 1.5)];
+    ctx.fillStyle = ["red","orange","yellow","green","blue","purple","black","white"][flag[i]];
+    ctx.fillRect(x + pixelPosition[0],y + pixelPosition[1],radius / 1.5,radius / 1.5);
+  }
+}
+
 window.onload = function() {
   canvas = document.getElementById("canvas");
   ctx = canvas.getContext("2d");
