@@ -1,5 +1,6 @@
 var battlePlayers = [];
 var battleWinner = -1;
+var battleFreeze = false;
 var battleSwapTime;
 var battleSwapDirection;
 var battleSwapPlayer;
@@ -438,8 +439,9 @@ function battleDialogueIncrement() {
       battleDialogueIncrement();
     },2750);
   } else if ( battleDialogueItem == 7 ) {
-    battleMovementPlayer = battleMovementPlayer == 0 ? 1 : 0;
+    if ( ! battleFreeze ) battleMovementPlayer = battleMovementPlayer == 0 ? 1 : 0;
     battleDialogueItem = 2 + battleMovementPlayer;
+    battleFreeze = false;
     if ( battlePlayers[0].hp[0] <= 0 ) {
       battleFaintPlayer = 0;
       battleDialogueItem = 7;

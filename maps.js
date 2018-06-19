@@ -131,15 +131,48 @@ var mapMetadata = [
   ],
   [
     {
-      trainers: [],
+      trainers: [
+        {
+          country: 0,
+          x: 4,
+          y: 4,
+          direction: 0,
+          colored: true,
+          exists: true,
+          battleData: {
+            trigger: true,
+            country: 0,
+            visibleCountry: 0,
+            faintedCountries: 0,
+            active: -1,
+            hp: [100],
+            pp: [100,100,100,100],
+            hexaballs: [0,0,0],
+            party: [
+              {
+                country: 0,
+                group: 1,
+                moves: [
+                  [0,1],
+                  [1,2],
+                  [2,3],
+                  [3,4]
+                ],
+                hp: [100],
+                pp: [100,100,100,100]
+              }
+            ]
+          }
+        }
+      ],
       warps: [],
       tileData: {
         tileset: ["lightblue","green","white","#f1d2ab"],
         walls: [0]
       },
       onScreenObjects: {
-        gym: {x: 11,y: 11},
-        pc: {x: 4,y: 4}
+        gym: {x: -1,y: -1},
+        pc: {x: -1,y: -1}
       }
     },
   ],
@@ -171,7 +204,40 @@ var mapMetadata = [
   ]
 ];
 
-var mapObjects = [];
+var mapObjects = [
+  {
+    country: 0,
+    x: 6,
+    y: 6,
+    direction: 0,
+    colored: true,
+    exists: true,
+    battleData: {
+      trigger: true,
+      country: 0,
+      visibleCountry: 0,
+      faintedCountries: 0,
+      active: -1,
+      hp: [100],
+      pp: [100,100,100,100],
+      hexaballs: [0,0,0],
+      party: [
+        {
+          country: 0,
+          group: 1,
+          moves: [
+            [0,1],
+            [1,2],
+            [2,3],
+            [3,4]
+          ],
+          hp: [100],
+          pp: [100,100,100,100]
+        }
+      ]
+    }
+  }
+];
 var mapPosition = [2,2];
 var mapIndex = 2;
 var mapMetadataID = 0;

@@ -52,6 +52,7 @@ var moves = [
     missChance: 0,
     onUse: function(object,party,player) {
       if ( party.length < 8 ) party.push(player);
+      battleFreeze = true;
     }
   },
   {
