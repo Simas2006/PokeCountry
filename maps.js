@@ -31,14 +31,14 @@ var maps = [
   0000000000000000000000000`,
   `000000000000000
   011111111111110
-  012242232242210
+  012222232222210
   013333333333310
   012222222222210
   012222222222210
   012222222222210
   012222222222210
   012222222222210
-  010222222222410
+  010222222222210
   011111111111110
   000000000000000`,
   `00000000000000000000
@@ -94,6 +94,10 @@ var mapMetadata = [
       tileData: {
         tileset: ["black","cyan","#80bfff","#ff6666","white","#ff6666","brown"],
         walls: [1,6]
+      },
+      onScreenObjects: {
+        gym: {x: -1,y: -1},
+        pc: {x: -1,y: -1}
       }
     },
     {
@@ -109,6 +113,10 @@ var mapMetadata = [
       tileData: {
         tileset: ["black","yellow","black","black","#fdcf04","#ff6666","brown"],
         walls: [1,6]
+      },
+      onScreenObjects: {
+        gym: {x: -1,y: -1},
+        pc: {x: -1,y: -1}
       }
     },
   ],
@@ -124,8 +132,12 @@ var mapMetadata = [
         }
       ],
       tileData: {
-        tileset: ["black","cyan","#80bfff","brown","blue"],
-        walls: [1]
+        tileset: ["black","cyan","#80bfff","brown"],
+        walls: [1,3]
+      },
+      onScreenObjects: {
+        gym: {x: -1,y: -1},
+        pc: {x: -1,y: -1}
       }
     },
   ],
@@ -202,47 +214,18 @@ var mapMetadata = [
       tileData: {
         tileset: ["black","brown","black","white"],
         walls: [1]
+      },
+      onScreenObjects: {
+        gym: {x: -1,y: -1},
+        pc: {x: -1,y: -1}
       }
     }
   ]
 ];
 
-var mapObjects = [
-  {
-    country: 0,
-    x: 6,
-    y: 6,
-    direction: 0,
-    colored: true,
-    exists: true,
-    battleData: {
-      trigger: true,
-      country: 0,
-      visibleCountry: 0,
-      faintedCountries: 0,
-      active: -1,
-      hp: [100],
-      pp: [100,100,100,100],
-      hexaballs: [0,0,0],
-      party: [
-        {
-          country: 0,
-          group: 1,
-          moves: [
-            [0,1],
-            [1,2],
-            [2,3],
-            [3,4]
-          ],
-          hp: [100],
-          pp: [100,100,100,100]
-        }
-      ]
-    }
-  }
-];
-var mapPosition = [2,2];
-var mapIndex = 2;
+var mapObjects = [];
+var mapPosition = [0,0];
+var mapIndex = 1;
 var mapMetadataID = 0;
 var mapCurrentBattle;
 var mapCanMove = true;
