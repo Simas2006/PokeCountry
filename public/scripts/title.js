@@ -254,6 +254,12 @@ function handleKeyboardTitle(key) {
     } else if ( titleAskNumber == 1 ) {
       if ( Math.round(titleCountryX) != names.length - 1 ) {
         mapIndex = groups[Math.round(titleCountryX)];
+        mapPosition = [
+          [1,1],
+          [2,2],
+          [3,3],
+          [4,4]
+        ][groups[Math.round(titleCountryX)]];
         mapObjects = [{
           country: Math.abs(Math.round(titleCountryX)),
           x: -1,
