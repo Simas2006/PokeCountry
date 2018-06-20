@@ -10,10 +10,12 @@ var titleLoseYMod = 0;
 var titleBounceVel = 0;
 var titleBounceYMod = 0;
 var titleGhostY = -35;
-var titleEndGameActive = 0;
+var titleEndGameActive = -1;
+var titleEndGameWait = 0;
 
 function renderTitle() {
   // rendering code
+  var hasWon = ["u","e","r","c"].filter(item => localStorage.getItem("wins").indexOf(item) > -1).length >= 4;
   ctx.lineWidth = 1;
   ctx.globalAlpha = 1;
   ctx.fillStyle = "white";
@@ -46,7 +48,7 @@ function renderTitle() {
     var radius = canvas.width * 0.11;
     var trueRadius = canvas.width * [0.11,0.065][titleMode];
     for ( var i = 0; i < [names.length,16][titleMode]; i++ ) {
-      if ( names[i] == "Switzerland" ) continue;
+      if ( names[i] == "Switzerland" && ! (hasWon && titleMode == 0) ) continue;
       if ( titleMode == 1 ) {
         if ( i % 4 == 0 ) radius = canvas.width * 0.1;
         else radius = canvas.width * 0.065;
@@ -229,37 +231,49 @@ function renderStop() {
   ctx.fillStyle = "black";
   ctx.fillRect(0,0,canvas.width,canvas.height);
   if ( titleEndGameActive > -1 ) {
-    var message = ["My name is sage","I am beige","And also a havanage"];
-    ctx.font = canvas.width * 0.06 + "px Menlo";
-    ctx.fillStyle = "white";
-    ctx.textAlign = "center";
-    for ( var i = 0; i < message.length; i++ ) {
-      ctx.fillText(message[i],canvas.width * 0.5,canvas.height * (0.25 + 0.06 * i));
+    titleEndGameWait++;
+    if ( titleEndGameWait >= 100 ) {
+      var message = ["My name is sage","I am beige","And also a havanage"];
+      ctx.font = canvas.width * 0.06 + "px Menlo";
+      ctx.fillStyle = "white";
+      ctx.textAlign = "center";
+      for ( var i = 0; i < message.length; i++ ) {
+        ctx.fillText(message[i],canvas.width * 0.5,canvas.height * (0.25 + 0.06 * i));
+      }
     }
   }
 }
 
 function handleKeyboardTitle(key) {
+  var hasWon = ["u","e","r","c"].filter(item => localStorage.getItem("wins").indexOf(item) > -1).length >= 4;
   if ( key == "ArrowLeft" && Math.round(titleCountryX) > 0 && titleAskNumber == 0 && titleMode == 0 ) titleMoving = -1;
-  if ( key == "ArrowRight" && Math.round(titleCountryX) < names.length - 2 && titleAskNumber == 0 && titleMode == 0 ) titleMoving = 1;
+  if ( key == "ArrowRight" && Math.round(titleCountryX) < names.length - (hasWon ? 1 : 2) && titleAskNumber == 0 && titleMode == 0 ) titleMoving = 1;
   if ( key == " " && titleMode == 0 ) {
     if ( titleAskNumber == 0 ) {
       titleAskNumber = 1;
     } else if ( titleAskNumber == 1 ) {
-      mapObjects.unshift({
-        country: titleCountryX,
-        x: -1,
-        y: -1,
-        direction: 0,
-        colored: true,
-        exists: true,
-        battleData: initialBattleData[Math.round(titleCountryX)]
-      });
-      blurActive = 1;
-      setTimeout(function() {
-        gamemode = "map";
-      },1250);
+      if ( Math.round(titleCountryX) != names.length - 1 ) {
+        mapObjects.unshift({
+          country: titleCountryX,
+          x: -1,
+          y: -1,
+          direction: 0,
+          colored: true,
+          exists: true,
+          battleData: initialBattleData[Math.round(titleCountryX)]
+        });
+        setTimeout(function() {
+          gamemode = "map";
+        },1250);
+      } else {
+        titleGhostY = -150;
+        titleEndGameActive = 0;
+        setTimeout(function() {
+          titleMode = 2;
+        },1250);
+      }
       titleAskNumber = 2;
+      blurActive = 1;
     }
   }
 }
