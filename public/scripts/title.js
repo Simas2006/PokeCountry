@@ -253,7 +253,8 @@ function handleKeyboardTitle(key) {
       titleAskNumber = 1;
     } else if ( titleAskNumber == 1 ) {
       if ( Math.round(titleCountryX) != names.length - 1 ) {
-        mapObjects.unshift({
+        mapIndex = groups[Math.round(titleCountryX)];
+        mapObjects = [{
           country: Math.abs(Math.round(titleCountryX)),
           x: -1,
           y: -1,
@@ -261,7 +262,7 @@ function handleKeyboardTitle(key) {
           colored: true,
           exists: true,
           battleData: initialBattleData[Math.abs(Math.round(titleCountryX))]
-        });
+        }].concat(mapMetadata[mapIndex][0].trainers);
         setTimeout(function() {
           gamemode = "map";
         },1250);
