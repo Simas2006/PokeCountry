@@ -254,13 +254,13 @@ function handleKeyboardTitle(key) {
     } else if ( titleAskNumber == 1 ) {
       if ( Math.round(titleCountryX) != names.length - 1 ) {
         mapObjects.unshift({
-          country: titleCountryX,
+          country: Math.abs(Math.round(titleCountryX)),
           x: -1,
           y: -1,
           direction: 0,
           colored: true,
           exists: true,
-          battleData: initialBattleData[Math.round(titleCountryX)]
+          battleData: initialBattleData[Math.abs(Math.round(titleCountryX))]
         });
         setTimeout(function() {
           gamemode = "map";
